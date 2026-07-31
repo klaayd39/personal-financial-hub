@@ -8,18 +8,23 @@ export const DashboardOverview: React.FC = () => {
   const period =
     filter.month === -1 ? `${filter.year}` : `${MONTH_NAMES[filter.month]} ${filter.year}`;
 
-  // Salary for the selected month/year (or annual if "All Months" selected)
+  // Total annual salary across all months in the selected year
+  const totalYearlySalary = salaries
+    .filter((s) => s.year === filter.year)
+    .reduce((sum, s) => sum + s.amount, 0);
+
+  // Salary for the selected month (or total annual if "All Months" is selected)
   const selectedMonthSalary = filter.month !== -1
     ? salaries.find((s) => s.month === filter.month && s.year === filter.year)?.amount ?? 0
-    : salaries.filter((s) => s.year === filter.year).reduce((sum, s) => sum + s.amount, 0);
+    : totalYearlySalary;
 
   const remainingBalance = selectedMonthSalary - summary.totalExpenses;
-  const hasSalary = selectedMonthSalary > 0;
+  const hasSalary = totalYearlySalary > 0;
 
   const cards = [
     {
-      label: 'Total Salary',
-      value: selectedMonthSalary,
+      label: `Total Salary (${filter.year})`,
+      value: totalYearlySalary,
       icon: <Banknote className="w-4 h-4" />,
       color: 'text-indigo-600',
       bg: 'bg-indigo-50',
