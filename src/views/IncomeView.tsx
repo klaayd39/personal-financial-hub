@@ -44,21 +44,21 @@ export const IncomeView: React.FC<IncomeViewProps> = ({ onOpenAddModal, onEditIn
             placeholder="Search..."
             value={filter.searchQuery}
             onChange={(e) => setFilter((p) => ({ ...p, searchQuery: e.target.value }))}
-            className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
           />
         </div>
         <div className="flex items-center gap-2">
           <select
             value={filter.incomeSource}
             onChange={(e) => setFilter((p) => ({ ...p, incomeSource: e.target.value as any }))}
-            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
           >
             {SOURCE_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
           <select
             value={filter.sortBy}
             onChange={(e) => setFilter((p) => ({ ...p, sortBy: e.target.value as any }))}
-            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
           >
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
@@ -69,7 +69,7 @@ export const IncomeView: React.FC<IncomeViewProps> = ({ onOpenAddModal, onEditIn
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
+      <div className="glass-panel overflow-hidden rounded-2xl">
         {filteredIncomes.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -84,8 +84,8 @@ export const IncomeView: React.FC<IncomeViewProps> = ({ onOpenAddModal, onEditIn
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {filteredIncomes.map((rec) => (
-                  <tr key={rec.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3 px-5 text-xs text-slate-500 whitespace-nowrap">{formatDate(rec.date)}</td>
+                  <tr key={rec.id} className="hover:bg-slate-50 transition-colors group">
+                    <td className="py-4 px-5 text-xs text-slate-500 whitespace-nowrap group-hover:text-slate-900 transition-colors">{formatDate(rec.date)}</td>
                     <td className="py-3 px-5 whitespace-nowrap">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded text-xs font-medium">
                         {rec.source}

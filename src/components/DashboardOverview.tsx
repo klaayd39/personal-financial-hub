@@ -72,9 +72,9 @@ export const DashboardOverview: React.FC = () => {
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-400 font-medium">{period}</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {cards.map((card) => (
-          <div key={card.label} className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm/50">
+          <div key={card.label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50 hover-lift">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="text-xs text-slate-400 font-medium leading-tight truncate">

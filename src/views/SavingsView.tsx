@@ -233,17 +233,17 @@ export const SavingsView: React.FC = () => {
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="bg-white rounded-xl border border-slate-100 p-4">
+        <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm/50 hover-lift">
           <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1.5">Total Deposits</p>
-          <p className="text-lg font-bold text-emerald-600">{formatCurrency(totalDeposits)}</p>
+          <p className="text-xl font-bold text-emerald-600">{formatCurrency(totalDeposits)}</p>
         </div>
-        <div className="bg-white rounded-xl border border-slate-100 p-4">
+        <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm/50 hover-lift">
           <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1.5">Total Withdrawals</p>
-          <p className="text-lg font-bold text-rose-500">{formatCurrency(totalWithdrawals)}</p>
+          <p className="text-xl font-bold text-rose-500">{formatCurrency(totalWithdrawals)}</p>
         </div>
-        <div className="bg-white rounded-xl border border-slate-100 p-4 border-violet-100 ring-1 ring-violet-50">
+        <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm/50 hover-lift ring-1 ring-violet-50">
           <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1.5">Net Savings</p>
-          <p className={`text-lg font-bold ${netSavings >= 0 ? 'text-violet-600' : 'text-rose-500'}`}>
+          <p className={`text-xl font-bold ${netSavings >= 0 ? 'text-violet-600' : 'text-rose-500'}`}>
             {formatCurrency(netSavings)}
           </p>
         </div>
@@ -260,7 +260,7 @@ export const SavingsView: React.FC = () => {
       </div>
 
       {/* Ledger table */}
-      <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
+      <div className="glass-panel overflow-hidden rounded-2xl">
         {sorted.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -277,8 +277,8 @@ export const SavingsView: React.FC = () => {
                 {sorted.map((entry) => {
                   const isDeposit = entry.amount >= 0;
                   return (
-                    <tr key={entry.id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="py-3 px-5 text-xs text-slate-500 whitespace-nowrap">
+                    <tr key={entry.id} className="hover:bg-slate-50 transition-colors group">
+                      <td className="py-4 px-5 text-xs text-slate-500 whitespace-nowrap group-hover:text-slate-900 transition-colors">
                         {formatDate(entry.date)}
                       </td>
                       <td className="py-3 px-5 whitespace-nowrap">

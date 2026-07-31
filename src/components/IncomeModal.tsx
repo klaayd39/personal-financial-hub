@@ -100,7 +100,7 @@ export const IncomeModal: React.FC<IncomeModalProps> = ({ isOpen, onClose, initi
               placeholder="e.g. 5500.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+              className="input-base text-lg font-bold"
             />
           </div>
 
@@ -114,7 +114,7 @@ export const IncomeModal: React.FC<IncomeModalProps> = ({ isOpen, onClose, initi
                 required
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
+                className="input-base"
               />
             </div>
 
@@ -125,7 +125,7 @@ export const IncomeModal: React.FC<IncomeModalProps> = ({ isOpen, onClose, initi
               <select
                 value={source}
                 onChange={(e) => setSource(e.target.value as IncomeSource)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
+                className="input-base"
               >
                 {SOURCES.map((s) => (
                   <option key={s} value={s}>
@@ -145,7 +145,7 @@ export const IncomeModal: React.FC<IncomeModalProps> = ({ isOpen, onClose, initi
               placeholder="e.g. Monthly salary from Tech Corp..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm resize-none"
+              className="input-base resize-none"
             />
           </div>
 
@@ -154,14 +154,14 @@ export const IncomeModal: React.FC<IncomeModalProps> = ({ isOpen, onClose, initi
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors"
+              className="btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 rounded-xl shadow-md shadow-emerald-600/20 transition-all disabled:opacity-50"
+              className="btn-primary disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               {isSubmitting ? 'Saving...' : initialData ? 'Update Income' : 'Add Income'}

@@ -78,14 +78,14 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ onEditIncome, onEditEx
             placeholder="Search transactions..."
             value={filter.searchQuery}
             onChange={(e) => { setFilter((p) => ({ ...p, searchQuery: e.target.value })); setCurrentPage(1); }}
-            className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 transition-all"
           />
         </div>
         <div className="flex items-center gap-2">
           <select
             value={filter.transactionType}
             onChange={(e) => { setFilter((p) => ({ ...p, transactionType: e.target.value as any })); setCurrentPage(1); }}
-            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2.5 py-2 focus:outline-none"
+            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 transition-all cursor-pointer"
           >
             <option value="All">All types</option>
             <option value="income">Income only</option>
@@ -94,7 +94,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ onEditIncome, onEditEx
           <select
             value={filter.sortBy}
             onChange={(e) => setFilter((p) => ({ ...p, sortBy: e.target.value as any }))}
-            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2.5 py-2 focus:outline-none"
+            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 transition-all cursor-pointer"
           >
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
@@ -105,7 +105,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ onEditIncome, onEditEx
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
+      <div className="glass-panel overflow-hidden rounded-2xl">
         {paginated.length > 0 ? (
           <>
             <div className="overflow-x-auto">
@@ -122,8 +122,8 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ onEditIncome, onEditEx
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {paginated.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="py-3 px-5 whitespace-nowrap">
+                    <tr key={tx.id} className="hover:bg-slate-50 transition-colors group">
+                      <td className="py-4 px-5 whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium ${
                           tx.type === 'income' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-600'
                         }`}>

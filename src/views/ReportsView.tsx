@@ -77,14 +77,14 @@ export const ReportsView: React.FC = () => {
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="bg-white rounded-xl p-4 border border-slate-100 flex items-center gap-3">
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 flex items-center gap-4 shadow-sm/50 hover-lift">
           <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600"><PiggyBank className="w-4 h-4" /></div>
           <div>
             <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Savings Rate</p>
             <p className="text-xl font-bold text-slate-900">{summary.savingsRate.toFixed(1)}%</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-4 border border-slate-100 flex items-center gap-3">
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 flex items-center gap-4 shadow-sm/50 hover-lift">
           <div className="p-2 bg-amber-50 rounded-lg text-amber-600"><FileText className="w-4 h-4" /></div>
           <div>
             <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Top Category</p>
@@ -92,7 +92,7 @@ export const ReportsView: React.FC = () => {
             <p className="text-xs text-slate-400">{formatCurrency(topCategory.value)}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-4 border border-slate-100 flex items-center gap-3">
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 flex items-center gap-4 shadow-sm/50 hover-lift">
           <div className="p-2 bg-slate-100 rounded-lg text-slate-600"><Wallet className="w-4 h-4" /></div>
           <div>
             <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Net Balance</p>
@@ -106,7 +106,7 @@ export const ReportsView: React.FC = () => {
       {/* Charts grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Bar comparison */}
-        <div className="bg-white rounded-xl border border-slate-100 p-5">
+        <div className="glass-panel p-6">
           <div className="mb-4">
             <p className="text-sm font-semibold text-slate-800">Income vs Expenses vs Savings</p>
             <p className="text-xs text-slate-400">{periodTitle}</p>
@@ -126,7 +126,7 @@ export const ReportsView: React.FC = () => {
         </div>
 
         {/* Pie chart */}
-        <div className="bg-white rounded-xl border border-slate-100 p-5">
+        <div className="glass-panel p-6">
           <div className="mb-4">
             <p className="text-sm font-semibold text-slate-800">Expense Breakdown</p>
             <p className="text-xs text-slate-400">Proportional spending</p>
@@ -150,7 +150,7 @@ export const ReportsView: React.FC = () => {
       </div>
 
       {/* Annual trend */}
-      <div className="bg-white rounded-xl border border-slate-100 p-5">
+      <div className="glass-panel p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-sm font-semibold text-slate-800">Annual Trend ({filter.year})</p>

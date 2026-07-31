@@ -35,7 +35,7 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="bg-white rounded-xl border border-slate-100 p-4 flex items-center gap-8">
+      <div className="bg-white rounded-2xl border border-slate-100 p-5 flex items-center gap-8 shadow-sm/50 hover-lift">
         <div>
           <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Income Records</p>
           <p className="text-2xl font-bold text-slate-900 mt-0.5">{incomes.length}</p>
@@ -55,7 +55,7 @@ export const SettingsView: React.FC = () => {
       {/* Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Export */}
-        <div className="bg-white rounded-xl border border-slate-100 p-5 space-y-3">
+        <div className="glass-panel p-6 space-y-3">
           <div>
             <p className="text-sm font-semibold text-slate-800">Export Backup</p>
             <p className="text-xs text-slate-400 mt-1 leading-relaxed">
@@ -64,21 +64,21 @@ export const SettingsView: React.FC = () => {
           </div>
           <button
             onClick={exportDataJSON}
-            className="w-full flex items-center justify-center gap-2 py-2 bg-slate-900 hover:bg-slate-700 text-white text-xs font-medium rounded-lg transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2 btn-secondary bg-slate-900 hover:bg-slate-700 text-white"
           >
             <Download className="w-3.5 h-3.5" /> Export JSON
           </button>
         </div>
 
         {/* Import */}
-        <div className="bg-white rounded-xl border border-slate-100 p-5 space-y-3">
+        <div className="glass-panel p-6 space-y-3">
           <div>
             <p className="text-sm font-semibold text-slate-800">Import Backup</p>
             <p className="text-xs text-slate-400 mt-1 leading-relaxed">
               Restore records from a previously exported JSON backup.
             </p>
           </div>
-          <label className="w-full flex items-center justify-center gap-2 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg cursor-pointer transition-colors">
+          <label className="w-full flex items-center justify-center gap-2 py-2 btn-primary cursor-pointer">
             <Upload className="w-3.5 h-3.5" /> Choose JSON File
             <input type="file" accept=".json,application/json" onChange={handleFileUpload} className="hidden" />
           </label>
@@ -91,7 +91,7 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* Danger zone */}
-      <div className="bg-white rounded-xl border border-rose-100 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-rose-100 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm/50">
         <div>
           <p className="text-sm font-semibold text-rose-700">Reset All Data</p>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -100,7 +100,7 @@ export const SettingsView: React.FC = () => {
         </div>
         <button
           onClick={() => setIsClearModalOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium rounded-lg transition-colors shrink-0"
+          className="flex items-center gap-1.5 px-4 py-2 btn-danger shrink-0"
         >
           <Trash2 className="w-3.5 h-3.5" /> Clear All Data
         </button>

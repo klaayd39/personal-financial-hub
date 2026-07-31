@@ -41,8 +41,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenIncomeModal, onOpenExpense
   ];
 
   return (
-    <header className="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-sm/40">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <header className="glass-panel sticky top-0 z-40 border-t-0 border-l-0 border-r-0 rounded-none">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main header row */}
         <div className="flex items-center justify-between h-16 gap-4">
           

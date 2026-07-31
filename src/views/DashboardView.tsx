@@ -62,13 +62,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal,
       <div className="flex items-center justify-end gap-3">
         <button
           onClick={onOpenIncomeModal}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors"
+          className="btn-primary py-2 px-3 text-xs"
         >
           <Plus className="w-3.5 h-3.5" /> Add Income
         </button>
         <button
           onClick={onOpenExpenseModal}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-700 text-white text-xs font-medium rounded-lg transition-colors"
+          className="btn-dark py-2 px-3 text-xs"
         >
           <Minus className="w-3.5 h-3.5" /> Add Expense
         </button>
@@ -79,7 +79,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal,
         {/* Charts */}
         <div className="lg:col-span-2 space-y-4">
           {/* Bar chart */}
-          <div className="bg-white rounded-xl border border-slate-100 p-5">
+          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm/50 hover-lift">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm font-semibold text-slate-800">Income vs Expenses</p>
               <Link to="/reports" className="text-xs text-slate-400 hover:text-slate-700 flex items-center gap-1 transition-colors">
@@ -104,7 +104,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal,
           </div>
 
           {/* Pie chart */}
-          <div className="bg-white rounded-xl border border-slate-100 p-5">
+          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm/50 hover-lift">
             <p className="text-sm font-semibold text-slate-800 mb-4">Expense Breakdown</p>
             {pieData.length > 0 ? (
               <div className="h-52">
@@ -127,7 +127,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal,
         </div>
 
         {/* Recent transactions */}
-        <div className="bg-white rounded-xl border border-slate-100 p-5 flex flex-col">
+        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm/50 hover-lift flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-slate-800">Recent</p>
             <Link to="/history" className="text-xs text-slate-400 hover:text-slate-700 transition-colors">All →</Link>
