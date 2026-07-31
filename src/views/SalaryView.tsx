@@ -34,14 +34,14 @@ const SalaryModal: React.FC<SalaryModalProps> = ({
   const [notes, setNotes] = useState(existingNotes ?? '');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = parseFloat(amount);
     if (isNaN(parsed) || parsed <= 0) {
       setError('Please enter a valid salary amount greater than ₱0.');
       return;
     }
-    setSalary(month, year, parsed, notes.trim() || undefined);
+    await setSalary(month, year, parsed, notes.trim() || undefined);
     onClose();
   };
 

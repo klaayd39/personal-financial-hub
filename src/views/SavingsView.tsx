@@ -29,7 +29,7 @@ const SavingsModal: React.FC<SavingsModalProps> = ({ existing, onClose }) => {
   const [notes, setNotes] = useState(existing?.notes ?? '');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = parseFloat(amount);
     if (isNaN(parsed) || parsed <= 0) {
@@ -44,14 +44,14 @@ const SavingsModal: React.FC<SavingsModalProps> = ({ existing, onClose }) => {
     const finalAmount = entryType === 'withdrawal' ? -parsed : parsed;
 
     if (existing) {
-      updateSavingsEntry(existing.id, {
+      await updateSavingsEntry(existing.id, {
         amount: finalAmount,
         description: description.trim(),
         date,
         notes: notes.trim() || undefined,
       });
     } else {
-      addSavingsEntry({
+      await addSavingsEntry({
         amount: finalAmount,
         description: description.trim(),
         date,
