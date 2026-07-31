@@ -232,7 +232,7 @@ export const SavingsView: React.FC = () => {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="bg-white rounded-xl border border-slate-100 p-4">
           <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1.5">Total Deposits</p>
           <p className="text-lg font-bold text-emerald-600">{formatCurrency(totalDeposits)}</p>

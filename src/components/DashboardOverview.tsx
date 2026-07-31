@@ -64,7 +64,9 @@ export const DashboardOverview: React.FC = () => {
     },
   ];
 
-  const colClass = hasSalary ? 'grid-cols-2 lg:grid-cols-5' : 'grid-cols-2 lg:grid-cols-4';
+  const colClass = hasSalary
+    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-5'
+    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4';
 
   return (
     <div className="space-y-1 mb-6">
