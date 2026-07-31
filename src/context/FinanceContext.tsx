@@ -379,10 +379,8 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     // Global total savings = sum of ALL savings entries (not month-filtered)
     const manualSavings = savingsRecords.reduce((sum, s) => sum + s.amount, 0);
 
-    // totalSavings: global manual total if any entries exist, else auto-calculated
-    const totalSavings = savingsRecords.length > 0
-      ? manualSavings
-      : Math.max(0, remainingBalance);
+    // totalSavings: sum of savings entries only (0 if none added)
+    const totalSavings = manualSavings;
 
     const base        = monthlySalary > 0 ? monthlySalary : totalIncome;
     const savingsRate = base > 0 ? (totalSavings / base) * 100 : 0;

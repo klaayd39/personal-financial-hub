@@ -44,8 +44,8 @@ export const DashboardOverview: React.FC = () => {
       icon: <PiggyBank className="w-4 h-4" />,
       color: 'text-violet-600',
       bg: 'bg-violet-50',
-      extra: 'savings',
-      badge: hasManualSavings ? 'Manual' : 'Auto',
+      extra: null as string | null,
+      badge: null as string | null,
     },
   ];
 
