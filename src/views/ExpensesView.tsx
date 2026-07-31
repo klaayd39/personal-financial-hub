@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useFinance } from '../context/FinanceContext';
-import type { ExpenseRecord, ExpenseCategory, PaymentMethod } from '../types/finance';
+import type { ExpenseRecord, PaymentMethod } from '../types/finance';
 import { formatCurrency, formatDate, MONTH_NAMES } from '../utils/formatters';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { Plus, Search, Edit2, Trash2, CreditCard, X, ImageIcon, Calendar, Download } from 'lucide-react';
@@ -9,11 +9,6 @@ interface ExpensesViewProps {
   onOpenAddModal: () => void;
   onEditExpense: (record: ExpenseRecord) => void;
 }
-
-const CATEGORIES: (ExpenseCategory | 'All')[] = [
-  'All', 'Food', 'Transportation', 'Bills', 'Shopping',
-  'Entertainment', 'Health', 'Education', 'Travel', 'Miscellaneous',
-];
 
 const PAYMENT_METHODS: (PaymentMethod | 'All')[] = [
   'All', 'Credit Card', 'Debit Card', 'Bank Transfer', 'E-Wallet', 'Cash',
@@ -67,15 +62,13 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
         const d = new Date(exp.date + 'T00:00:00');
         const matchMonth = selectedMonth === -1 || d.getMonth() === selectedMonth;
         const matchYear = d.getFullYear() === selectedYear;
-        const matchCategory = filter.category === 'All' || exp.category === filter.category;
         const matchPayment = filter.paymentMethod === 'All' || exp.payment_method === filter.paymentMethod;
         const matchSearch =
           !filter.searchQuery ||
           exp.description.toLowerCase().includes(filter.searchQuery.toLowerCase()) ||
-          exp.category.toLowerCase().includes(filter.searchQuery.toLowerCase()) ||
           exp.payment_method.toLowerCase().includes(filter.searchQuery.toLowerCase());
 
-        return matchMonth && matchYear && matchCategory && matchPayment && matchSearch;
+        return matchMonth && matchYear && matchPayment && matchSearch;
       })
       .sort((a, b) => {
         if (filter.sortBy === 'newest') return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -220,23 +213,6 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
         </div>
       </div>
 
-      {/* Category Pills Filter */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setFilter((p) => ({ ...p, category: cat }))}
-            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-              filter.category === cat
-                ? 'bg-slate-900 text-white'
-                : 'bg-white border border-slate-200 text-slate-500 hover:border-slate-400'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
       {/* Toolbar (Search & Dropdowns) */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
         <div className="relative flex-1 min-w-0">
@@ -279,7 +255,6 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
                 <tr className="border-b border-slate-100">
                   <th className="text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider py-3 px-5">Date</th>
                   <th className="text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider py-3 px-5">Description</th>
-                  <th className="text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider py-3 px-5">Category</th>
                   <th className="text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider py-3 px-5">Method</th>
                   <th className="text-right text-[10px] font-semibold text-slate-400 uppercase tracking-wider py-3 px-5">Amount</th>
                   <th className="py-3 px-5"></th>
@@ -290,11 +265,6 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
                   <tr key={rec.id} className="hover:bg-slate-50 transition-colors group">
                     <td className="py-4 px-5 text-xs text-slate-500 whitespace-nowrap group-hover:text-slate-900 transition-colors">{formatDate(rec.date)}</td>
                     <td className="py-3 px-5 text-xs font-medium text-slate-800 max-w-xs truncate">{rec.description}</td>
-                    <td className="py-3 px-5 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs font-medium">
-                        {rec.category}
-                      </span>
-                    </td>
                     <td className="py-3 px-5 text-xs text-slate-400 whitespace-nowrap">{rec.payment_method}</td>
                     <td className="py-3 px-5 text-right text-xs font-semibold text-slate-800 whitespace-nowrap">
                       -{formatCurrency(rec.amount)}

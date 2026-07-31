@@ -6,19 +6,7 @@ import { formatCurrency, formatDate } from '../utils/formatters';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
 } from 'recharts';
-const CATEGORY_COLORS: Record<string, string> = {
-  Food: '#f59e0b',
-  Transportation: '#3b82f6',
-  Bills: '#ef4444',
-  Shopping: '#ec4899',
-  Entertainment: '#8b5cf6',
-  Health: '#10b981',
-  Education: '#06b6d4',
-  Travel: '#6366f1',
-  Miscellaneous: '#94a3b8',
-};
 
 export const DashboardView: React.FC = () => {
   const { filteredIncomes, filteredExpenses, summary } = useFinance();
@@ -32,7 +20,7 @@ export const DashboardView: React.FC = () => {
       })),
       ...filteredExpenses.map((exp) => ({
         id: exp.id, type: 'expense' as const,
-        title: exp.description, sub: exp.category,
+        title: exp.description, sub: exp.payment_method,
         amount: exp.amount, date: exp.date,
       })),
     ];
@@ -41,29 +29,21 @@ export const DashboardView: React.FC = () => {
 
   const barData = [{ name: 'Period', Salary: summary.monthlySalary || 0, Expenses: summary.totalExpenses }];
 
-  const pieData = React.useMemo(() => {
-    const totals: Record<string, number> = {};
-    filteredExpenses.forEach((e) => { totals[e.category] = (totals[e.category] || 0) + e.amount; });
-    return Object.entries(totals).map(([name, value]) => ({ name, value }));
-  }, [filteredExpenses]);
-
   return (
     <div className="space-y-6">
       {/* Overview cards */}
       <DashboardOverview />
 
-
-
       {/* Charts + recent */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Charts */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2">
           {/* Bar chart */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm/50 hover-lift">
+          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm/50 hover-lift h-full flex flex-col justify-between">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm font-semibold text-slate-800">Salary vs Expenses</p>
             </div>
-            <div className="h-52">
+            <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
                   <XAxis dataKey="name" stroke="#cbd5e1" fontSize={11} tickLine={false} axisLine={false} />
@@ -78,28 +58,6 @@ export const DashboardView: React.FC = () => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
-
-          {/* Pie chart */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm/50 hover-lift">
-            <p className="text-sm font-semibold text-slate-800 mb-4">Expense Breakdown</p>
-            {pieData.length > 0 ? (
-              <div className="h-52">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={48} outerRadius={72} paddingAngle={3} dataKey="value">
-                      {pieData.map((entry) => (
-                        <Cell key={entry.name} fill={CATEGORY_COLORS[entry.name] || '#94a3b8'} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(v: any) => [formatCurrency(Number(v)), '']} contentStyle={{ borderRadius: '10px', border: '1px solid #f1f5f9', fontSize: 12 }} />
-                    <Legend iconType="circle" iconSize={8} formatter={(v) => <span className="text-xs text-slate-600">{v}</span>} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            ) : (
-              <p className="text-sm text-slate-400 text-center py-12">No expense data for this period.</p>
-            )}
           </div>
         </div>
 

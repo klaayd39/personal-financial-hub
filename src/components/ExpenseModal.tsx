@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFinance } from '../context/FinanceContext';
-import type { ExpenseRecord, ExpenseCategory, PaymentMethod } from '../types/finance';
+import type { ExpenseRecord, PaymentMethod } from '../types/finance';
 import { X, MinusCircle, Save, Upload, Image as ImageIcon } from 'lucide-react';
 
 interface ExpenseModalProps {
@@ -8,18 +8,6 @@ interface ExpenseModalProps {
   onClose: () => void;
   initialData?: ExpenseRecord | null;
 }
-
-const CATEGORIES: ExpenseCategory[] = [
-  'Food',
-  'Transportation',
-  'Bills',
-  'Shopping',
-  'Entertainment',
-  'Health',
-  'Education',
-  'Travel',
-  'Miscellaneous',
-];
 
 const PAYMENT_METHODS: PaymentMethod[] = [
   'Credit Card',
@@ -33,7 +21,6 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
   const { addExpense, updateExpense } = useFinance();
   const [amount, setAmount] = useState<string>('');
   const [date, setDate] = useState<string>('');
-  const [category, setCategory] = useState<ExpenseCategory>('Food');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Credit Card');
   const [description, setDescription] = useState<string>('');
   const [receiptUrl, setReceiptUrl] = useState<string>('');
@@ -43,14 +30,12 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
     if (initialData) {
       setAmount(initialData.amount.toString());
       setDate(initialData.date);
-      setCategory(initialData.category);
       setPaymentMethod(initialData.payment_method);
       setDescription(initialData.description);
       setReceiptUrl(initialData.receipt_url || '');
     } else {
       setAmount('');
       setDate(new Date().toISOString().split('T')[0]);
-      setCategory('Food');
       setPaymentMethod('Credit Card');
       setDescription('');
       setReceiptUrl('');
@@ -86,7 +71,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
         await updateExpense(initialData.id, {
           amount: parsedAmount,
           date,
-          category,
+          category: 'Miscellaneous',
           payment_method: paymentMethod,
           description: description.trim(),
           receipt_url: receiptUrl,
@@ -95,7 +80,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
         await addExpense({
           amount: parsedAmount,
           date,
-          category,
+          category: 'Miscellaneous',
           payment_method: paymentMethod,
           description: description.trim(),
           receipt_url: receiptUrl,
@@ -162,23 +147,6 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
-                Category
-              </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
-                className="input-base"
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
                 Payment Method
               </label>
               <select
@@ -193,19 +161,19 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
                 ))}
               </select>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
-              Date
-            </label>
-            <input
-              type="date"
-              required
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="input-base"
-            />
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                Date
+              </label>
+              <input
+                type="date"
+                required
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="input-base"
+              />
+            </div>
           </div>
 
           <div>
