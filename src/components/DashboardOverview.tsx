@@ -4,28 +4,33 @@ import { formatCurrency, MONTH_NAMES } from '../utils/formatters';
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, Banknote } from 'lucide-react';
 
 export const DashboardOverview: React.FC = () => {
-  const { summary, filter, savingsRecords } = useFinance();
+  const { summary, filter, salaries, savingsRecords } = useFinance();
   const period =
     filter.month === -1 ? `${filter.year}` : `${MONTH_NAMES[filter.month]} ${filter.year}`;
 
-  const hasSalary  = summary.monthlySalary > 0 && filter.month !== -1;
+  // Calculate salary for current filter
+  const isAllMonths = filter.month === -1;
+  const currentMonthSalary = summary.monthlySalary;
+
+  // Annual salary total for selected year
+  const annualSalary = salaries
+    .filter((s) => s.year === filter.year)
+    .reduce((sum, s) => sum + s.amount, 0);
+
+  const displaySalary = isAllMonths ? annualSalary : currentMonthSalary;
+  const hasSalary = displaySalary > 0;
   const hasManualSavings = savingsRecords.length > 0;
 
   const cards = [
-    // Salary card — only when a salary is set for the selected month
-    ...(hasSalary
-      ? [
-          {
-            label: 'Monthly Salary',
-            value: summary.monthlySalary,
-            icon: <Banknote className="w-4 h-4" />,
-            color: 'text-indigo-600',
-            bg: 'bg-indigo-50',
-            extra: null as string | null,
-            badge: null as string | null,
-          },
-        ]
-      : []),
+    {
+      label: isAllMonths ? 'Annual Salary' : 'Monthly Salary',
+      value: displaySalary,
+      icon: <Banknote className="w-4 h-4" />,
+      color: 'text-indigo-600',
+      bg: 'bg-indigo-50',
+      extra: null as string | null,
+      badge: hasSalary ? null : 'Not Set',
+    },
     {
       label: 'Total Income',
       value: summary.totalIncome,
@@ -45,7 +50,7 @@ export const DashboardOverview: React.FC = () => {
       badge: null as string | null,
     },
     {
-      label: hasSalary ? 'Remaining (Salary − Expenses)' : 'Remaining Balance',
+      label: hasSalary && !isAllMonths ? 'Remaining (Salary − Expenses)' : 'Remaining Balance',
       value: summary.remainingBalance,
       icon: <Wallet className="w-4 h-4" />,
       color: summary.remainingBalance >= 0 ? 'text-slate-900' : 'text-rose-500',
@@ -64,16 +69,14 @@ export const DashboardOverview: React.FC = () => {
     },
   ];
 
-  const colClass = hasSalary
-    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-5'
-    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4';
-
   return (
     <div className="space-y-1 mb-6">
-      <p className="text-xs text-slate-400 font-medium">{period}</p>
-      <div className={`grid ${colClass} gap-3`}>
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-slate-400 font-medium">{period}</p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         {cards.map((card) => (
-          <div key={card.label} className="bg-white rounded-xl p-4 border border-slate-100">
+          <div key={card.label} className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm/50">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="text-xs text-slate-400 font-medium leading-tight truncate">
@@ -83,6 +86,8 @@ export const DashboardOverview: React.FC = () => {
                   <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${
                     card.badge === 'Manual'
                       ? 'bg-violet-100 text-violet-600'
+                      : card.badge === 'Not Set'
+                      ? 'bg-amber-100 text-amber-700'
                       : 'bg-slate-100 text-slate-400'
                   }`}>
                     {card.badge}
