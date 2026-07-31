@@ -18,7 +18,7 @@ export const DashboardOverview: React.FC = () => {
 
   const cards = [
     {
-      label: filter.month === -1 ? 'Annual Salary' : 'Monthly Salary',
+      label: 'Total Salary',
       value: selectedMonthSalary,
       icon: <Banknote className="w-4 h-4" />,
       color: 'text-indigo-600',
