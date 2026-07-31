@@ -55,9 +55,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenIncomeModal, onOpenExpense
               <span className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-slate-700 transition-colors">
                 FinanceHub
               </span>
-              <span className="text-[10px] font-medium text-slate-400 -mt-0.5 hidden sm:block">
-                Personal Wealth Tracker
-              </span>
             </div>
           </NavLink>
 

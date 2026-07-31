@@ -17,13 +17,13 @@ export const DashboardOverview: React.FC = () => {
     .filter((s) => s.year === filter.year)
     .reduce((sum, s) => sum + s.amount, 0);
 
-  const displaySalary = isAllMonths ? annualSalary : currentMonthSalary;
+  const displaySalary = annualSalary;
   const hasSalary = displaySalary > 0;
   const hasManualSavings = savingsRecords.length > 0;
 
   const cards = [
     {
-      label: isAllMonths ? 'Annual Salary' : 'Monthly Salary',
+      label: 'Total Salary',
       value: displaySalary,
       icon: <Banknote className="w-4 h-4" />,
       color: 'text-indigo-600',
@@ -50,7 +50,7 @@ export const DashboardOverview: React.FC = () => {
       badge: null as string | null,
     },
     {
-      label: hasSalary && !isAllMonths ? 'Remaining (Salary − Expenses)' : 'Remaining Balance',
+      label: 'Remaining Balance',
       value: summary.remainingBalance,
       icon: <Wallet className="w-4 h-4" />,
       color: summary.remainingBalance >= 0 ? 'text-slate-900' : 'text-rose-500',
