@@ -37,7 +37,7 @@ export const ReportsView: React.FC = () => {
   }, [filteredExpenses]);
 
   const topCategory = React.useMemo(() => {
-    if (!categoryData.length) return { name: 'None', amount: 0 };
+    if (!categoryData.length) return { name: 'None', value: 0 };
     return [...categoryData].sort((a, b) => b.value - a.value)[0];
   }, [categoryData]);
 
@@ -89,7 +89,7 @@ export const ReportsView: React.FC = () => {
           <div>
             <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Top Category</p>
             <p className="text-lg font-bold text-slate-900 truncate max-w-[140px]">{topCategory.name}</p>
-            <p className="text-xs text-slate-400">{formatCurrency(topCategory.amount)}</p>
+            <p className="text-xs text-slate-400">{formatCurrency(topCategory.value)}</p>
           </div>
         </div>
         <div className="bg-white rounded-xl p-4 border border-slate-100 flex items-center gap-3">

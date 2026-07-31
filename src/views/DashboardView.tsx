@@ -27,7 +27,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal, onOpenExpenseModal }) => {
-  const { filteredIncomes, filteredExpenses, filter, summary } = useFinance();
+  const { filteredIncomes, filteredExpenses, summary } = useFinance();
 
   const recentTransactions = React.useMemo(() => {
     const combined = [

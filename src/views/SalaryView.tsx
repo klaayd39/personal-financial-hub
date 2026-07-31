@@ -4,7 +4,6 @@ import { formatCurrency } from '../utils/formatters';
 import { MONTH_NAMES } from '../utils/formatters';
 import { ConfirmModal } from '../components/ConfirmModal';
 import {
-  Banknote,
   Plus,
   Edit2,
   Trash2,

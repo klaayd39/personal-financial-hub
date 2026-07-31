@@ -3,7 +3,7 @@ import { useFinance } from '../context/FinanceContext';
 import type { IncomeRecord } from '../types/finance';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { ConfirmModal } from '../components/ConfirmModal';
-import { Plus, Search, ArrowUpDown, Edit2, Trash2, TrendingUp } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, TrendingUp } from 'lucide-react';
 
 interface IncomeViewProps {
   onOpenAddModal: () => void;
