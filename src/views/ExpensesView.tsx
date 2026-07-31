@@ -21,10 +21,18 @@ const PAYMENT_METHODS: (PaymentMethod | 'All')[] = [
 
 export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEditExpense }) => {
   const { expenses, deleteExpense, filter, setFilter } = useFinance();
-  const [selectedMonth, setSelectedMonth] = useState<number>(filter.month === -1 ? new Date().getMonth() : filter.month);
-  const [selectedYear, setSelectedYear] = useState<number>(filter.year);
+  const selectedMonth = filter.month === -1 ? new Date().getMonth() : filter.month;
+  const selectedYear = filter.year;
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [previewReceipt, setPreviewReceipt] = useState<string | null>(null);
+
+  const handleSelectMonth = (monthIndex: number) => {
+    setFilter((p) => ({ ...p, month: monthIndex }));
+  };
+
+  const handleSelectYear = (year: number) => {
+    setFilter((p) => ({ ...p, year }));
+  };
 
   // Group all expenses by Month (0 - 11) for the selected Year
   const monthlyStats = useMemo(() => {
@@ -116,7 +124,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              onChange={(e) => handleSelectYear(parseInt(e.target.value))}
               className="bg-transparent text-slate-700 text-xs font-semibold focus:outline-none cursor-pointer"
             >
               {[2024, 2025, 2026, 2027, 2028].map((y) => (
@@ -146,9 +154,9 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
         <div className="flex items-center justify-between px-2 mb-2">
           <span className="text-xs font-semibold text-slate-700">Select Month</span>
           <button
-            onClick={() => setSelectedMonth(-1)}
+            onClick={() => handleSelectMonth(-1)}
             className={`text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors ${
-              selectedMonth === -1 ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'
+              filter.month === -1 ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'
             }`}
           >
             All Months
@@ -156,11 +164,11 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
         </div>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
           {monthlyStats.map((st) => {
-            const isSelected = selectedMonth === st.monthIndex;
+            const isSelected = filter.month === st.monthIndex;
             return (
               <button
                 key={st.monthIndex}
-                onClick={() => setSelectedMonth(st.monthIndex)}
+                onClick={() => handleSelectMonth(st.monthIndex)}
                 className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                   isSelected
                     ? 'bg-rose-50/60 border-rose-200 ring-2 ring-rose-500/20 shadow-sm'
