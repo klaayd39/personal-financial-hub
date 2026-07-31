@@ -31,6 +31,14 @@ export const DashboardOverview: React.FC = () => {
       badge: hasSalary ? null : 'Not Set',
     },
     {
+      label: filter.month === -1 ? 'Monthly Salary' : `${MONTH_NAMES[filter.month]} Salary`,
+      value: selectedMonthSalary,
+      icon: <Banknote className="w-4 h-4" />,
+      color: 'text-blue-600',
+      bg: 'bg-blue-50',
+      badge: selectedMonthSalary > 0 ? null : 'Not Set',
+    },
+    {
       label: 'Total Expenses',
       value: summary.totalExpenses,
       icon: <TrendingDown className="w-4 h-4" />,
@@ -61,7 +69,7 @@ export const DashboardOverview: React.FC = () => {
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-400 font-medium">{period}</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         {cards.map((card) => (
           <div key={card.label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50 hover-lift">
             <div className="flex items-center justify-between mb-3">
