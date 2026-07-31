@@ -20,11 +20,16 @@ const PAYMENT_METHODS: (PaymentMethod | 'All')[] = [
 ];
 
 export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEditExpense }) => {
-  const { expenses, deleteExpense, filter, setFilter } = useFinance();
+  const { expenses, deleteExpense, filter, setFilter, salaries } = useFinance();
   const selectedMonth = filter.month === -1 ? new Date().getMonth() : filter.month;
   const selectedYear = filter.year;
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [previewReceipt, setPreviewReceipt] = useState<string | null>(null);
+
+  // Salary for the selected month/year
+  const selectedMonthSalary = filter.month !== -1
+    ? salaries.find((s) => s.month === filter.month && s.year === filter.year)?.amount ?? 0
+    : salaries.filter((s) => s.year === filter.year).reduce((sum, s) => sum + s.amount, 0);
 
   const handleSelectMonth = (monthIndex: number) => {
     setFilter((p) => ({ ...p, month: monthIndex }));
@@ -115,8 +120,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
         <div>
           <h1 className="text-lg font-semibold text-slate-900">Monthly Expense Categorization</h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            {monthlyFilteredExpenses.length} transactions for {selectedMonth === -1 ? 'all months' : MONTH_NAMES[selectedMonth]} {selectedYear} · Total{' '}
-            <span className="font-semibold text-rose-500">{formatCurrency(selectedMonthTotal)}</span>
+            {monthlyFilteredExpenses.length} transactions for {selectedMonth === -1 ? 'all months' : MONTH_NAMES[selectedMonth]} {selectedYear}
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -146,6 +150,32 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
           >
             <Plus className="w-3.5 h-3.5" /> Add Expense
           </button>
+        </div>
+      </div>
+
+      {/* Salary vs Expenses Summary Cards Banner */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm/50">
+          <span className="text-xs text-slate-400 font-medium">
+            {selectedMonth === -1 ? 'Annual Salary' : `${MONTH_NAMES[selectedMonth]} Salary`}
+          </span>
+          <p className="text-lg font-bold text-indigo-600 tracking-tight mt-1">
+            {formatCurrency(selectedMonthSalary)}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm/50">
+          <span className="text-xs text-slate-400 font-medium">Total Expenses</span>
+          <p className="text-lg font-bold text-rose-500 tracking-tight mt-1">
+            {formatCurrency(selectedMonthTotal)}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm/50">
+          <span className="text-xs text-slate-400 font-medium">Remaining Balance</span>
+          <p className={`text-lg font-bold tracking-tight mt-1 ${selectedMonthSalary - selectedMonthTotal >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+            {formatCurrency(selectedMonthSalary - selectedMonthTotal)}
+          </p>
         </div>
       </div>
 

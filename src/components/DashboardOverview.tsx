@@ -1,32 +1,28 @@
 import React from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { formatCurrency, MONTH_NAMES } from '../utils/formatters';
-import { TrendingDown, PiggyBank, Banknote } from 'lucide-react';
+import { TrendingDown, PiggyBank, Banknote, Wallet } from 'lucide-react';
 
 export const DashboardOverview: React.FC = () => {
-  const { summary, filter, salaries, savingsRecords } = useFinance();
+  const { summary, filter, salaries } = useFinance();
   const period =
     filter.month === -1 ? `${filter.year}` : `${MONTH_NAMES[filter.month]} ${filter.year}`;
 
-  // Calculate salary for current filter
+  // Salary for the selected month/year (or annual if "All Months" selected)
+  const selectedMonthSalary = filter.month !== -1
+    ? salaries.find((s) => s.month === filter.month && s.year === filter.year)?.amount ?? 0
+    : salaries.filter((s) => s.year === filter.year).reduce((sum, s) => sum + s.amount, 0);
 
-  // Annual salary total for selected year
-  const annualSalary = salaries
-    .filter((s) => s.year === filter.year)
-    .reduce((sum, s) => sum + s.amount, 0);
-
-  const displaySalary = annualSalary;
-  const hasSalary = displaySalary > 0;
-  const hasManualSavings = savingsRecords.length > 0;
+  const remainingBalance = selectedMonthSalary - summary.totalExpenses;
+  const hasSalary = selectedMonthSalary > 0;
 
   const cards = [
     {
-      label: 'Total Salary',
-      value: displaySalary,
+      label: filter.month === -1 ? 'Annual Salary' : 'Monthly Salary',
+      value: selectedMonthSalary,
       icon: <Banknote className="w-4 h-4" />,
       color: 'text-indigo-600',
       bg: 'bg-indigo-50',
-      extra: null as string | null,
       badge: hasSalary ? null : 'Not Set',
     },
     {
@@ -35,7 +31,14 @@ export const DashboardOverview: React.FC = () => {
       icon: <TrendingDown className="w-4 h-4" />,
       color: 'text-rose-500',
       bg: 'bg-rose-50',
-      extra: null as string | null,
+      badge: null as string | null,
+    },
+    {
+      label: 'Remaining Balance',
+      value: remainingBalance,
+      icon: <Wallet className="w-4 h-4" />,
+      color: remainingBalance >= 0 ? 'text-emerald-600' : 'text-rose-600',
+      bg: remainingBalance >= 0 ? 'bg-emerald-50' : 'bg-rose-50',
       badge: null as string | null,
     },
     {
@@ -44,7 +47,6 @@ export const DashboardOverview: React.FC = () => {
       icon: <PiggyBank className="w-4 h-4" />,
       color: 'text-violet-600',
       bg: 'bg-violet-50',
-      extra: null as string | null,
       badge: null as string | null,
     },
   ];
@@ -54,7 +56,7 @@ export const DashboardOverview: React.FC = () => {
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-400 font-medium">{period}</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((card) => (
           <div key={card.label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50 hover-lift">
             <div className="flex items-center justify-between mb-3">
@@ -81,28 +83,6 @@ export const DashboardOverview: React.FC = () => {
             <p className={`text-xl font-bold ${card.color} tracking-tight`}>
               {formatCurrency(card.value)}
             </p>
-            {card.extra === 'savings' && (
-              <div className="mt-2">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] text-slate-400">
-                    {hasManualSavings ? 'Overall savings' : 'Savings rate'}
-                  </span>
-                  {!hasManualSavings && (
-                    <span className="text-[10px] font-semibold text-slate-600">
-                      {summary.savingsRate.toFixed(1)}%
-                    </span>
-                  )}
-                </div>
-                {!hasManualSavings && (
-                  <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-violet-500 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(100, Math.max(0, summary.savingsRate))}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         ))}
       </div>
