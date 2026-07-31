@@ -132,14 +132,21 @@ export const BudgetView: React.FC = () => {
   } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
-  // Group expenses by month for the selected year
-  const expensesByMonth = React.useMemo(() => {
-    const map: Record<number, number> = {};
+  // Group expenses by month and half (1st Half: Days 1-15, 2nd Half: Days 16+)
+  const expensesByMonthAndHalf = React.useMemo(() => {
+    const map: Record<number, { total: number; firstHalf: number; secondHalf: number }> = {};
     expenses.forEach((e) => {
       const d = new Date(e.date + 'T00:00:00');
       if (d.getFullYear() === selectedYear) {
         const month = d.getMonth();
-        map[month] = (map[month] || 0) + e.amount;
+        const day = d.getDate();
+        if (!map[month]) map[month] = { total: 0, firstHalf: 0, secondHalf: 0 };
+        map[month].total += e.amount;
+        if (day <= 15) {
+          map[month].firstHalf += e.amount;
+        } else {
+          map[month].secondHalf += e.amount;
+        }
       }
     });
     return map;
@@ -154,9 +161,9 @@ export const BudgetView: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Monthly Budgeting</h1>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Monthly & Semi-Monthly Budgeting</h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Set spending limits for each month and prevent overspending.
+            Set spending limits split into 15-day pay cycles (1st–15th and 16th–End).
           </p>
         </div>
 
@@ -187,7 +194,7 @@ export const BudgetView: React.FC = () => {
             {formatCurrency(totalYearBudget)}
           </p>
           <p className="text-xs text-amber-100/80 mt-1">
-            Across {yearBudgets.length} configured month{yearBudgets.length !== 1 ? 's' : ''}.
+            Across {yearBudgets.length} configured month{yearBudgets.length !== 1 ? 's' : ''} (₱{(totalYearBudget / 2).toLocaleString()} per 15-day cycle).
           </p>
         </div>
       </div>
@@ -199,7 +206,13 @@ export const BudgetView: React.FC = () => {
             (b) => b.month === monthIdx && b.year === selectedYear
           );
           const budgetLimit = budgetRec?.amount ?? 0;
-          const monthSpent = expensesByMonth[monthIdx] ?? 0;
+          const halfBudgetLimit = budgetLimit / 2;
+
+          const monthStats = expensesByMonthAndHalf[monthIdx] || { total: 0, firstHalf: 0, secondHalf: 0 };
+          const monthSpent = monthStats.total;
+          const firstHalfSpent = monthStats.firstHalf;
+          const secondHalfSpent = monthStats.secondHalf;
+
           const percentage = budgetLimit > 0 ? Math.min((monthSpent / budgetLimit) * 100, 100) : 0;
           const isOverBudget = budgetLimit > 0 && monthSpent > budgetLimit;
           const isNearLimit = budgetLimit > 0 && percentage >= 80 && !isOverBudget;
@@ -264,8 +277,8 @@ export const BudgetView: React.FC = () => {
                 {budgetLimit > 0 ? (
                   <div className="space-y-3">
                     <div className="flex items-baseline justify-between text-xs">
-                      <span className="text-slate-400">Spent: <strong className="text-slate-700">{formatCurrency(monthSpent)}</strong></span>
-                      <span className="text-slate-400">Limit: <strong className="text-slate-700">{formatCurrency(budgetLimit)}</strong></span>
+                      <span className="text-slate-400">Total Spent: <strong className="text-slate-700">{formatCurrency(monthSpent)}</strong></span>
+                      <span className="text-slate-400">Total Limit: <strong className="text-slate-700">{formatCurrency(budgetLimit)}</strong></span>
                     </div>
 
                     {/* Progress Bar */}
@@ -280,6 +293,35 @@ export const BudgetView: React.FC = () => {
                         }`}
                         style={{ width: `${percentage}%` }}
                       />
+                    </div>
+
+                    {/* 15-Day Semi-Monthly Split Cycles */}
+                    <div className="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2">
+                      {/* 1st Half: Days 1 - 15 */}
+                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold uppercase">
+                          <span>1st Half (1st–15th)</span>
+                        </div>
+                        <p className={`text-xs font-bold ${firstHalfSpent > halfBudgetLimit ? 'text-rose-600' : 'text-slate-800'}`}>
+                          {formatCurrency(firstHalfSpent)}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          Limit: {formatCurrency(halfBudgetLimit)}
+                        </p>
+                      </div>
+
+                      {/* 2nd Half: Days 16 - End */}
+                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold uppercase">
+                          <span>2nd Half (16th–End)</span>
+                        </div>
+                        <p className={`text-xs font-bold ${secondHalfSpent > halfBudgetLimit ? 'text-rose-600' : 'text-slate-800'}`}>
+                          {formatCurrency(secondHalfSpent)}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          Limit: {formatCurrency(halfBudgetLimit)}
+                        </p>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] font-medium pt-1">
