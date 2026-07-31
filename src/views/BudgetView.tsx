@@ -17,6 +17,8 @@ interface BudgetModalProps {
   month: number;
   year: number;
   existingAmount?: number;
+  existingFirstHalf?: number;
+  existingSecondHalf?: number;
   onClose: () => void;
 }
 
@@ -24,23 +26,62 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
   month,
   year,
   existingAmount,
+  existingFirstHalf,
+  existingSecondHalf,
   onClose,
 }) => {
   const { setBudget } = useFinance();
-  const [amount, setAmount] = useState(existingAmount?.toString() ?? '');
+  const [totalAmount, setTotalAmount] = useState(existingAmount?.toString() ?? '');
+  const [firstHalfAmount, setFirstHalfAmount] = useState(existingFirstHalf?.toString() ?? '');
+  const [secondHalfAmount, setSecondHalfAmount] = useState(existingSecondHalf?.toString() ?? '');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Auto-split total evenly if user enters a Total Amount without specifying halves
+  const handleTotalChange = (val: string) => {
+    setTotalAmount(val);
+    setError('');
+    const parsed = parseFloat(val);
+    if (!isNaN(parsed) && parsed > 0) {
+      const half = (parsed / 2).toFixed(2);
+      setFirstHalfAmount(half);
+      setSecondHalfAmount(half);
+    } else {
+      setFirstHalfAmount('');
+      setSecondHalfAmount('');
+    }
+  };
+
+  const handleHalfChange = (firstVal: string, secondVal: string) => {
+    setFirstHalfAmount(firstVal);
+    setSecondHalfAmount(secondVal);
+    setError('');
+    const p1 = parseFloat(firstVal) || 0;
+    const p2 = parseFloat(secondVal) || 0;
+    if (p1 > 0 || p2 > 0) {
+      setTotalAmount((p1 + p2).toString());
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = parseFloat(amount);
-    if (isNaN(parsed) || parsed <= 0) {
+    const parsedTotal = parseFloat(totalAmount);
+    const parsedFirst = parseFloat(firstHalfAmount);
+    const parsedSecond = parseFloat(secondHalfAmount);
+
+    if (isNaN(parsedTotal) || parsedTotal <= 0) {
       setError('Please enter a valid monthly budget limit greater than ₱0.');
       return;
     }
     setIsSubmitting(true);
     try {
-      await setBudget(month, year, parsed);
+      await setBudget(
+        month,
+        year,
+        parsedTotal,
+        !isNaN(parsedFirst) ? parsedFirst : undefined,
+        !isNaN(parsedSecond) ? parsedSecond : undefined
+      );
       onClose();
     } finally {
       setIsSubmitting(false);
@@ -54,7 +95,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="text-base font-semibold text-slate-900">
-              {existingAmount !== undefined ? 'Edit' : 'Set'} Budget Limit
+              {existingAmount !== undefined ? 'Edit' : 'Set'} Budget Limits
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
               {MONTH_NAMES[month]} {year}
@@ -77,8 +118,8 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1.5">
-              Monthly Budget Limit (₱)
+            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+              Total Monthly Budget (₱)
             </label>
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
@@ -89,14 +130,55 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
                 step="0.01"
                 min="0.01"
                 required
-                placeholder="e.g. 15000.00"
-                value={amount}
-                onChange={(e) => {
-                  setAmount(e.target.value);
-                  setError('');
-                }}
+                placeholder="e.g. 10000.00"
+                value={totalAmount}
+                onChange={(e) => handleTotalChange(e.target.value)}
                 className="input-base pl-8 text-base font-bold"
               />
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 space-y-3">
+            <p className="text-xs font-semibold text-slate-700">15-Day Cycle Custom Split</p>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-medium text-slate-500 mb-1">
+                  1st Half (1st–15th)
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+                    ₱
+                  </span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g. 5000"
+                    value={firstHalfAmount}
+                    onChange={(e) => handleHalfChange(e.target.value, secondHalfAmount)}
+                    className="input-base pl-7 text-xs font-semibold"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-medium text-slate-500 mb-1">
+                  2nd Half (16th–End)
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+                    ₱
+                  </span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g. 5000"
+                    value={secondHalfAmount}
+                    onChange={(e) => handleHalfChange(firstHalfAmount, e.target.value)}
+                    className="input-base pl-7 text-xs font-semibold"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -113,7 +195,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
               disabled={isSubmitting}
               className="btn-primary py-2 text-xs disabled:opacity-50"
             >
-              {isSubmitting ? 'Saving...' : 'Save Budget Limit'}
+              {isSubmitting ? 'Saving...' : 'Save Budget Limits'}
             </button>
           </div>
         </form>
@@ -129,6 +211,8 @@ export const BudgetView: React.FC = () => {
     month: number;
     year: number;
     amount?: number;
+    firstHalf?: number;
+    secondHalf?: number;
   } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
@@ -194,7 +278,7 @@ export const BudgetView: React.FC = () => {
             {formatCurrency(totalYearBudget)}
           </p>
           <p className="text-xs text-amber-100/80 mt-1">
-            Across {yearBudgets.length} configured month{yearBudgets.length !== 1 ? 's' : ''} (₱{(totalYearBudget / 2).toLocaleString()} per 15-day cycle).
+            Across {yearBudgets.length} configured month{yearBudgets.length !== 1 ? 's' : ''}.
           </p>
         </div>
       </div>
@@ -206,7 +290,8 @@ export const BudgetView: React.FC = () => {
             (b) => b.month === monthIdx && b.year === selectedYear
           );
           const budgetLimit = budgetRec?.amount ?? 0;
-          const halfBudgetLimit = budgetLimit / 2;
+          const firstHalfLimit = budgetRec?.first_half_amount ?? budgetLimit / 2;
+          const secondHalfLimit = budgetRec?.second_half_amount ?? budgetLimit / 2;
 
           const monthStats = expensesByMonthAndHalf[monthIdx] || { total: 0, firstHalf: 0, secondHalf: 0 };
           const monthSpent = monthStats.total;
@@ -255,6 +340,8 @@ export const BudgetView: React.FC = () => {
                           month: monthIdx,
                           year: selectedYear,
                           amount: budgetLimit || undefined,
+                          firstHalf: budgetRec?.first_half_amount,
+                          secondHalf: budgetRec?.second_half_amount,
                         })
                       }
                       className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
@@ -302,11 +389,11 @@ export const BudgetView: React.FC = () => {
                         <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold uppercase">
                           <span>1st Half (1st–15th)</span>
                         </div>
-                        <p className={`text-xs font-bold ${firstHalfSpent > halfBudgetLimit ? 'text-rose-600' : 'text-slate-800'}`}>
+                        <p className={`text-xs font-bold ${firstHalfSpent > firstHalfLimit ? 'text-rose-600' : 'text-slate-800'}`}>
                           {formatCurrency(firstHalfSpent)}
                         </p>
                         <p className="text-[10px] text-slate-400">
-                          Limit: {formatCurrency(halfBudgetLimit)}
+                          Limit: {formatCurrency(firstHalfLimit)}
                         </p>
                       </div>
 
@@ -315,11 +402,11 @@ export const BudgetView: React.FC = () => {
                         <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold uppercase">
                           <span>2nd Half (16th–End)</span>
                         </div>
-                        <p className={`text-xs font-bold ${secondHalfSpent > halfBudgetLimit ? 'text-rose-600' : 'text-slate-800'}`}>
+                        <p className={`text-xs font-bold ${secondHalfSpent > secondHalfLimit ? 'text-rose-600' : 'text-slate-800'}`}>
                           {formatCurrency(secondHalfSpent)}
                         </p>
                         <p className="text-[10px] text-slate-400">
-                          Limit: {formatCurrency(halfBudgetLimit)}
+                          Limit: {formatCurrency(secondHalfLimit)}
                         </p>
                       </div>
                     </div>
@@ -363,6 +450,8 @@ export const BudgetView: React.FC = () => {
           month={activeModal.month}
           year={activeModal.year}
           existingAmount={activeModal.amount}
+          existingFirstHalf={activeModal.firstHalf}
+          existingSecondHalf={activeModal.secondHalf}
           onClose={() => setActiveModal(null)}
         />
       )}

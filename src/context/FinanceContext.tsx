@@ -49,7 +49,13 @@ interface FinanceContextType {
   getSalaryForPeriod: (month: number, year: number) => SalaryRecord | undefined;
 
   // Budget CRUD
-  setBudget: (month: number, year: number, amount: number) => Promise<void>;
+  setBudget: (
+    month: number,
+    year: number,
+    amount: number,
+    firstHalfAmount?: number,
+    secondHalfAmount?: number
+  ) => Promise<void>;
   deleteBudget: (id: string) => Promise<void>;
   getBudgetForPeriod: (month: number, year: number) => BudgetRecord | undefined;
 
@@ -220,11 +226,25 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     salaries.find((s) => s.month === month && s.year === year);
 
   // ── Budget CRUD ───────────────────────────────────────────────────────
-  const setBudget = async (month: number, year: number, amount: number) => {
+  const setBudget = async (
+    month: number,
+    year: number,
+    amount: number,
+    firstHalfAmount?: number,
+    secondHalfAmount?: number
+  ) => {
     const id = `bud-${year}-${month}`;
     const updated_at = new Date().toISOString();
     try {
-      const saved = await supabaseService.upsertBudget({ id, month, year, amount, updated_at });
+      const saved = await supabaseService.upsertBudget({
+        id,
+        month,
+        year,
+        amount,
+        first_half_amount: firstHalfAmount,
+        second_half_amount: secondHalfAmount,
+        updated_at,
+      });
       setBudgets((prev) => {
         const exists = prev.some((b) => b.id === id);
         if (exists) return prev.map((b) => (b.id === id ? saved : b));
