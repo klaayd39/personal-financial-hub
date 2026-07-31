@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useFinance } from '../context/FinanceContext';
+import { useAuth } from '../context/AuthContext';
 import { MONTH_NAMES } from '../utils/formatters';
 import {
   LayoutDashboard,
@@ -11,9 +12,11 @@ import {
   Menu,
   X,
   Calendar,
+  LogOut,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
+  const { user, signOut } = useAuth();
   const { filter, setFilter } = useFinance();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const YEARS = [2024, 2025, 2026, 2027, 2028];
@@ -94,14 +97,32 @@ export const Navbar: React.FC = () => {
 
 
 
-            {/* Mobile Hamburger Toggle Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* User Profile & Logout */}
+            <div className="flex items-center gap-3">
+              {user && (
+                <div className="hidden sm:flex flex-col text-right">
+                  <span className="text-xs font-semibold text-slate-800 truncate max-w-[150px]">{user.email}</span>
+                  <span className="text-[10px] text-slate-400">Signed in</span>
+                </div>
+              )}
+              <button
+                onClick={signOut}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl transition-colors"
+                title="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </button>
+
+              {/* Mobile Hamburger Toggle Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
 
