@@ -57,6 +57,8 @@ CREATE TABLE IF NOT EXISTS public.bills (
   name TEXT NOT NULL,
   amount NUMERIC NOT NULL,
   due_day INT NOT NULL, -- 1 to 31
+  month INT, -- NULL = recurring every month, 0-11 for specific month
+  year INT,
   billing_cycle TEXT DEFAULT 'monthly', -- 'monthly' | 'yearly' | 'weekly'
   is_paid BOOLEAN DEFAULT FALSE,
   notes TEXT,

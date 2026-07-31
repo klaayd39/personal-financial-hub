@@ -93,6 +93,11 @@ export const DashboardView: React.FC = () => {
                         <Circle className="w-3.5 h-3.5" />
                       </button>
                       <span className="font-medium text-slate-800 truncate">{b.name}</span>
+                      <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">
+                        {b.month !== undefined && b.month !== null
+                          ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][b.month]
+                          : 'Monthly'}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="text-[10px] font-semibold text-slate-400">Due {b.due_day}th</span>

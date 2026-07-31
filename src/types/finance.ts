@@ -45,6 +45,8 @@ export interface BillRecord {
   name: string;
   amount: number;
   due_day: number; // 1 - 31
+  month?: number;  // 0 = Jan ... 11 = Dec (optional for specific month, undefined = All Months)
+  year?: number;   // e.g. 2026
   billing_cycle: 'monthly' | 'yearly' | 'weekly';
   is_paid: boolean;
   notes?: string;

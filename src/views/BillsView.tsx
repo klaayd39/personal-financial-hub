@@ -20,11 +20,22 @@ interface BillModalProps {
   initialData?: BillRecord | null;
 }
 
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) => {
   const { addBill, updateBill } = useFinance();
   const [name, setName] = useState(initialData?.name ?? '');
   const [amount, setAmount] = useState(initialData?.amount.toString() ?? '');
   const [dueDay, setDueDay] = useState(initialData?.due_day.toString() ?? '1');
+  const [monthOption, setMonthOption] = useState<string>(
+    initialData?.month !== undefined && initialData?.month !== null ? initialData.month.toString() : 'all'
+  );
+  const [yearOption, setYearOption] = useState<number>(
+    initialData?.year ?? new Date().getFullYear()
+  );
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly' | 'weekly'>(
     initialData?.billing_cycle ?? 'monthly'
   );
@@ -38,6 +49,8 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
     e.preventDefault();
     const parsedAmount = parseFloat(amount);
     const parsedDay = parseInt(dueDay, 10);
+    const targetMonth = monthOption === 'all' ? undefined : parseInt(monthOption, 10);
+    const targetYear = monthOption === 'all' ? undefined : yearOption;
 
     if (!name.trim()) {
       setError('Please enter a bill name.');
@@ -59,6 +72,8 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           name: name.trim(),
           amount: parsedAmount,
           due_day: parsedDay,
+          month: targetMonth,
+          year: targetYear,
           billing_cycle: billingCycle,
           notes: notes.trim() || undefined,
         });
@@ -67,6 +82,8 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           name: name.trim(),
           amount: parsedAmount,
           due_day: parsedDay,
+          month: targetMonth,
+          year: targetYear,
           billing_cycle: billingCycle,
           is_paid: false,
           notes: notes.trim() || undefined,
@@ -83,7 +100,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
       <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-slate-900">
-            {initialData ? 'Edit Recurring Bill' : 'Add Fixed / Recurring Bill'}
+            {initialData ? 'Edit Bill' : 'Add Bill'}
           </h2>
           <button
             onClick={onClose}
@@ -160,6 +177,44 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
                 }}
                 className="input-base text-sm"
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+                Bill Month
+              </label>
+              <select
+                value={monthOption}
+                onChange={(e) => setMonthOption(e.target.value)}
+                className="input-base text-xs font-medium"
+              >
+                <option value="all">Every Month (Recurring)</option>
+                {MONTH_NAMES.map((m, idx) => (
+                  <option key={m} value={idx}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+                Bill Year
+              </label>
+              <select
+                disabled={monthOption === 'all'}
+                value={yearOption}
+                onChange={(e) => setYearOption(Number(e.target.value))}
+                className="input-base text-xs font-medium disabled:opacity-50"
+              >
+                {[2024, 2025, 2026, 2027, 2028].map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -315,10 +370,15 @@ export const BillsView: React.FC = () => {
                     </button>
 
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h4 className={`text-sm font-semibold truncate ${bill.is_paid ? 'line-through text-slate-400' : 'text-slate-800'}`}>
                           {bill.name}
                         </h4>
+                        <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                          {bill.month !== undefined && bill.month !== null
+                            ? `${MONTH_NAMES[bill.month]} ${bill.year || ''}`
+                            : 'Every Month'}
+                        </span>
                         <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
                           Due day {bill.due_day}
                         </span>
