@@ -52,14 +52,18 @@ export const DashboardOverview: React.FC = () => {
       bg: 'bg-rose-50',
       badge: null as string | null,
     },
-    {
-      label: 'Remaining Balance',
-      value: remainingBalance,
-      icon: <Wallet className="w-4 h-4" />,
-      color: remainingBalance >= 0 ? 'text-emerald-600' : 'text-rose-600',
-      bg: remainingBalance >= 0 ? 'bg-emerald-50' : 'bg-rose-50',
-      badge: null as string | null,
-    },
+    ...(!isAllMonths
+      ? [
+          {
+            label: 'Remaining Balance',
+            value: remainingBalance,
+            icon: <Wallet className="w-4 h-4" />,
+            color: remainingBalance >= 0 ? 'text-emerald-600' : 'text-rose-600',
+            bg: remainingBalance >= 0 ? 'bg-emerald-50' : 'bg-rose-50',
+            badge: null as string | null,
+          },
+        ]
+      : []),
     {
       label: 'Total Savings',
       value: summary.totalSavings,
@@ -75,7 +79,7 @@ export const DashboardOverview: React.FC = () => {
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-400 font-medium">{period}</p>
       </div>
-      <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAllMonths ? 'lg:grid-cols-4' : 'lg:grid-cols-5'} gap-4`}>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAllMonths ? 'lg:grid-cols-3' : 'lg:grid-cols-5'} gap-4`}>
         {cards.map((card) => (
           <div key={card.label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50 hover-lift">
             <div className="flex items-center justify-between mb-3">
