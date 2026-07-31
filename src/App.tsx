@@ -5,13 +5,10 @@ import { Navbar } from './components/Navbar';
 import { ToastContainer } from './components/Toast';
 import { DashboardView } from './views/DashboardView';
 import { ExpensesView } from './views/ExpensesView';
-import { HistoryView } from './views/HistoryView';
-import { ReportsView } from './views/ReportsView';
 import { SalaryView } from './views/SalaryView';
 import { SavingsView } from './views/SavingsView';
-import { SettingsView } from './views/SettingsView';
 import { ExpenseModal } from './components/ExpenseModal';
-import type { IncomeRecord, ExpenseRecord } from './types/finance';
+import type { ExpenseRecord } from './types/finance';
 import { useFinance } from './context/FinanceContext';
 
 const MainLayout: React.FC = () => {
@@ -33,9 +30,7 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased selection:bg-brand-100 selection:text-brand-900">
-      <Navbar
-        onOpenExpenseModal={handleOpenAddExpense}
-      />
+      <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 page-enter relative">
         {isLoading ? (
@@ -49,11 +44,7 @@ const MainLayout: React.FC = () => {
         <Routes>
           <Route
             path="/"
-            element={
-              <DashboardView
-                onOpenExpenseModal={handleOpenAddExpense}
-              />
-            }
+            element={<DashboardView />}
           />
 
           <Route
@@ -65,18 +56,8 @@ const MainLayout: React.FC = () => {
               />
             }
           />
-          <Route
-            path="/history"
-            element={
-              <HistoryView
-                onEditExpense={handleEditExpense}
-              />
-            }
-          />
           <Route path="/salary" element={<SalaryView />} />
           <Route path="/savings" element={<SavingsView />} />
-          <Route path="/reports" element={<ReportsView />} />
-          <Route path="/settings" element={<SettingsView />} />
         </Routes>
       </main>
 

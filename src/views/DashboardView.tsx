@@ -3,16 +3,11 @@ import { Link } from 'react-router-dom';
 import { useFinance } from '../context/FinanceContext';
 import { DashboardOverview } from '../components/DashboardOverview';
 import { formatCurrency, formatDate } from '../utils/formatters';
-import { TrendingUp, TrendingDown, Plus, Minus, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts';
-
-interface DashboardViewProps {
-  onOpenExpenseModal: () => void;
-}
-
 const CATEGORY_COLORS: Record<string, string> = {
   Food: '#f59e0b',
   Transportation: '#3b82f6',
@@ -25,7 +20,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   Miscellaneous: '#94a3b8',
 };
 
-export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenExpenseModal }) => {
+export const DashboardView: React.FC = () => {
   const { filteredIncomes, filteredExpenses, summary } = useFinance();
 
   const recentTransactions = React.useMemo(() => {
@@ -57,15 +52,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenExpenseModal
       {/* Overview cards */}
       <DashboardOverview />
 
-      {/* Quick actions row */}
-      <div className="flex items-center justify-end gap-3">
-        <button
-          onClick={onOpenExpenseModal}
-          className="btn-dark py-2 px-3 text-xs"
-        >
-          <Minus className="w-3.5 h-3.5" /> Add Expense
-        </button>
-      </div>
+
 
       {/* Charts + recent */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -75,9 +62,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenExpenseModal
           <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm/50 hover-lift">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm font-semibold text-slate-800">Salary vs Expenses</p>
-              <Link to="/reports" className="text-xs text-slate-400 hover:text-slate-700 flex items-center gap-1 transition-colors">
-                See reports <ArrowRight className="w-3 h-3" />
-              </Link>
             </div>
             <div className="h-52">
               <ResponsiveContainer width="100%" height="100%">
@@ -123,7 +107,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenExpenseModal
         <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm/50 hover-lift flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-slate-800">Recent</p>
-            <Link to="/history" className="text-xs text-slate-400 hover:text-slate-700 transition-colors">All →</Link>
           </div>
 
           {recentTransactions.length > 0 ? (

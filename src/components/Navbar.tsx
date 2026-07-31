@@ -4,39 +4,25 @@ import { useFinance } from '../context/FinanceContext';
 import { MONTH_NAMES } from '../utils/formatters';
 import {
   LayoutDashboard,
-  TrendingUp,
   CreditCard,
-  History,
   Banknote,
   PiggyBank,
-  BarChart3,
-  Settings,
-  Plus,
-  Minus,
   Wallet,
   Menu,
   X,
   Calendar,
 } from 'lucide-react';
 
-interface NavbarProps {
-  onOpenExpenseModal: () => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ onOpenExpenseModal }) => {
+export const Navbar: React.FC = () => {
   const { filter, setFilter } = useFinance();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const YEARS = [2024, 2025, 2026, 2027, 2028];
 
   const navItems = [
     { to: '/', label: 'Dashboard', icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
-
     { to: '/expenses', label: 'Expenses', icon: <CreditCard className="w-3.5 h-3.5" /> },
-    { to: '/history', label: 'History', icon: <History className="w-3.5 h-3.5" /> },
     { to: '/salary', label: 'Salary', icon: <Banknote className="w-3.5 h-3.5" /> },
     { to: '/savings', label: 'Savings', icon: <PiggyBank className="w-3.5 h-3.5" /> },
-    { to: '/reports', label: 'Reports', icon: <BarChart3 className="w-3.5 h-3.5" /> },
-    { to: '/settings', label: 'Settings', icon: <Settings className="w-3.5 h-3.5" /> },
   ];
 
   return (
@@ -106,17 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExpenseModal }) => {
               </select>
             </div>
 
-            {/* Expense Quick Button */}
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={onOpenExpenseModal}
-                className="flex items-center gap-1 px-3 py-2 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
-                title="Add Expense"
-              >
-                <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span className="hidden md:inline">Expense</span>
-              </button>
-            </div>
+
 
             {/* Mobile Hamburger Toggle Button */}
             <button

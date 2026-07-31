@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { formatCurrency, MONTH_NAMES } from '../utils/formatters';
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, Banknote } from 'lucide-react';
+import { TrendingDown, PiggyBank, Banknote } from 'lucide-react';
 
 export const DashboardOverview: React.FC = () => {
   const { summary, filter, salaries, savingsRecords } = useFinance();
