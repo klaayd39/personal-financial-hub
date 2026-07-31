@@ -82,6 +82,7 @@ export interface ExpenseRecord {
   category: ExpenseCategory;
   payment_method: PaymentMethod;
   description: string;
+  notes?: string;
   receipt_url?: string;
   created_at?: string;
 }

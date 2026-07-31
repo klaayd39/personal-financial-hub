@@ -334,35 +334,42 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     try {
       if (isNowPaid) {
-        // Guard: if bill_expense_id already exists, don't create a duplicate
+        // Guard: Check if linked expense already exists to prevent duplicates
         if (target.bill_expense_id) {
-          await supabaseService.updateBill(id, { is_paid: true });
-          setBills((prev) => prev.map((b) => (b.id === id ? { ...b, is_paid: true } : b)));
-          showToast('Marked as Paid', 'success');
-          return;
+          const existingExp = expenses.find((e) => e.id === target.bill_expense_id);
+          if (existingExp) {
+            await supabaseService.updateBill(id, { is_paid: true });
+            setBills((prev) => prev.map((b) => (b.id === id ? { ...b, is_paid: true } : b)));
+            showToast('Bill marked as Paid (Linked expense already exists)', 'info');
+            return;
+          }
         }
 
-        // Create an expense record for this bill payment
+        // Create a new corresponding expense record for this paid bill
         const today = new Date();
         const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         const expenseId = 'exp-bill-' + Date.now();
-        const newExpense = {
+        const newExpense: Omit<ExpenseRecord, 'created_at'> = {
           id: expenseId,
           amount: target.amount,
           date: dateStr,
           category: 'Bills' as const,
           payment_method: 'Bank Transfer' as const,
           description: `Bill Payment: ${target.name}`,
+          notes: target.notes
+            ? `[Ref ID: ${target.id}] ${target.notes}`
+            : `[Ref ID: ${target.id}] Auto-generated bill payment`,
         };
+
         const savedExpense = await supabaseService.addExpense(newExpense);
         setExpenses((prev) => [savedExpense, ...prev]);
 
-        // Update bill: mark paid + store the expense reference
+        // Update bill: mark paid + store the linked expense reference ID
         await supabaseService.updateBill(id, { is_paid: true, bill_expense_id: savedExpense.id });
         setBills((prev) =>
           prev.map((b) => (b.id === id ? { ...b, is_paid: true, bill_expense_id: savedExpense.id } : b))
         );
-        showToast(`✓ ${target.name} marked as Paid — salary deducted`, 'success');
+        showToast(`✓ ${target.name} marked as Paid — expense created & totals updated`, 'success');
       } else {
         // Unmark paid: delete the linked expense if it exists
         if (target.bill_expense_id) {
@@ -370,7 +377,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
             await supabaseService.deleteExpense(target.bill_expense_id);
             setExpenses((prev) => prev.filter((e) => e.id !== target.bill_expense_id));
           } catch {
-            // Expense may have been manually deleted; proceed anyway
+            // Expense may have been manually deleted; proceed
           }
         }
 
@@ -379,7 +386,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setBills((prev) =>
           prev.map((b) => (b.id === id ? { ...b, is_paid: false, bill_expense_id: null } : b))
         );
-        showToast(`↩ ${target.name} marked as Unpaid — salary restored`, 'info');
+        showToast(`↩ ${target.name} marked as Unpaid — expense removed & totals updated`, 'info');
       }
     } catch (err: any) {
       showToast('Failed to update bill status: ' + err.message, 'error');

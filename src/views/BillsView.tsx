@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useFinance } from '../context/FinanceContext';
-import type { BillRecord } from '../types/finance';
-import { formatCurrency } from '../utils/formatters';
+import type { BillRecord, ExpenseRecord } from '../types/finance';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { AnimatedModal } from '../components/AnimatedModal';
 import { AnimatedList, AnimatedListItem } from '../components/AnimatedComponents';
 import {
   Plus, Edit2, Trash2, X, CheckCircle2, Circle,
-  Calendar, AlertTriangle, Receipt, Zap,
+  Calendar, AlertTriangle, Receipt, Zap, ExternalLink,
 } from 'lucide-react';
 
 interface BillModalProps {
@@ -314,11 +315,15 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
 // ─── BillsView ──────────────────────────────────────────────────────────────
 
 export const BillsView: React.FC = () => {
-  const { bills, deleteBill, toggleBillPaid } = useFinance();
+  const { bills, expenses, deleteBill, toggleBillPaid } = useFinance();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBill, setEditingBill] = useState<BillRecord | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [selectedLinkedExpense, setSelectedLinkedExpense] = useState<{
+    bill: BillRecord;
+    expense?: ExpenseRecord;
+  } | null>(null);
 
   const todayDay = new Date().getDate();
 
@@ -515,9 +520,18 @@ export const BillsView: React.FC = () => {
                           </span>
                         )}
                         {bill.is_paid && bill.bill_expense_id && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
-                            ✓ Deducted
-                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const linkedExp = expenses.find((e) => e.id === bill.bill_expense_id);
+                              setSelectedLinkedExpense({ bill, expense: linkedExp });
+                            }}
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 hover:bg-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
+                            title="View Linked Expense Record"
+                          >
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            View Linked Expense
+                          </button>
                         )}
                       </div>
                       {bill.notes && <p className="text-xs text-slate-400 mt-0.5">{bill.notes}</p>}
@@ -575,6 +589,105 @@ export const BillsView: React.FC = () => {
 
       {/* Bill Modal */}
       <BillModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialData={editingBill} />
+
+      {/* Linked Expense Details Modal */}
+      <AnimatedModal
+        isOpen={Boolean(selectedLinkedExpense)}
+        onClose={() => setSelectedLinkedExpense(null)}
+        maxWidth="max-w-md"
+      >
+        <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-emerald-50 to-white">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-emerald-100 text-emerald-600 rounded-xl">
+                <Receipt className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-800 text-sm">Linked Expense Details</h3>
+                <p className="text-xs text-slate-400">Bill: {selectedLinkedExpense?.bill.name}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setSelectedLinkedExpense(null)}
+              className="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="p-6 space-y-4 text-xs">
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500 font-medium">Bill Reference ID:</span>
+                <span className="font-mono text-xs font-semibold text-slate-800">{selectedLinkedExpense?.bill.id}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500 font-medium">Expense Record ID:</span>
+                <span className="font-mono text-xs font-semibold text-blue-600">{selectedLinkedExpense?.bill.bill_expense_id}</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 bg-slate-50 rounded-xl">
+                <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Amount</span>
+                <span className="text-base font-bold text-slate-900">
+                  {formatCurrency(selectedLinkedExpense?.expense?.amount || selectedLinkedExpense?.bill.amount || 0)}
+                </span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl">
+                <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Payment Date</span>
+                <span className="text-sm font-semibold text-slate-800">
+                  {selectedLinkedExpense?.expense?.date ? formatDate(selectedLinkedExpense.expense.date) : 'Today'}
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 bg-slate-50 rounded-xl">
+                <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Category</span>
+                <span className="text-xs font-semibold text-slate-800">
+                  📋 {selectedLinkedExpense?.expense?.category || 'Bills'}
+                </span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl">
+                <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Payment Method</span>
+                <span className="text-xs font-semibold text-slate-800">
+                  {selectedLinkedExpense?.expense?.payment_method || 'Bank Transfer'}
+                </span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-50 rounded-xl">
+              <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Notes & Description</span>
+              <p className="font-medium text-slate-800">
+                {selectedLinkedExpense?.expense?.description || `Bill Payment: ${selectedLinkedExpense?.bill.name}`}
+              </p>
+              {selectedLinkedExpense?.expense?.notes && (
+                <p className="text-slate-500 text-[11px] mt-1 border-t border-slate-200/60 pt-1">
+                  {selectedLinkedExpense.expense.notes}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between px-6 py-3 border-t border-slate-100 bg-slate-50/50">
+            <Link
+              to="/expenses"
+              onClick={() => setSelectedLinkedExpense(null)}
+              className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700 font-semibold"
+            >
+              View in Expenses Page <ExternalLink className="w-3 h-3" />
+            </Link>
+            <button
+              type="button"
+              onClick={() => setSelectedLinkedExpense(null)}
+              className="btn-secondary py-1.5 text-xs px-4"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </AnimatedModal>
 
       {/* Delete Confirmation */}
       {deleteTarget && (
