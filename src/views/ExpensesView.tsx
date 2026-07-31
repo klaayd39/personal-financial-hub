@@ -139,7 +139,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
           </button>
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl transition-colors"
+            className="btn-primary gap-1.5 text-xs py-2"
           >
             <Plus className="w-3.5 h-3.5" /> Add Expense
           </button>
@@ -194,11 +194,11 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
                 onClick={() => handleSelectMonth(st.monthIndex)}
                 className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                   isSelected
-                    ? 'bg-rose-50/60 border-rose-200 ring-2 ring-rose-500/20 shadow-sm'
+                    ? 'bg-blue-50 border-blue-200 ring-2 ring-blue-500/20 shadow-sm'
                     : 'bg-slate-50/50 border-slate-100 hover:bg-slate-100/70 hover:border-slate-200'
                 }`}
               >
-                <span className={`text-xs font-bold ${isSelected ? 'text-rose-700' : 'text-slate-800'}`}>
+                <span className={`text-xs font-bold ${isSelected ? 'text-blue-700' : 'text-slate-800'}`}>
                   {st.monthName}
                 </span>
                 <span className="text-[10px] text-slate-400 mt-1 font-medium">
@@ -293,7 +293,13 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
           <div className="py-16 text-center">
             <CreditCard className="w-8 h-8 mx-auto text-slate-200 mb-3" />
             <p className="text-sm font-medium text-slate-600">No expense records found</p>
-            <p className="text-xs text-slate-400 mt-1">No expenses recorded for {selectedMonth === -1 ? 'this period' : MONTH_NAMES[selectedMonth]}.</p>
+            <p className="text-xs text-slate-400 mt-1 mb-4">No expenses recorded for {selectedMonth === -1 ? 'this period' : MONTH_NAMES[selectedMonth]}.</p>
+            <button
+              onClick={onOpenAddModal}
+              className="btn-primary text-xs py-2 mx-auto"
+            >
+              <Plus className="w-3.5 h-3.5" /> Add First Expense
+            </button>
           </div>
         )}
       </div>

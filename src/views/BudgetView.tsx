@@ -385,30 +385,46 @@ export const BudgetView: React.FC = () => {
                     {/* 15-Day Semi-Monthly Split Cycles */}
                     <div className="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2">
                       {/* 1st Half: Days 1 - 15 */}
-                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                        <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold uppercase">
-                          <span>1st Half (1st–15th)</span>
-                        </div>
-                        <p className={`text-xs font-bold ${firstHalfSpent > firstHalfLimit ? 'text-rose-600' : 'text-slate-800'}`}>
-                          {formatCurrency(firstHalfSpent)}
-                        </p>
-                        <p className="text-[10px] text-slate-400">
-                          Limit: {formatCurrency(firstHalfLimit)}
-                        </p>
-                      </div>
+                      {(() => {
+                        const pct1 = firstHalfLimit > 0 ? Math.min((firstHalfSpent / firstHalfLimit) * 100, 100) : 0;
+                        const over1 = firstHalfLimit > 0 && firstHalfSpent > firstHalfLimit;
+                        return (
+                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                            <span className="text-[10px] text-slate-400 font-semibold uppercase block">1st (1st–15th)</span>
+                            <p className={`text-xs font-bold ${over1 ? 'text-rose-600' : 'text-slate-800'}`}>
+                              {formatCurrency(firstHalfSpent)}
+                            </p>
+                            <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${over1 ? 'bg-rose-500' : 'bg-blue-500'}`}
+                                style={{ width: `${pct1}%` }}
+                              />
+                            </div>
+                            <p className="text-[10px] text-slate-400">of {formatCurrency(firstHalfLimit)}</p>
+                          </div>
+                        );
+                      })()}
 
                       {/* 2nd Half: Days 16 - End */}
-                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                        <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold uppercase">
-                          <span>2nd Half (16th–End)</span>
-                        </div>
-                        <p className={`text-xs font-bold ${secondHalfSpent > secondHalfLimit ? 'text-rose-600' : 'text-slate-800'}`}>
-                          {formatCurrency(secondHalfSpent)}
-                        </p>
-                        <p className="text-[10px] text-slate-400">
-                          Limit: {formatCurrency(secondHalfLimit)}
-                        </p>
-                      </div>
+                      {(() => {
+                        const pct2 = secondHalfLimit > 0 ? Math.min((secondHalfSpent / secondHalfLimit) * 100, 100) : 0;
+                        const over2 = secondHalfLimit > 0 && secondHalfSpent > secondHalfLimit;
+                        return (
+                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                            <span className="text-[10px] text-slate-400 font-semibold uppercase block">2nd (16th–End)</span>
+                            <p className={`text-xs font-bold ${over2 ? 'text-rose-600' : 'text-slate-800'}`}>
+                              {formatCurrency(secondHalfSpent)}
+                            </p>
+                            <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${over2 ? 'bg-rose-500' : 'bg-indigo-500'}`}
+                                style={{ width: `${pct2}%` }}
+                              />
+                            </div>
+                            <p className="text-[10px] text-slate-400">of {formatCurrency(secondHalfLimit)}</p>
+                          </div>
+                        );
+                      })()}
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] font-medium pt-1">

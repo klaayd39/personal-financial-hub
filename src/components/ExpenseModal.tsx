@@ -117,7 +117,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
         <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
           <div>
             <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
-              Amount ($)
+              Amount (₱)
             </label>
             <input
               type="number"
@@ -226,7 +226,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-danger disabled:opacity-50"
+              className="btn-primary disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               {isSubmitting ? 'Saving...' : initialData ? 'Update Expense' : 'Add Expense'}

@@ -53,7 +53,7 @@ const MainLayout: React.FC = () => {
         {financeLoading ? (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-50/50 backdrop-blur-sm z-50">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-4 border-slate-200 border-t-emerald-600 rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
               <p className="text-sm font-medium text-slate-500">Loading financial data...</p>
             </div>
           </div>
@@ -78,9 +78,16 @@ const MainLayout: React.FC = () => {
       </main>
 
       <footer className="border-t border-slate-100 py-4 text-center text-xs text-slate-300">
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <span>Personal Financial Hub &copy; {new Date().getFullYear()}</span>
-          <span>Encrypted · Secure Auth</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+              <span className="text-white text-[8px] font-black">F</span>
+            </div>
+            <span className="font-medium text-slate-400">FinanceHub</span>
+            <span className="text-slate-200">·</span>
+            <span>&copy; {new Date().getFullYear()}</span>
+          </div>
+          <span className="hidden sm:inline text-slate-300">🔐 Encrypted · Secure Auth</span>
         </div>
       </footer>
 

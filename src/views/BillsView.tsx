@@ -308,7 +308,7 @@ export const BillsView: React.FC = () => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50">
+        <div className="card">
           <span className="text-xs text-slate-400 font-medium">Total Monthly Bills</span>
           <p className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
             {formatCurrency(totalMonthlyBills)}
@@ -316,17 +316,23 @@ export const BillsView: React.FC = () => {
           <span className="text-[10px] text-slate-400">{bills.length} recurring item{bills.length !== 1 ? 's' : ''}</span>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50">
+        <div className="card">
           <span className="text-xs text-slate-400 font-medium">Total Paid</span>
           <p className="text-2xl font-extrabold text-emerald-600 tracking-tight mt-1">
             {formatCurrency(paidTotal)}
           </p>
-          <span className="text-[10px] text-emerald-600 font-medium">
+          <div className="mt-2 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+              style={{ width: bills.length > 0 ? `${(paidTotal / totalMonthlyBills) * 100}%` : '0%' }}
+            />
+          </div>
+          <span className="text-[10px] text-emerald-600 font-medium mt-1 block">
             {bills.length > 0 ? `${((paidTotal / totalMonthlyBills) * 100).toFixed(0)}% paid` : '0%'}
           </span>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50">
+        <div className="card">
           <span className="text-xs text-slate-400 font-medium">Unpaid Remaining</span>
           <p className="text-2xl font-extrabold text-rose-600 tracking-tight mt-1">
             {formatCurrency(unpaidTotal)}
@@ -348,14 +354,14 @@ export const BillsView: React.FC = () => {
               return (
                 <div
                   key={bill.id}
-                  className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                  className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors border-l-4 ${
                     bill.is_paid
-                      ? 'bg-slate-50/50'
+                      ? 'bg-slate-50/50 border-l-emerald-400'
                       : isPastDue
-                      ? 'bg-rose-50/30'
+                      ? 'bg-rose-50/30 border-l-rose-400'
                       : isDueSoon
-                      ? 'bg-amber-50/30'
-                      : 'hover:bg-slate-50/70'
+                      ? 'bg-amber-50/30 border-l-amber-400'
+                      : 'hover:bg-slate-50/70 border-l-blue-300'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
@@ -428,7 +434,7 @@ export const BillsView: React.FC = () => {
             <p className="text-sm font-medium text-slate-700">No recurring bills added yet</p>
             <p className="text-xs text-slate-400 mt-1 mb-4">Keep track of your monthly subscriptions, utilities, and scheduled payments.</p>
             <button onClick={handleOpenAdd} className="btn-primary text-xs py-2">
-              + Add First Bill
+              <Plus className="w-3.5 h-3.5" /> Add First Bill
             </button>
           </div>
         )}

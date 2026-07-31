@@ -231,12 +231,12 @@ export const SalaryView: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <button
-                  onClick={() => setEditTarget({ month: idx })}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 border border-dashed border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/50 text-slate-400 hover:text-emerald-600 rounded-lg text-xs font-medium transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" /> Set salary
-                </button>
+                  <button
+                    onClick={() => setEditTarget({ month: idx })}
+                    className="w-full flex items-center justify-center gap-1.5 py-3 border-2 border-dashed border-blue-200 hover:border-blue-400 hover:bg-blue-50/50 text-blue-400 hover:text-blue-600 rounded-xl text-xs font-semibold transition-all"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Set salary
+                  </button>
               )}
             </div>
           );

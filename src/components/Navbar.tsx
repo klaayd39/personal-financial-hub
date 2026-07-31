@@ -13,6 +13,7 @@ import {
   X,
   Calendar,
   LogOut,
+  Receipt,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -26,30 +27,30 @@ export const Navbar: React.FC = () => {
     { to: '/expenses', label: 'Expenses', icon: <CreditCard className="w-3.5 h-3.5" /> },
     { to: '/salary', label: 'Salary', icon: <Banknote className="w-3.5 h-3.5" /> },
     { to: '/budget', label: 'Budget', icon: <Calendar className="w-3.5 h-3.5" /> },
-    { to: '/bills', label: 'Bills', icon: <Calendar className="w-3.5 h-3.5" /> },
+    { to: '/bills', label: 'Bills', icon: <Receipt className="w-3.5 h-3.5" /> },
     { to: '/savings', label: 'Savings', icon: <PiggyBank className="w-3.5 h-3.5" /> },
   ];
 
   return (
-    <header className="glass-panel sticky top-0 z-40 border-t-0 border-l-0 border-r-0 rounded-none">
+    <header className="glass-panel sticky top-0 z-40 border-t-0 border-l-0 border-r-0 rounded-none shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main header row */}
         <div className="flex items-center justify-between h-16 gap-4">
           
           {/* Brand Logo & Title */}
           <NavLink to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center shadow-md shadow-slate-900/10 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-600/20 group-hover:scale-105 transition-transform">
               <Wallet className="w-4 h-4 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-slate-700 transition-colors">
+              <span className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-blue-700 transition-colors">
                 FinanceHub
               </span>
             </div>
           </NavLink>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 bg-slate-100/70 p-1 rounded-xl border border-slate-200/50">
+          <nav className="hidden lg:flex items-center gap-0.5 bg-slate-100/70 p-1 rounded-xl border border-slate-200/50">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -58,8 +59,8 @@ export const Navbar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
                     isActive
-                      ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60'
-                      : 'text-slate-500 hover:text-slate-900 hover:bg-white/50'
+                      ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/25'
+                      : 'text-slate-500 hover:text-slate-900 hover:bg-white/70'
                   }`
                 }
               >
@@ -96,8 +97,6 @@ export const Navbar: React.FC = () => {
                 {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
               </select>
             </div>
-
-
 
             {/* User Profile & Logout */}
             <div className="flex items-center gap-3">
@@ -163,7 +162,7 @@ export const Navbar: React.FC = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                       isActive
-                        ? 'bg-slate-900 text-white shadow-sm'
+                        ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/25'
                         : 'bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     }`
                   }

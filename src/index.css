@@ -14,6 +14,7 @@
 }
 
 @layer utilities {
+  /* ── Glass Panels ─────────────────────────────────────────────────── */
   .glass-panel {
     @apply bg-white/80 backdrop-blur-md border border-slate-200/60 shadow-sm;
   }
@@ -22,16 +23,27 @@
     @apply bg-slate-900/90 backdrop-blur-md border border-slate-700/50 shadow-lg;
   }
 
+  /* ── Card ─────────────────────────────────────────────────────────── */
+  .card {
+    @apply bg-white rounded-2xl border border-slate-100 shadow-sm p-5;
+  }
+
+  .card-sm {
+    @apply bg-white rounded-2xl border border-slate-100 shadow-sm p-4;
+  }
+
+  /* ── Inputs ───────────────────────────────────────────────────────── */
   .input-base {
     @apply w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 
            transition-all duration-200 placeholder:text-slate-400
-           focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500;
+           focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500;
   }
 
+  /* ── Buttons ──────────────────────────────────────────────────────── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl 
-           transition-all duration-200 hover:bg-emerald-700 hover:shadow-md hover:shadow-emerald-600/20 
-           focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl 
+           transition-all duration-200 hover:bg-blue-700 hover:shadow-md hover:shadow-blue-600/20 
+           focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 active:scale-[0.98];
   }
 
   .btn-secondary {
@@ -51,9 +63,30 @@
            transition-all duration-200 hover:bg-slate-800 hover:shadow-md hover:shadow-slate-900/20
            focus:outline-none focus:ring-2 focus:ring-slate-900/50 focus:ring-offset-2 active:scale-[0.98];
   }
+
+  /* ── Badges ───────────────────────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full;
+  }
+
+  .badge-blue  { @apply bg-blue-50 text-blue-700 border border-blue-100; }
+  .badge-green { @apply bg-emerald-50 text-emerald-700 border border-emerald-100; }
+  .badge-amber { @apply bg-amber-50 text-amber-700 border border-amber-100; }
+  .badge-rose  { @apply bg-rose-50 text-rose-700 border border-rose-100; }
+  .badge-slate { @apply bg-slate-100 text-slate-500; }
+  .badge-violet{ @apply bg-violet-50 text-violet-700 border border-violet-100; }
+
+  /* ── Section Header ───────────────────────────────────────────────── */
+  .section-title {
+    @apply text-xl font-bold text-slate-900 tracking-tight;
+  }
+
+  .section-subtitle {
+    @apply text-xs text-slate-400 mt-0.5;
+  }
 }
 
-/* Custom Scrollbars */
+/* ── Custom Scrollbars ────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -72,7 +105,7 @@
   background: #94a3b8;
 }
 
-/* Micro-animations */
+/* ── Micro-animations ─────────────────────────────────────────────────── */
 .hover-lift {
   transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -82,7 +115,7 @@
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
 }
 
-/* Smooth page transitions */
+/* ── Smooth page transitions ──────────────────────────────────────────── */
 .page-enter {
   animation: fadeSlideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
@@ -96,4 +129,16 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ── Progress bar shimmer ─────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.progress-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }

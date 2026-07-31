@@ -55,8 +55,8 @@ export const DashboardOverview: React.FC = () => {
             label: `Budget Limit`,
             value: budgetLimit,
             icon: <Calendar className="w-4 h-4" />,
-            color: isOverBudget ? 'text-rose-600' : 'text-amber-600',
-            bg: isOverBudget ? 'bg-rose-50' : 'bg-amber-50',
+            color: isOverBudget ? 'text-rose-600' : 'text-blue-600',
+            bg: isOverBudget ? 'bg-rose-50' : 'bg-blue-50',
             badge: isOverBudget ? 'Over Limit' : `${budgetUsedPct.toFixed(0)}% Used`,
           },
         ]
@@ -97,13 +97,15 @@ export const DashboardOverview: React.FC = () => {
         <p className="text-xs text-slate-400 font-medium">{period}</p>
       </div>
 
-      {/* Budget Progress Notification Banner on Dashboard if active */}
+      {/* Budget Progress Banner */}
       {!isAllMonths && budgetLimit > 0 && (
         <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-          isOverBudget ? 'bg-rose-500/10 border-rose-200 text-rose-900' : 'bg-amber-500/10 border-amber-200 text-amber-900'
+          isOverBudget
+            ? 'bg-rose-500/10 border-rose-200 text-rose-900'
+            : 'bg-blue-500/10 border-blue-200 text-blue-900'
         }`}>
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-xl shrink-0 ${isOverBudget ? 'bg-rose-500 text-white' : 'bg-amber-500 text-white'}`}>
+            <div className={`p-2 rounded-xl shrink-0 ${isOverBudget ? 'bg-rose-500 text-white' : 'bg-blue-600 text-white'}`}>
               <Calendar className="w-4 h-4" />
             </div>
             <div>
@@ -121,7 +123,7 @@ export const DashboardOverview: React.FC = () => {
           <div className="w-full sm:w-48 space-y-1">
             <div className="w-full h-2 bg-white/60 rounded-full overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all ${isOverBudget ? 'bg-rose-600' : 'bg-amber-500'}`}
+                className={`h-full rounded-full transition-all ${isOverBudget ? 'bg-rose-600' : 'bg-blue-600'}`}
                 style={{ width: `${budgetUsedPct}%` }}
               />
             </div>
@@ -132,19 +134,17 @@ export const DashboardOverview: React.FC = () => {
 
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAllMonths ? 'lg:grid-cols-3' : 'lg:grid-cols-4 xl:grid-cols-6'} gap-3`}>
         {cards.map((card) => (
-          <div key={card.label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50 hover-lift">
+          <div key={card.label} className="card hover-lift">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="text-xs text-slate-400 font-medium leading-tight truncate">
                   {card.label}
                 </span>
                 {card.badge && (
-                  <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${
-                    card.badge === 'Manual'
-                      ? 'bg-violet-100 text-violet-600'
-                      : card.badge === 'Not Set'
-                      ? 'bg-amber-100 text-amber-700'
-                      : 'bg-slate-100 text-slate-400'
+                  <span className={`badge shrink-0 ${
+                    card.badge === 'Over Limit' || card.badge === 'Not Set'
+                      ? 'badge-amber'
+                      : 'badge-slate'
                   }`}>
                     {card.badge}
                   </span>

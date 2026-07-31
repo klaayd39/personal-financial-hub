@@ -180,7 +180,7 @@ const SavingsModal: React.FC<SavingsModalProps> = ({ existing, onClose }) => {
             </button>
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-xs font-medium rounded-lg transition-colors"
+              className="btn-primary text-xs py-2"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               {existing ? 'Update Entry' : 'Add Entry'}
@@ -225,7 +225,7 @@ export const SavingsView: React.FC = () => {
         </div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-1.5 px-3 py-2 bg-violet-600 hover:bg-violet-700 text-white text-xs font-medium rounded-lg transition-colors"
+          className="btn-primary text-xs py-2"
         >
           <Plus className="w-3.5 h-3.5" /> Add Entry
         </button>
