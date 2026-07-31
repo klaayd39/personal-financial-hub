@@ -269,15 +269,15 @@ export const BudgetView: React.FC = () => {
       </div>
 
       {/* Overview Card */}
-      <div className="bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-6 text-white shadow-lg shadow-amber-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg shadow-blue-600/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-xs text-amber-100 font-medium uppercase tracking-wider">
+          <span className="text-xs text-blue-100 font-medium uppercase tracking-wider">
             Total Annual Budget ({selectedYear})
           </span>
           <p className="text-3xl font-extrabold tracking-tight mt-1">
             {formatCurrency(totalYearBudget)}
           </p>
-          <p className="text-xs text-amber-100/80 mt-1">
+          <p className="text-xs text-blue-100/80 mt-1">
             Across {yearBudgets.length} configured month{yearBudgets.length !== 1 ? 's' : ''}.
           </p>
         </div>
