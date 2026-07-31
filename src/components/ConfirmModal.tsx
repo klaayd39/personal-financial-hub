@@ -1,5 +1,7 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { AlertTriangle, X } from 'lucide-react';
+import { AnimatedModal } from './AnimatedModal';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -22,40 +24,38 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   onClose,
 }) => {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-sm w-full overflow-hidden p-6">
-        <div className="flex items-center justify-between mb-4">
+    <AnimatedModal isOpen={isOpen} onClose={onClose} maxWidth="max-w-sm">
+      <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden p-6">
+        <div className="flex items-start justify-between mb-4">
           <div
-            className={`p-2.5 rounded-xl ${
-              isDanger ? 'bg-rose-50 text-rose-600 border border-rose-100' : 'bg-amber-50 text-amber-600'
+            className={`p-2.5 rounded-xl shrink-0 ${
+              isDanger
+                ? 'bg-rose-50 text-rose-600 border border-rose-100'
+                : 'bg-amber-50 text-amber-600 border border-amber-100'
             }`}
           >
-            <AlertTriangle className="w-5 h-5" />
+            <AlertTriangle className="w-5 h-5" aria-hidden="true" />
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+            aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <h3 className="font-bold text-slate-900 text-lg mb-1">{title}</h3>
-        <p className="text-xs text-slate-500 mb-6 leading-relaxed">{message}</p>
+        <h3 className="font-bold text-slate-900 text-base mb-1">{title}</h3>
+        <p className="text-sm text-slate-500 mb-6 leading-relaxed">{message}</p>
 
         <div className="flex items-center justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="btn-secondary py-2 text-xs"
-          >
+          <button type="button" onClick={onClose} className="btn-secondary py-2 text-xs">
             {cancelLabel}
           </button>
-          <button
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.97 }}
             onClick={() => {
               onConfirm();
               onClose();
@@ -63,9 +63,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             className={`${isDanger ? 'btn-danger' : 'btn-primary'} py-2 text-xs`}
           >
             {confirmLabel}
-          </button>
+          </motion.button>
         </div>
       </div>
-    </div>
+    </AnimatedModal>
   );
 };

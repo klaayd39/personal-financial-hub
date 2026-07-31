@@ -1,7 +1,18 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useFinance } from '../context/FinanceContext';
 import { formatCurrency, MONTH_NAMES } from '../utils/formatters';
 import { TrendingDown, PiggyBank, Banknote, Wallet, Calendar } from 'lucide-react';
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 12, scale: 0.97 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { delay: i * 0.07, duration: 0.35, ease: [0.16, 1, 0.3, 1] as const },
+  }),
+};
 
 export const DashboardOverview: React.FC = () => {
   const { summary, filter, salaries, getBudgetForPeriod } = useFinance();
@@ -14,9 +25,10 @@ export const DashboardOverview: React.FC = () => {
     .reduce((sum, s) => sum + s.amount, 0);
 
   // Salary for the selected month (or total annual if "All Months" is selected)
-  const selectedMonthSalary = filter.month !== -1
-    ? salaries.find((s) => s.month === filter.month && s.year === filter.year)?.amount ?? 0
-    : totalYearlySalary;
+  const selectedMonthSalary =
+    filter.month !== -1
+      ? salaries.find((s) => s.month === filter.month && s.year === filter.year)?.amount ?? 0
+      : totalYearlySalary;
 
   const activeBudget = filter.month !== -1 ? getBudgetForPeriod(filter.month, filter.year) : undefined;
   const budgetLimit = activeBudget?.amount ?? 0;
@@ -52,7 +64,7 @@ export const DashboardOverview: React.FC = () => {
     ...(!isAllMonths && budgetLimit > 0
       ? [
           {
-            label: `Budget Limit`,
+            label: 'Budget Limit',
             value: budgetLimit,
             icon: <Calendar className="w-4 h-4" />,
             color: isOverBudget ? 'text-rose-600' : 'text-blue-600',
@@ -99,18 +111,26 @@ export const DashboardOverview: React.FC = () => {
 
       {/* Budget Progress Banner */}
       {!isAllMonths && budgetLimit > 0 && (
-        <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-          isOverBudget
-            ? 'bg-rose-500/10 border-rose-200 text-rose-900'
-            : 'bg-blue-500/10 border-blue-200 text-blue-900'
-        }`}>
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+            isOverBudget
+              ? 'bg-rose-500/10 border-rose-200 text-rose-900'
+              : 'bg-blue-500/10 border-blue-200 text-blue-900'
+          }`}
+        >
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-xl shrink-0 ${isOverBudget ? 'bg-rose-500 text-white' : 'bg-blue-600 text-white'}`}>
+            <div
+              className={`p-2 rounded-xl shrink-0 ${isOverBudget ? 'bg-rose-500 text-white' : 'bg-blue-600 text-white'}`}
+            >
               <Calendar className="w-4 h-4" />
             </div>
             <div>
               <p className="text-xs font-bold">
-                {MONTH_NAMES[filter.month]} Budget: {formatCurrency(summary.totalExpenses)} / {formatCurrency(budgetLimit)}
+                {MONTH_NAMES[filter.month]} Budget: {formatCurrency(summary.totalExpenses)} /{' '}
+                {formatCurrency(budgetLimit)}
               </p>
               <p className="text-[11px] opacity-80">
                 {isOverBudget
@@ -122,42 +142,58 @@ export const DashboardOverview: React.FC = () => {
 
           <div className="w-full sm:w-48 space-y-1">
             <div className="w-full h-2 bg-white/60 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all ${isOverBudget ? 'bg-rose-600' : 'bg-blue-600'}`}
-                style={{ width: `${budgetUsedPct}%` }}
+              <motion.div
+                className={`h-full rounded-full ${isOverBudget ? 'bg-rose-600' : 'bg-blue-600'}`}
+                initial={{ width: 0 }}
+                animate={{ width: `${budgetUsedPct}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut' as const }}
               />
             </div>
             <p className="text-[10px] text-right font-bold">{budgetUsedPct.toFixed(0)}% Used</p>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAllMonths ? 'lg:grid-cols-3' : 'lg:grid-cols-4 xl:grid-cols-6'} gap-3`}>
-        {cards.map((card) => (
-          <div key={card.label} className="card hover-lift">
+      {/* Metric Cards */}
+      <div
+        className={`grid grid-cols-1 sm:grid-cols-2 ${
+          isAllMonths ? 'lg:grid-cols-3' : 'lg:grid-cols-4 xl:grid-cols-6'
+        } gap-3`}
+      >
+        {cards.map((card, i) => (
+          <motion.div
+            key={card.label}
+            custom={i}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            className="card hover-lift group cursor-default"
+          >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="text-xs text-slate-400 font-medium leading-tight truncate">
                   {card.label}
                 </span>
                 {card.badge && (
-                  <span className={`badge shrink-0 ${
-                    card.badge === 'Over Limit' || card.badge === 'Not Set'
-                      ? 'badge-amber'
-                      : 'badge-slate'
-                  }`}>
+                  <span
+                    className={`badge shrink-0 ${
+                      card.badge === 'Over Limit' || card.badge === 'Not Set'
+                        ? 'badge-amber'
+                        : 'badge-slate'
+                    }`}
+                  >
                     {card.badge}
                   </span>
                 )}
               </div>
-              <span className={`${card.color} ${card.bg} p-1.5 rounded-lg shrink-0 ml-1`}>
+              <span className={`${card.color} ${card.bg} p-1.5 rounded-lg shrink-0 ml-1 transition-transform group-hover:scale-110`}>
                 {card.icon}
               </span>
             </div>
             <p className={`text-xl font-bold ${card.color} tracking-tight`}>
               {formatCurrency(card.value)}
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useFinance } from '../context/FinanceContext';
 import { DashboardOverview } from '../components/DashboardOverview';
+import { AnimatedList, AnimatedListItem } from '../components/AnimatedComponents';
 import { formatCurrency, formatDate, MONTH_NAMES } from '../utils/formatters';
 import { TrendingUp, TrendingDown, Calendar, CheckCircle2, Circle, ArrowRight } from 'lucide-react';
 import {
@@ -72,7 +74,12 @@ export const DashboardView: React.FC = () => {
       {/* Charts + sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* 12-Month Expense Trend */}
-        <div className="lg:col-span-2">
+        <motion.div
+          className="lg:col-span-2"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.4, ease: [0.16, 1, 0.3, 1] as const }}
+        >
           <div className="card hover-lift h-full flex flex-col">
             <div className="flex items-center justify-between mb-5">
               <div>
@@ -94,13 +101,7 @@ export const DashboardView: React.FC = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    stroke="#cbd5e1"
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={false}
-                  />
+                  <XAxis dataKey="month" stroke="#cbd5e1" fontSize={11} tickLine={false} axisLine={false} />
                   <YAxis
                     stroke="#cbd5e1"
                     fontSize={11}
@@ -122,12 +123,17 @@ export const DashboardView: React.FC = () => {
               </ResponsiveContainer>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right sidebar: Bills + Recent */}
         <div className="space-y-4 flex flex-col">
           {/* Upcoming Bills Widget */}
-          <div className="card hover-lift">
+          <motion.div
+            className="card hover-lift"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.35, ease: [0.16, 1, 0.3, 1] as const }}
+          >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-amber-50 rounded-lg">
@@ -135,7 +141,10 @@ export const DashboardView: React.FC = () => {
                 </div>
                 <p className="text-sm font-bold text-slate-800">Upcoming Bills</p>
               </div>
-              <Link to="/bills" className="flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors">
+              <Link
+                to="/bills"
+                className="flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+              >
                 Manage <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
@@ -148,26 +157,29 @@ export const DashboardView: React.FC = () => {
                   <span className="text-blue-600">{billsPaidCount} / {bills.length}</span>
                 </div>
                 <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-blue-600 rounded-full transition-all duration-500"
-                    style={{ width: `${billsPaidPct}%` }}
+                  <motion.div
+                    className="h-full bg-blue-600 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${billsPaidPct}%` }}
+                    transition={{ duration: 0.8, ease: 'easeOut' as const, delay: 0.4 }}
                   />
                 </div>
               </div>
             )}
 
             {upcomingBills.length > 0 ? (
-              <div className="space-y-1.5">
+              <AnimatedList className="space-y-1.5">
                 {upcomingBills.map((b) => (
-                  <div key={b.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0 text-xs">
+                  <AnimatedListItem key={b.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0 text-xs">
                     <div className="flex items-center gap-2 min-w-0">
-                      <button
+                      <motion.button
                         onClick={() => toggleBillPaid(b.id)}
+                        whileTap={{ scale: 0.85 }}
                         className="p-0.5 text-slate-300 hover:text-emerald-600 transition-colors shrink-0"
                         title="Mark Paid"
                       >
                         <Circle className="w-3.5 h-3.5" />
-                      </button>
+                      </motion.button>
                       <span className="font-medium text-slate-800 truncate">{b.name}</span>
                       <span className="badge badge-blue shrink-0">
                         {b.month !== undefined && b.month !== null
@@ -179,45 +191,65 @@ export const DashboardView: React.FC = () => {
                       <span className="text-[10px] font-semibold text-slate-400">Due {b.due_day}th</span>
                       <span className="font-bold text-rose-600">{formatCurrency(b.amount)}</span>
                     </div>
-                  </div>
+                  </AnimatedListItem>
                 ))}
-              </div>
+              </AnimatedList>
             ) : (
               <div className="py-4 text-center">
                 <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto mb-1" />
                 <p className="text-xs text-slate-400">All bills paid! 🎉</p>
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Recent Transactions */}
-          <div className="card hover-lift flex-1 flex flex-col">
+          <motion.div
+            className="card hover-lift flex-1 flex flex-col"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.35, ease: [0.16, 1, 0.3, 1] as const }}
+          >
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm font-bold text-slate-800">Recent Transactions</p>
-              <Link to="/expenses" className="flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors">
+              <Link
+                to="/expenses"
+                className="flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+              >
                 All <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
 
             {recentTransactions.length > 0 ? (
-              <div className="space-y-0.5 flex-1">
+              <AnimatedList className="space-y-0.5 flex-1">
                 {recentTransactions.map((tx) => (
-                  <div key={tx.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
+                  <AnimatedListItem key={tx.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className={`p-1.5 rounded-lg shrink-0 ${tx.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}`}>
-                        {tx.type === 'income' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                      <div
+                        className={`p-1.5 rounded-lg shrink-0 ${
+                          tx.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'
+                        }`}
+                      >
+                        {tx.type === 'income' ? (
+                          <TrendingUp className="w-3.5 h-3.5" />
+                        ) : (
+                          <TrendingDown className="w-3.5 h-3.5" />
+                        )}
                       </div>
                       <div className="min-w-0">
                         <p className="text-xs font-medium text-slate-800 truncate">{tx.title}</p>
                         <p className="text-[10px] text-slate-400">{formatDate(tx.date)}</p>
                       </div>
                     </div>
-                    <p className={`text-xs font-bold shrink-0 ml-2 ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-700'}`}>
+                    <p
+                      className={`text-xs font-bold shrink-0 ml-2 ${
+                        tx.type === 'income' ? 'text-emerald-600' : 'text-slate-700'
+                      }`}
+                    >
                       {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
                     </p>
-                  </div>
+                  </AnimatedListItem>
                 ))}
-              </div>
+              </AnimatedList>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center py-8 text-center">
                 <TrendingDown className="w-8 h-8 text-slate-200 mb-2" />
@@ -225,7 +257,7 @@ export const DashboardView: React.FC = () => {
                 <p className="text-[11px] text-slate-400 mt-0.5">Add your first expense to get started</p>
               </div>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

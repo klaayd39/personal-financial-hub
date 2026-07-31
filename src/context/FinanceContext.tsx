@@ -308,7 +308,17 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const deleteBill = async (id: string) => {
+    const target = bills.find((b) => b.id === id);
     try {
+      // If the bill was paid, remove its linked expense to restore salary
+      if (target?.bill_expense_id) {
+        try {
+          await supabaseService.deleteExpense(target.bill_expense_id);
+          setExpenses((prev) => prev.filter((e) => e.id !== target.bill_expense_id));
+        } catch {
+          // Expense may have been manually deleted; proceed
+        }
+      }
       await supabaseService.deleteBill(id);
       setBills((prev) => prev.filter((b) => b.id !== id));
       showToast('Bill removed', 'info');
@@ -320,13 +330,57 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const toggleBillPaid = async (id: string) => {
     const target = bills.find((b) => b.id === id);
     if (!target) return;
-    const updatedPaid = !target.is_paid;
+    const isNowPaid = !target.is_paid;
+
     try {
-      await supabaseService.updateBill(id, { is_paid: updatedPaid });
-      setBills((prev) =>
-        prev.map((b) => (b.id === id ? { ...b, is_paid: updatedPaid } : b))
-      );
-      showToast(updatedPaid ? 'Marked as Paid' : 'Marked as Unpaid', 'info');
+      if (isNowPaid) {
+        // Guard: if bill_expense_id already exists, don't create a duplicate
+        if (target.bill_expense_id) {
+          await supabaseService.updateBill(id, { is_paid: true });
+          setBills((prev) => prev.map((b) => (b.id === id ? { ...b, is_paid: true } : b)));
+          showToast('Marked as Paid', 'success');
+          return;
+        }
+
+        // Create an expense record for this bill payment
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        const expenseId = 'exp-bill-' + Date.now();
+        const newExpense = {
+          id: expenseId,
+          amount: target.amount,
+          date: dateStr,
+          category: 'Bills' as const,
+          payment_method: 'Bank Transfer' as const,
+          description: `Bill Payment: ${target.name}`,
+        };
+        const savedExpense = await supabaseService.addExpense(newExpense);
+        setExpenses((prev) => [savedExpense, ...prev]);
+
+        // Update bill: mark paid + store the expense reference
+        await supabaseService.updateBill(id, { is_paid: true, bill_expense_id: savedExpense.id });
+        setBills((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, is_paid: true, bill_expense_id: savedExpense.id } : b))
+        );
+        showToast(`✓ ${target.name} marked as Paid — salary deducted`, 'success');
+      } else {
+        // Unmark paid: delete the linked expense if it exists
+        if (target.bill_expense_id) {
+          try {
+            await supabaseService.deleteExpense(target.bill_expense_id);
+            setExpenses((prev) => prev.filter((e) => e.id !== target.bill_expense_id));
+          } catch {
+            // Expense may have been manually deleted; proceed anyway
+          }
+        }
+
+        // Update bill: mark unpaid + clear expense reference
+        await supabaseService.updateBill(id, { is_paid: false, bill_expense_id: null });
+        setBills((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, is_paid: false, bill_expense_id: null } : b))
+        );
+        showToast(`↩ ${target.name} marked as Unpaid — salary restored`, 'info');
+      }
     } catch (err: any) {
       showToast('Failed to update bill status: ' + err.message, 'error');
     }

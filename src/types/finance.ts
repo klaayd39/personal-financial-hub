@@ -49,6 +49,8 @@ export interface BillRecord {
   year?: number;   // e.g. 2026
   billing_cycle: 'monthly' | 'yearly' | 'weekly';
   is_paid: boolean;
+  /** ID of the auto-created ExpenseRecord when bill is marked paid. Null when unpaid. */
+  bill_expense_id?: string | null;
   notes?: string;
   created_at?: string;
 }
