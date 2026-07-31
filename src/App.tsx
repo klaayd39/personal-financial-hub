@@ -9,6 +9,7 @@ import { ExpensesView } from './views/ExpensesView';
 import { SalaryView } from './views/SalaryView';
 import { SavingsView } from './views/SavingsView';
 import { BudgetView } from './views/BudgetView';
+import { BillsView } from './views/BillsView';
 import { AuthView } from './views/AuthView';
 import { ExpenseModal } from './components/ExpenseModal';
 import type { ExpenseRecord } from './types/finance';
@@ -70,6 +71,7 @@ const MainLayout: React.FC = () => {
           />
           <Route path="/salary" element={<SalaryView />} />
           <Route path="/budget" element={<BudgetView />} />
+          <Route path="/bills" element={<BillsView />} />
           <Route path="/savings" element={<SavingsView />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

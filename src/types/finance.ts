@@ -39,6 +39,18 @@ export interface BudgetRecord {
   updated_at: string; // ISO timestamp
 }
 
+/** Recurring or fixed monthly bill record. */
+export interface BillRecord {
+  id: string;
+  name: string;
+  amount: number;
+  due_day: number; // 1 - 31
+  billing_cycle: 'monthly' | 'yearly' | 'weekly';
+  is_paid: boolean;
+  notes?: string;
+  created_at?: string;
+}
+
 /** A single savings ledger entry (global, not per-month). */
 export interface SavingsRecord {
   id: string;

@@ -5,6 +5,7 @@ import type {
   SalaryRecord,
   SavingsRecord,
   BudgetRecord,
+  BillRecord,
   FinancialSummary,
   FilterState,
 } from '../types/finance';
@@ -23,6 +24,7 @@ interface FinanceContextType {
   salaries: SalaryRecord[];
   savingsRecords: SavingsRecord[];
   budgets: BudgetRecord[];
+  bills: BillRecord[];
   filteredIncomes: IncomeRecord[];
   filteredExpenses: ExpenseRecord[];
   summary: FinancialSummary;
@@ -58,6 +60,12 @@ interface FinanceContextType {
   ) => Promise<void>;
   deleteBudget: (id: string) => Promise<void>;
   getBudgetForPeriod: (month: number, year: number) => BudgetRecord | undefined;
+
+  // Bills CRUD
+  addBill: (record: Omit<BillRecord, 'id'>) => Promise<void>;
+  updateBill: (id: string, record: Partial<BillRecord>) => Promise<void>;
+  deleteBill: (id: string) => Promise<void>;
+  toggleBillPaid: (id: string) => Promise<void>;
 
   // Savings CRUD (global ledger entries)
   addSavingsEntry: (entry: Omit<SavingsRecord, 'id' | 'created_at'>) => Promise<void>;
@@ -99,17 +107,19 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [salaries, setSalaries] = useState<SalaryRecord[]>([]);
   const [savingsRecords, setSavingsRecords] = useState<SavingsRecord[]>([]);
   const [budgets, setBudgets] = useState<BudgetRecord[]>([]);
+  const [bills, setBills] = useState<BillRecord[]>([]);
 
   useEffect(() => {
     let isMounted = true;
     const fetchInitialData = async () => {
       try {
-        const [inc, exp, sal, sav, bud] = await Promise.all([
+        const [inc, exp, sal, sav, bud, bls] = await Promise.all([
           supabaseService.fetchIncomes(),
           supabaseService.fetchExpenses(),
           supabaseService.fetchSalaries(),
           supabaseService.fetchSavings(),
           supabaseService.fetchBudgets(),
+          supabaseService.fetchBills(),
         ]);
         if (isMounted) {
           setIncomes(inc);
@@ -117,6 +127,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
           setSalaries(sal);
           setSavingsRecords(sav);
           setBudgets(bud);
+          setBills(bls);
         }
       } catch (err: any) {
         showToast('Error loading data: ' + err.message, 'error');
@@ -266,6 +277,60 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
   const getBudgetForPeriod = (month: number, year: number) =>
     budgets.find((b) => b.month === month && b.year === year);
+
+  // ── Bills CRUD ────────────────────────────────────────────────────────
+  const addBill = async (record: Omit<BillRecord, 'id'>) => {
+    try {
+      const newBill: BillRecord = {
+        ...record,
+        id: 'bill-' + Date.now(),
+      };
+      const saved = await supabaseService.addBill(newBill);
+      setBills((prev) => [...prev, saved].sort((a, b) => a.due_day - b.due_day));
+      showToast('Bill added successfully', 'success');
+    } catch (err: any) {
+      showToast('Failed to add bill: ' + err.message, 'error');
+    }
+  };
+
+  const updateBill = async (id: string, updated: Partial<BillRecord>) => {
+    try {
+      await supabaseService.updateBill(id, updated);
+      setBills((prev) =>
+        prev
+          .map((b) => (b.id === id ? { ...b, ...updated } : b))
+          .sort((a, b) => a.due_day - b.due_day)
+      );
+      showToast('Bill updated', 'success');
+    } catch (err: any) {
+      showToast('Failed to update bill: ' + err.message, 'error');
+    }
+  };
+
+  const deleteBill = async (id: string) => {
+    try {
+      await supabaseService.deleteBill(id);
+      setBills((prev) => prev.filter((b) => b.id !== id));
+      showToast('Bill removed', 'info');
+    } catch (err: any) {
+      showToast('Failed to delete bill: ' + err.message, 'error');
+    }
+  };
+
+  const toggleBillPaid = async (id: string) => {
+    const target = bills.find((b) => b.id === id);
+    if (!target) return;
+    const updatedPaid = !target.is_paid;
+    try {
+      await supabaseService.updateBill(id, { is_paid: updatedPaid });
+      setBills((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, is_paid: updatedPaid } : b))
+      );
+      showToast(updatedPaid ? 'Marked as Paid' : 'Marked as Unpaid', 'info');
+    } catch (err: any) {
+      showToast('Failed to update bill status: ' + err.message, 'error');
+    }
+  };
 
   // ── Savings CRUD (global ledger) ──────────────────────────────────────
   const addSavingsEntry = async (entry: Omit<SavingsRecord, 'id' | 'created_at'>) => {
@@ -463,6 +528,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         salaries,
         savingsRecords,
         budgets,
+        bills,
         filteredIncomes,
         filteredExpenses,
         summary,
@@ -482,6 +548,10 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setBudget,
         deleteBudget,
         getBudgetForPeriod,
+        addBill,
+        updateBill,
+        deleteBill,
+        toggleBillPaid,
         addSavingsEntry,
         updateSavingsEntry,
         deleteSavingsEntry,

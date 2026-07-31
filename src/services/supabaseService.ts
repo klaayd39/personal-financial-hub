@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { IncomeRecord, ExpenseRecord, SalaryRecord, SavingsRecord, BudgetRecord } from '../types/finance';
+import type { IncomeRecord, ExpenseRecord, SalaryRecord, SavingsRecord, BudgetRecord, BillRecord } from '../types/finance';
 
 export const supabaseService = {
   // ── Incomes ──────────────────────────────────────────────────────────
@@ -152,6 +152,72 @@ export const supabaseService = {
     if (local) {
       const list: BudgetRecord[] = JSON.parse(local);
       localStorage.setItem('finance_budgets_fallback', JSON.stringify(list.filter((b) => b.id !== id)));
+    }
+  },
+
+  // ── Bills (Fixed & Recurring) ─────────────────────────────────────────
+  async fetchBills(): Promise<BillRecord[]> {
+    if (!supabase) return [];
+    try {
+      const { data, error } = await supabase.from('bills').select('*').order('due_day', { ascending: true });
+      if (error) {
+        console.warn('Bills table fallback active:', error.message);
+        const local = localStorage.getItem('finance_bills_fallback');
+        return local ? JSON.parse(local) : [];
+      }
+      return data as BillRecord[];
+    } catch (e) {
+      console.warn('Bills table fetch catch:', e);
+      const local = localStorage.getItem('finance_bills_fallback');
+      return local ? JSON.parse(local) : [];
+    }
+  },
+
+  async addBill(record: BillRecord): Promise<BillRecord> {
+    if (!supabase) throw new Error('Supabase not configured');
+    try {
+      const { data, error } = await supabase.from('bills').insert([record]).select().single();
+      if (error) throw error;
+      return data as BillRecord;
+    } catch (err: any) {
+      console.warn('Supabase addBill failed, fallback active:', err.message);
+      const local = localStorage.getItem('finance_bills_fallback');
+      const list: BillRecord[] = local ? JSON.parse(local) : [];
+      list.push(record);
+      localStorage.setItem('finance_bills_fallback', JSON.stringify(list));
+      return record;
+    }
+  },
+
+  async updateBill(id: string, updated: Partial<BillRecord>): Promise<void> {
+    if (!supabase) throw new Error('Supabase not configured');
+    try {
+      const { error } = await supabase.from('bills').update(updated).eq('id', id);
+      if (error) console.warn('Supabase updateBill error:', error.message);
+    } catch (e) {
+      console.warn('Supabase updateBill catch:', e);
+    }
+    const local = localStorage.getItem('finance_bills_fallback');
+    if (local) {
+      const list: BillRecord[] = JSON.parse(local);
+      const idx = list.findIndex((b) => b.id === id);
+      if (idx >= 0) list[idx] = { ...list[idx], ...updated };
+      localStorage.setItem('finance_bills_fallback', JSON.stringify(list));
+    }
+  },
+
+  async deleteBill(id: string): Promise<void> {
+    if (!supabase) throw new Error('Supabase not configured');
+    try {
+      const { error } = await supabase.from('bills').delete().eq('id', id);
+      if (error) console.warn('Supabase deleteBill error:', error.message);
+    } catch (e) {
+      console.warn('Supabase deleteBill catch:', e);
+    }
+    const local = localStorage.getItem('finance_bills_fallback');
+    if (local) {
+      const list: BillRecord[] = JSON.parse(local);
+      localStorage.setItem('finance_bills_fallback', JSON.stringify(list.filter((b) => b.id !== id)));
     }
   }
 };

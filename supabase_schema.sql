@@ -51,12 +51,25 @@ CREATE TABLE IF NOT EXISTS public.budgets (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 6. Bills Table (Fixed & Recurring Bills)
+CREATE TABLE IF NOT EXISTS public.bills (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  amount NUMERIC NOT NULL,
+  due_day INT NOT NULL, -- 1 to 31
+  billing_cycle TEXT DEFAULT 'monthly', -- 'monthly' | 'yearly' | 'weekly'
+  is_paid BOOLEAN DEFAULT FALSE,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Enable Row Level Security (RLS) & add open policy for standard access
 ALTER TABLE public.incomes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.salaries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.savings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.budgets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.bills ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Allow public access to incomes" ON public.incomes;
 CREATE POLICY "Allow public access to incomes" ON public.incomes FOR ALL USING (true) WITH CHECK (true);
@@ -72,3 +85,6 @@ CREATE POLICY "Allow public access to savings" ON public.savings FOR ALL USING (
 
 DROP POLICY IF EXISTS "Allow public access to budgets" ON public.budgets;
 CREATE POLICY "Allow public access to budgets" ON public.budgets FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access to bills" ON public.bills;
+CREATE POLICY "Allow public access to bills" ON public.bills FOR ALL USING (true) WITH CHECK (true);
