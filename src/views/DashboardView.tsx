@@ -1,0 +1,167 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useFinance } from '../context/FinanceContext';
+import { DashboardOverview } from '../components/DashboardOverview';
+import { formatCurrency, formatDate } from '../utils/formatters';
+import { TrendingUp, TrendingDown, Plus, Minus, ArrowRight } from 'lucide-react';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend,
+} from 'recharts';
+
+interface DashboardViewProps {
+  onOpenIncomeModal: () => void;
+  onOpenExpenseModal: () => void;
+}
+
+const CATEGORY_COLORS: Record<string, string> = {
+  Food: '#f59e0b',
+  Transportation: '#3b82f6',
+  Bills: '#ef4444',
+  Shopping: '#ec4899',
+  Entertainment: '#8b5cf6',
+  Health: '#10b981',
+  Education: '#06b6d4',
+  Travel: '#6366f1',
+  Miscellaneous: '#94a3b8',
+};
+
+export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal, onOpenExpenseModal }) => {
+  const { filteredIncomes, filteredExpenses, filter, summary } = useFinance();
+
+  const recentTransactions = React.useMemo(() => {
+    const combined = [
+      ...filteredIncomes.map((inc) => ({
+        id: inc.id, type: 'income' as const,
+        title: inc.source, sub: inc.notes || '—',
+        amount: inc.amount, date: inc.date,
+      })),
+      ...filteredExpenses.map((exp) => ({
+        id: exp.id, type: 'expense' as const,
+        title: exp.description, sub: exp.category,
+        amount: exp.amount, date: exp.date,
+      })),
+    ];
+    return combined.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6);
+  }, [filteredIncomes, filteredExpenses]);
+
+  const barData = [{ name: 'Period', Income: summary.totalIncome, Expenses: summary.totalExpenses }];
+
+  const pieData = React.useMemo(() => {
+    const totals: Record<string, number> = {};
+    filteredExpenses.forEach((e) => { totals[e.category] = (totals[e.category] || 0) + e.amount; });
+    return Object.entries(totals).map(([name, value]) => ({ name, value }));
+  }, [filteredExpenses]);
+
+  return (
+    <div className="space-y-6">
+      {/* Overview cards */}
+      <DashboardOverview />
+
+      {/* Quick actions row */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onOpenIncomeModal}
+          className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors"
+        >
+          <Plus className="w-3.5 h-3.5" /> Add Income
+        </button>
+        <button
+          onClick={onOpenExpenseModal}
+          className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-700 text-white text-xs font-medium rounded-lg transition-colors"
+        >
+          <Minus className="w-3.5 h-3.5" /> Add Expense
+        </button>
+      </div>
+
+      {/* Charts + recent */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Charts */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Bar chart */}
+          <div className="bg-white rounded-xl border border-slate-100 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-semibold text-slate-800">Income vs Expenses</p>
+              <Link to="/reports" className="text-xs text-slate-400 hover:text-slate-700 flex items-center gap-1 transition-colors">
+                See reports <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+            <div className="h-52">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={barData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+                  <XAxis dataKey="name" stroke="#cbd5e1" fontSize={11} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#cbd5e1" fontSize={11} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    formatter={(v: any) => [formatCurrency(Number(v)), '']}
+                    contentStyle={{ borderRadius: '10px', border: '1px solid #f1f5f9', fontSize: 12 }}
+                    cursor={{ fill: '#f8fafc' }}
+                  />
+                  <Bar dataKey="Income" fill="#10b981" radius={[6, 6, 0, 0]} maxBarSize={48} />
+                  <Bar dataKey="Expenses" fill="#f43f5e" radius={[6, 6, 0, 0]} maxBarSize={48} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Pie chart */}
+          <div className="bg-white rounded-xl border border-slate-100 p-5">
+            <p className="text-sm font-semibold text-slate-800 mb-4">Expense Breakdown</p>
+            {pieData.length > 0 ? (
+              <div className="h-52">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={48} outerRadius={72} paddingAngle={3} dataKey="value">
+                      {pieData.map((entry) => (
+                        <Cell key={entry.name} fill={CATEGORY_COLORS[entry.name] || '#94a3b8'} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(v: any) => [formatCurrency(Number(v)), '']} contentStyle={{ borderRadius: '10px', border: '1px solid #f1f5f9', fontSize: 12 }} />
+                    <Legend iconType="circle" iconSize={8} formatter={(v) => <span className="text-xs text-slate-600">{v}</span>} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="text-sm text-slate-400 text-center py-12">No expense data for this period.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Recent transactions */}
+        <div className="bg-white rounded-xl border border-slate-100 p-5 flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-semibold text-slate-800">Recent</p>
+            <Link to="/history" className="text-xs text-slate-400 hover:text-slate-700 transition-colors">All →</Link>
+          </div>
+
+          {recentTransactions.length > 0 ? (
+            <div className="space-y-1 flex-1">
+              {recentTransactions.map((tx) => (
+                <div key={tx.id} className="flex items-center justify-between py-2.5 border-b border-slate-50 last:border-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className={`p-1.5 rounded-lg shrink-0 ${tx.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}`}>
+                      {tx.type === 'income' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-slate-800 truncate">{tx.title}</p>
+                      <p className="text-[10px] text-slate-400">{formatDate(tx.date)}</p>
+                    </div>
+                  </div>
+                  <p className={`text-xs font-semibold shrink-0 ml-2 ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-700'}`}>
+                    {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400 text-center py-12 flex-1">No transactions yet.</p>
+          )}
+
+          <div className="mt-4 pt-4 border-t border-slate-50 flex gap-4">
+            <Link to="/income" className="text-xs text-emerald-600 hover:text-emerald-700 font-medium transition-colors">Incomes →</Link>
+            <Link to="/expenses" className="text-xs text-slate-600 hover:text-slate-800 font-medium transition-colors">Expenses →</Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
