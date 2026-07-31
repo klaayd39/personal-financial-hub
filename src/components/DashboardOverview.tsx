@@ -9,8 +9,6 @@ export const DashboardOverview: React.FC = () => {
     filter.month === -1 ? `${filter.year}` : `${MONTH_NAMES[filter.month]} ${filter.year}`;
 
   // Calculate salary for current filter
-  const isAllMonths = filter.month === -1;
-  const currentMonthSalary = summary.monthlySalary;
 
   // Annual salary total for selected year
   const annualSalary = salaries
