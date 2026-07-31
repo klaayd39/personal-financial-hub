@@ -347,7 +347,25 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
         // Create a new corresponding expense record for this paid bill
         const today = new Date();
-        const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        const targetYear = target.year !== undefined && target.year !== null
+          ? target.year
+          : filter.month !== -1
+          ? filter.year
+          : today.getFullYear();
+
+        const targetMonth = target.month !== undefined && target.month !== null
+          ? target.month
+          : filter.month !== -1
+          ? filter.month
+          : today.getMonth();
+
+        const daysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+        const targetDay = Math.min(Math.max(1, target.due_day || today.getDate()), daysInMonth);
+
+        const monthStr = String(targetMonth + 1).padStart(2, '0');
+        const dayStr = String(targetDay).padStart(2, '0');
+        const dateStr = `${targetYear}-${monthStr}-${dayStr}`;
+
         const expenseId = 'exp-bill-' + Date.now();
         const newExpense: Omit<ExpenseRecord, 'created_at'> = {
           id: expenseId,
