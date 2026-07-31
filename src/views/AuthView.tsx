@@ -56,8 +56,17 @@ export const AuthView: React.FC = () => {
 
         if (error) throw error;
 
-        if (data.user && data.session === null) {
-          setMessage('Account created! Please check your email for a confirmation link.');
+        // If email confirmation is disabled in Supabase, data.session exists & user logs in automatically.
+        // If email confirmation is enabled, attempt instant sign in with password so they aren't blocked if confirmation is disabled project-wide.
+        if (!data.session) {
+          const { error: signInErr } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (signInErr) {
+            setMessage('Account created successfully! You can now sign in.');
+            setIsSignUp(false);
+          }
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
