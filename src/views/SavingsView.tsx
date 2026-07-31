@@ -113,7 +113,7 @@ const SavingsModal: React.FC<SavingsModalProps> = ({ existing, onClose }) => {
               Amount (₱) <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">₱</span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm pointer-events-none select-none">₱</span>
               <input
                 type="number"
                 min="0.01"
@@ -123,7 +123,7 @@ const SavingsModal: React.FC<SavingsModalProps> = ({ existing, onClose }) => {
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => { setAmount(e.target.value); setError(''); }}
-                className="w-full pl-8 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:bg-white transition-colors"
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:bg-white transition-colors"
               />
             </div>
           </div>

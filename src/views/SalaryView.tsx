@@ -73,7 +73,7 @@ const SalaryModal: React.FC<SalaryModalProps> = ({
               Monthly Salary (₱) <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-base pointer-events-none select-none">
                 ₱
               </span>
               <input
@@ -85,7 +85,7 @@ const SalaryModal: React.FC<SalaryModalProps> = ({
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => { setAmount(e.target.value); setError(''); }}
-                className="input-base pl-8 text-lg font-bold"
+                className="input-base pl-9 text-base font-bold"
               />
             </div>
             {error && <p className="text-xs text-rose-500 mt-1">{error}</p>}

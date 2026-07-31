@@ -180,7 +180,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
               <span className="flex items-center gap-1.5"><DollarSign className="w-3 h-3" /> Amount (₱) <span className="text-rose-500">*</span></span>
             </label>
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₱</span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-base pointer-events-none select-none">₱</span>
               <input
                 id="expense-amount"
                 type="number"
@@ -189,7 +189,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => { setAmount(e.target.value); setErrors((prev) => ({ ...prev, amount: '' })); }}
-                className={`input-base pl-8 text-lg font-bold ${errors.amount ? 'border-rose-400 ring-2 ring-rose-400/20' : ''}`}
+                className={`input-base pl-9 text-base font-bold ${errors.amount ? 'border-rose-400 ring-2 ring-rose-400/20' : ''}`}
                 aria-invalid={Boolean(errors.amount)}
                 aria-describedby={errors.amount ? 'amount-error' : undefined}
               />

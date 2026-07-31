@@ -183,17 +183,17 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
                 Amount (₱) *
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-xs">₱</span>
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs pointer-events-none select-none">₱</span>
                 <input
                   id="bill-amount"
                   type="number"
                   step="0.01"
                   min="0.01"
                   required
-                  placeholder="e.g. 1499.00"
+                  placeholder="0.00"
                   value={amount}
                   onChange={(e) => { setAmount(e.target.value); setError(''); }}
-                  className="input-base pl-7 text-sm font-bold"
+                  className="input-base pl-9 text-sm font-bold"
                 />
               </div>
             </div>

@@ -122,7 +122,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
               Total Monthly Budget (₱)
             </label>
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-base pointer-events-none select-none">
                 ₱
               </span>
               <input
@@ -130,10 +130,10 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
                 step="0.01"
                 min="0.01"
                 required
-                placeholder="e.g. 10000.00"
+                placeholder="0.00"
                 value={totalAmount}
                 onChange={(e) => handleTotalChange(e.target.value)}
-                className="input-base pl-8 text-base font-bold"
+                className="input-base pl-9 text-base font-bold"
               />
             </div>
           </div>
@@ -147,16 +147,16 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
                   1st Half (1st–15th)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs pointer-events-none select-none">
                     ₱
                   </span>
                   <input
                     type="number"
                     step="0.01"
-                    placeholder="e.g. 5000"
+                    placeholder="0.00"
                     value={firstHalfAmount}
                     onChange={(e) => handleHalfChange(e.target.value, secondHalfAmount)}
-                    className="input-base pl-7 text-xs font-semibold"
+                    className="input-base pl-8 text-xs font-semibold"
                   />
                 </div>
               </div>
@@ -166,16 +166,16 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
                   2nd Half (16th–End)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs pointer-events-none select-none">
                     ₱
                   </span>
                   <input
                     type="number"
                     step="0.01"
-                    placeholder="e.g. 5000"
+                    placeholder="0.00"
                     value={secondHalfAmount}
                     onChange={(e) => handleHalfChange(firstHalfAmount, e.target.value)}
-                    className="input-base pl-7 text-xs font-semibold"
+                    className="input-base pl-8 text-xs font-semibold"
                   />
                 </div>
               </div>
