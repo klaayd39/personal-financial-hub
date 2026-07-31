@@ -173,9 +173,7 @@ export const SalaryView: React.FC = () => {
       <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-start gap-3">
         <Calendar className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
         <p className="text-xs text-slate-500 leading-relaxed">
-          Set a salary for each month you want to track. When a salary is set, the dashboard will
-          calculate <strong className="text-slate-700">Remaining Balance = Salary − Expenses</strong> for
-          that month. Leave months empty if salary isn't applicable.
+          Set a salary for each month you want to track. Leave months empty if salary isn't applicable.
         </p>
       </div>
 
