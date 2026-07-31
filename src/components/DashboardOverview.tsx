@@ -30,29 +30,11 @@ export const DashboardOverview: React.FC = () => {
       badge: hasSalary ? null : 'Not Set',
     },
     {
-      label: 'Total Income',
-      value: summary.totalIncome,
-      icon: <TrendingUp className="w-4 h-4" />,
-      color: 'text-emerald-600',
-      bg: 'bg-emerald-50',
-      extra: null as string | null,
-      badge: null as string | null,
-    },
-    {
       label: 'Total Expenses',
       value: summary.totalExpenses,
       icon: <TrendingDown className="w-4 h-4" />,
       color: 'text-rose-500',
       bg: 'bg-rose-50',
-      extra: null as string | null,
-      badge: null as string | null,
-    },
-    {
-      label: 'Remaining Balance',
-      value: summary.remainingBalance,
-      icon: <Wallet className="w-4 h-4" />,
-      color: summary.remainingBalance >= 0 ? 'text-slate-900' : 'text-rose-500',
-      bg: 'bg-slate-100',
       extra: null as string | null,
       badge: null as string | null,
     },
@@ -72,7 +54,7 @@ export const DashboardOverview: React.FC = () => {
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-400 font-medium">{period}</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {cards.map((card) => (
           <div key={card.label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50 hover-lift">
             <div className="flex items-center justify-between mb-3">

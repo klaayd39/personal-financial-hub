@@ -4,33 +4,22 @@ import { FinanceProvider } from './context/FinanceContext';
 import { Navbar } from './components/Navbar';
 import { ToastContainer } from './components/Toast';
 import { DashboardView } from './views/DashboardView';
-import { IncomeView } from './views/IncomeView';
 import { ExpensesView } from './views/ExpensesView';
 import { HistoryView } from './views/HistoryView';
 import { ReportsView } from './views/ReportsView';
 import { SalaryView } from './views/SalaryView';
 import { SavingsView } from './views/SavingsView';
 import { SettingsView } from './views/SettingsView';
-import { IncomeModal } from './components/IncomeModal';
 import { ExpenseModal } from './components/ExpenseModal';
 import type { IncomeRecord, ExpenseRecord } from './types/finance';
+import { useFinance } from './context/FinanceContext';
 
 const MainLayout: React.FC = () => {
-  const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
+  const { isLoading } = useFinance();
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
 
-  const [editingIncome, setEditingIncome] = useState<IncomeRecord | null>(null);
   const [editingExpense, setEditingExpense] = useState<ExpenseRecord | null>(null);
 
-  const handleOpenAddIncome = () => {
-    setEditingIncome(null);
-    setIsIncomeModalOpen(true);
-  };
-
-  const handleEditIncome = (record: IncomeRecord) => {
-    setEditingIncome(record);
-    setIsIncomeModalOpen(true);
-  };
 
   const handleOpenAddExpense = () => {
     setEditingExpense(null);
@@ -45,30 +34,28 @@ const MainLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased selection:bg-brand-100 selection:text-brand-900">
       <Navbar
-        onOpenIncomeModal={handleOpenAddIncome}
         onOpenExpenseModal={handleOpenAddExpense}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 page-enter">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 page-enter relative">
+        {isLoading ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-50/50 backdrop-blur-sm z-50">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-8 h-8 border-4 border-slate-200 border-t-emerald-600 rounded-full animate-spin"></div>
+              <p className="text-sm font-medium text-slate-500">Loading data...</p>
+            </div>
+          </div>
+        ) : null}
         <Routes>
           <Route
             path="/"
             element={
               <DashboardView
-                onOpenIncomeModal={handleOpenAddIncome}
                 onOpenExpenseModal={handleOpenAddExpense}
               />
             }
           />
-          <Route
-            path="/income"
-            element={
-              <IncomeView
-                onOpenAddModal={handleOpenAddIncome}
-                onEditIncome={handleEditIncome}
-              />
-            }
-          />
+
           <Route
             path="/expenses"
             element={
@@ -82,7 +69,6 @@ const MainLayout: React.FC = () => {
             path="/history"
             element={
               <HistoryView
-                onEditIncome={handleEditIncome}
                 onEditExpense={handleEditExpense}
               />
             }
@@ -100,12 +86,6 @@ const MainLayout: React.FC = () => {
           <span>100% local · no cloud · privacy-first</span>
         </div>
       </footer>
-
-      <IncomeModal
-        isOpen={isIncomeModalOpen}
-        onClose={() => setIsIncomeModalOpen(false)}
-        initialData={editingIncome}
-      />
 
       <ExpenseModal
         isOpen={isExpenseModalOpen}

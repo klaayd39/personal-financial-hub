@@ -20,18 +20,17 @@ import {
 } from 'lucide-react';
 
 interface NavbarProps {
-  onOpenIncomeModal: () => void;
   onOpenExpenseModal: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenIncomeModal, onOpenExpenseModal }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenExpenseModal }) => {
   const { filter, setFilter } = useFinance();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const YEARS = [2024, 2025, 2026, 2027, 2028];
 
   const navItems = [
     { to: '/', label: 'Dashboard', icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
-    { to: '/income', label: 'Income', icon: <TrendingUp className="w-3.5 h-3.5" /> },
+
     { to: '/expenses', label: 'Expenses', icon: <CreditCard className="w-3.5 h-3.5" /> },
     { to: '/history', label: 'History', icon: <History className="w-3.5 h-3.5" /> },
     { to: '/salary', label: 'Salary', icon: <Banknote className="w-3.5 h-3.5" /> },
@@ -107,16 +106,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenIncomeModal, onOpenExpense
               </select>
             </div>
 
-            {/* Income & Expense Quick Buttons */}
+            {/* Expense Quick Button */}
             <div className="flex items-center gap-1.5">
-              <button
-                onClick={onOpenIncomeModal}
-                className="flex items-center gap-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
-                title="Add Income"
-              >
-                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span className="hidden md:inline">Income</span>
-              </button>
               <button
                 onClick={onOpenExpenseModal}
                 className="flex items-center gap-1 px-3 py-2 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"

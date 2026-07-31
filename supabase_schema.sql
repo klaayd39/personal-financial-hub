@@ -48,7 +48,14 @@ ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.salaries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.savings ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public access to incomes" ON public.incomes;
 CREATE POLICY "Allow public access to incomes" ON public.incomes FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access to expenses" ON public.expenses;
 CREATE POLICY "Allow public access to expenses" ON public.expenses FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access to salaries" ON public.salaries;
 CREATE POLICY "Allow public access to salaries" ON public.salaries FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access to savings" ON public.savings;
 CREATE POLICY "Allow public access to savings" ON public.savings FOR ALL USING (true) WITH CHECK (true);

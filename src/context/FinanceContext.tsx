@@ -7,7 +7,8 @@ import type {
   FinancialSummary,
   FilterState,
 } from '../types/finance';
-import { storageService } from '../services/storageService';
+import { supabaseService } from '../services/supabaseService';
+import { storageService } from '../services/storageService'; // keep for export
 
 interface ToastMessage {
   id: string;
@@ -25,6 +26,7 @@ interface FinanceContextType {
   summary: FinancialSummary;
   filter: FilterState;
   toasts: ToastMessage[];
+  isLoading: boolean;
 
   // Filter
   setFilter: React.Dispatch<React.SetStateAction<FilterState>>;
@@ -64,6 +66,7 @@ const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const currentDate = new Date();
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // ── Filter State ──────────────────────────────────────────────────────
   const [filter, setFilter] = useState<FilterState>({
@@ -77,18 +80,37 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     sortBy: 'newest',
   });
 
-  // ── Records State (backed by LocalStorage) ────────────────────────────
-  const [incomes, setIncomes] = useState<IncomeRecord[]>(() => storageService.getIncomes());
-  const [expenses, setExpenses] = useState<ExpenseRecord[]>(() => storageService.getExpenses());
-  const [salaries, setSalaries] = useState<SalaryRecord[]>(() => storageService.getSalaries());
-  const [savingsRecords, setSavingsRecords] = useState<SavingsRecord[]>(
-    () => storageService.getSavingsRecords(),
-  );
+  // ── Records State (backed by Supabase) ────────────────────────────
+  const [incomes, setIncomes] = useState<IncomeRecord[]>([]);
+  const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
+  const [salaries, setSalaries] = useState<SalaryRecord[]>([]);
+  const [savingsRecords, setSavingsRecords] = useState<SavingsRecord[]>([]);
 
-  useEffect(() => { storageService.saveIncomes(incomes); }, [incomes]);
-  useEffect(() => { storageService.saveExpenses(expenses); }, [expenses]);
-  useEffect(() => { storageService.saveSalaries(salaries); }, [salaries]);
-  useEffect(() => { storageService.saveSavingsRecords(savingsRecords); }, [savingsRecords]);
+  useEffect(() => {
+    let isMounted = true;
+    const fetchInitialData = async () => {
+      try {
+        const [inc, exp, sal, sav] = await Promise.all([
+          supabaseService.fetchIncomes(),
+          supabaseService.fetchExpenses(),
+          supabaseService.fetchSalaries(),
+          supabaseService.fetchSavings()
+        ]);
+        if (isMounted) {
+          setIncomes(inc);
+          setExpenses(exp);
+          setSalaries(sal);
+          setSavingsRecords(sav);
+        }
+      } catch (err: any) {
+        showToast('Error loading data: ' + err.message, 'error');
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+    fetchInitialData();
+    return () => { isMounted = false; };
+  }, []);
 
   // ── Toast System ──────────────────────────────────────────────────────
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
@@ -100,74 +122,131 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // ── Income CRUD ───────────────────────────────────────────────────────
   const addIncome = async (record: Omit<IncomeRecord, 'id'>) => {
-    setIncomes((prev) => [{ ...record, id: 'inc-' + Date.now() }, ...prev]);
-    showToast('Income record added', 'success');
+    try {
+      // Remove local id generation, let DB or service handle it (wait, our schema needs id! UUID generation will be needed if we didn't specify default gen_random_uuid() in schema. Wait, schema is TEXT PRIMARY KEY. Let's pass the id.)
+      const newRecord = { ...record, id: 'inc-' + Date.now() };
+      const saved = await supabaseService.addIncome(newRecord);
+      setIncomes((prev) => [saved, ...prev]);
+      showToast('Income record added', 'success');
+    } catch (err: any) {
+      showToast('Failed to add income: ' + err.message, 'error');
+    }
   };
   const updateIncome = async (id: string, updated: Partial<IncomeRecord>) => {
-    setIncomes((prev) => prev.map((item) => (item.id === id ? { ...item, ...updated } : item)));
-    showToast('Income record updated', 'success');
+    try {
+      await supabaseService.updateIncome(id, updated);
+      setIncomes((prev) => prev.map((item) => (item.id === id ? { ...item, ...updated } : item)));
+      showToast('Income record updated', 'success');
+    } catch (err: any) {
+      showToast('Failed to update income: ' + err.message, 'error');
+    }
   };
   const deleteIncome = async (id: string) => {
-    setIncomes((prev) => prev.filter((item) => item.id !== id));
-    showToast('Income record removed', 'info');
+    try {
+      await supabaseService.deleteIncome(id);
+      setIncomes((prev) => prev.filter((item) => item.id !== id));
+      showToast('Income record removed', 'info');
+    } catch (err: any) {
+      showToast('Failed to delete income: ' + err.message, 'error');
+    }
   };
 
   // ── Expense CRUD ──────────────────────────────────────────────────────
   const addExpense = async (record: Omit<ExpenseRecord, 'id'>) => {
-    setExpenses((prev) => [{ ...record, id: 'exp-' + Date.now() }, ...prev]);
-    showToast('Expense record added', 'success');
+    try {
+      const newRecord = { ...record, id: 'exp-' + Date.now() };
+      const saved = await supabaseService.addExpense(newRecord);
+      setExpenses((prev) => [saved, ...prev]);
+      showToast('Expense record added', 'success');
+    } catch (err: any) {
+      showToast('Failed to add expense: ' + err.message, 'error');
+    }
   };
   const updateExpense = async (id: string, updated: Partial<ExpenseRecord>) => {
-    setExpenses((prev) => prev.map((item) => (item.id === id ? { ...item, ...updated } : item)));
-    showToast('Expense record updated', 'success');
+    try {
+      await supabaseService.updateExpense(id, updated);
+      setExpenses((prev) => prev.map((item) => (item.id === id ? { ...item, ...updated } : item)));
+      showToast('Expense record updated', 'success');
+    } catch (err: any) {
+      showToast('Failed to update expense: ' + err.message, 'error');
+    }
   };
   const deleteExpense = async (id: string) => {
-    setExpenses((prev) => prev.filter((item) => item.id !== id));
-    showToast('Expense record removed', 'info');
+    try {
+      await supabaseService.deleteExpense(id);
+      setExpenses((prev) => prev.filter((item) => item.id !== id));
+      showToast('Expense record removed', 'info');
+    } catch (err: any) {
+      showToast('Failed to delete expense: ' + err.message, 'error');
+    }
   };
 
   // ── Salary CRUD ───────────────────────────────────────────────────────
-  const setSalary = (month: number, year: number, amount: number, notes?: string) => {
+  const setSalary = async (month: number, year: number, amount: number, notes?: string) => {
     const id = `sal-${year}-${month}`;
     const updated_at = new Date().toISOString();
-    setSalaries((prev) => {
-      const exists = prev.some((s) => s.id === id);
-      if (exists) return prev.map((s) => (s.id === id ? { ...s, amount, notes, updated_at } : s));
-      return [...prev, { id, month, year, amount, notes, updated_at }];
-    });
-    showToast('Salary saved', 'success');
+    try {
+      const saved = await supabaseService.upsertSalary({ id, month, year, amount, notes, updated_at });
+      setSalaries((prev) => {
+        const exists = prev.some((s) => s.id === id);
+        if (exists) return prev.map((s) => (s.id === id ? saved : s));
+        return [...prev, saved];
+      });
+      showToast('Salary saved', 'success');
+    } catch (err: any) {
+      showToast('Failed to set salary: ' + err.message, 'error');
+    }
   };
-  const deleteSalary = (id: string) => {
-    setSalaries((prev) => prev.filter((s) => s.id !== id));
-    showToast('Salary record removed', 'info');
+  const deleteSalary = async (id: string) => {
+    try {
+      await supabaseService.deleteSalary(id);
+      setSalaries((prev) => prev.filter((s) => s.id !== id));
+      showToast('Salary record removed', 'info');
+    } catch (err: any) {
+      showToast('Failed to delete salary: ' + err.message, 'error');
+    }
   };
   const getSalaryForPeriod = (month: number, year: number) =>
     salaries.find((s) => s.month === month && s.year === year);
 
   // ── Savings CRUD (global ledger) ──────────────────────────────────────
-  const addSavingsEntry = (entry: Omit<SavingsRecord, 'id' | 'created_at'>) => {
-    const newEntry: SavingsRecord = {
-      ...entry,
-      id: 'sav-' + Date.now(),
-      created_at: new Date().toISOString(),
-    };
-    setSavingsRecords((prev) => [newEntry, ...prev]);
-    showToast('Savings entry added', 'success');
+  const addSavingsEntry = async (entry: Omit<SavingsRecord, 'id' | 'created_at'>) => {
+    try {
+      const newEntry = {
+        ...entry,
+        id: 'sav-' + Date.now(),
+      };
+      const saved = await supabaseService.addSavingsEntry(newEntry);
+      setSavingsRecords((prev) => [saved, ...prev]);
+      showToast('Savings entry added', 'success');
+    } catch (err: any) {
+      showToast('Failed to add savings entry: ' + err.message, 'error');
+    }
   };
 
-  const updateSavingsEntry = (
+  const updateSavingsEntry = async (
     id: string,
     updated: Partial<Omit<SavingsRecord, 'id' | 'created_at'>>,
   ) => {
-    setSavingsRecords((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, ...updated } : s)),
-    );
-    showToast('Savings entry updated', 'success');
+    try {
+      await supabaseService.updateSavingsEntry(id, updated);
+      setSavingsRecords((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, ...updated } : s)),
+      );
+      showToast('Savings entry updated', 'success');
+    } catch (err: any) {
+      showToast('Failed to update savings entry: ' + err.message, 'error');
+    }
   };
 
-  const deleteSavingsEntry = (id: string) => {
-    setSavingsRecords((prev) => prev.filter((s) => s.id !== id));
-    showToast('Savings entry removed', 'info');
+  const deleteSavingsEntry = async (id: string) => {
+    try {
+      await supabaseService.deleteSavingsEntry(id);
+      setSavingsRecords((prev) => prev.filter((s) => s.id !== id));
+      showToast('Savings entry removed', 'info');
+    } catch (err: any) {
+      showToast('Failed to delete savings entry: ' + err.message, 'error');
+    }
   };
 
   // ── Backup / Import / Export ──────────────────────────────────────────
@@ -176,29 +255,63 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     showToast('Data exported successfully', 'success');
   };
 
-  const importDataJSON = (jsonText: string) => {
+  const importDataJSON = async (jsonText: string) => {
     try {
       const backup = storageService.validateAndImportJSON(jsonText);
-      setIncomes(backup.incomes);
-      setExpenses(backup.expenses);
-      if (backup.salaries) setSalaries(backup.salaries);
-      if (backup.savings) setSavingsRecords(backup.savings);
+      
+      // We will perform naive bulk inserts for simplicity (skipping for now in UI if they prefer)
+      // Actually we'll just loop and insert to Supabase. This can be slow, but it works.
+      setIsLoading(true);
+      await Promise.all([
+        ...backup.incomes.map(i => supabaseService.addIncome(i)),
+        ...backup.expenses.map(e => supabaseService.addExpense(e)),
+        ...(backup.salaries || []).map(s => supabaseService.upsertSalary(s)),
+        ...(backup.savings || []).map(s => supabaseService.addSavingsEntry(s))
+      ]);
+      
+      // Re-fetch everything
+      const [inc, exp, sal, sav] = await Promise.all([
+        supabaseService.fetchIncomes(),
+        supabaseService.fetchExpenses(),
+        supabaseService.fetchSalaries(),
+        supabaseService.fetchSavings()
+      ]);
+      setIncomes(inc);
+      setExpenses(exp);
+      setSalaries(sal);
+      setSavingsRecords(sav);
+      
       showToast(
         `Imported ${backup.incomes.length} income${backup.incomes.length !== 1 ? 's' : ''} & ${backup.expenses.length} expense${backup.expenses.length !== 1 ? 's' : ''}`,
         'success',
       );
     } catch (err: any) {
       showToast('Import failed: ' + (err.message || 'Invalid JSON format'), 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const clearAllData = () => {
-    storageService.clearAllData();
-    setIncomes([]);
-    setExpenses([]);
-    setSalaries([]);
-    setSavingsRecords([]);
-    showToast('All financial records cleared', 'info');
+  const clearAllData = async () => {
+    setIsLoading(true);
+    try {
+      // Very crude way to delete all local state records from Supabase
+      await Promise.all([
+        ...incomes.map(i => supabaseService.deleteIncome(i.id)),
+        ...expenses.map(e => supabaseService.deleteExpense(e.id)),
+        ...salaries.map(s => supabaseService.deleteSalary(s.id)),
+        ...savingsRecords.map(s => supabaseService.deleteSavingsEntry(s.id))
+      ]);
+      setIncomes([]);
+      setExpenses([]);
+      setSalaries([]);
+      setSavingsRecords([]);
+      showToast('All financial records cleared', 'info');
+    } catch (err: any) {
+      showToast('Clear failed: ' + err.message, 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // ── Filtering ─────────────────────────────────────────────────────────
@@ -298,6 +411,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         summary,
         filter,
         toasts,
+        isLoading,
         setFilter,
         addIncome,
         updateIncome,

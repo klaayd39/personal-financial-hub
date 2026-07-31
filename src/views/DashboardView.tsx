@@ -10,7 +10,6 @@ import {
 } from 'recharts';
 
 interface DashboardViewProps {
-  onOpenIncomeModal: () => void;
   onOpenExpenseModal: () => void;
 }
 
@@ -26,7 +25,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   Miscellaneous: '#94a3b8',
 };
 
-export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal, onOpenExpenseModal }) => {
+export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenExpenseModal }) => {
   const { filteredIncomes, filteredExpenses, summary } = useFinance();
 
   const recentTransactions = React.useMemo(() => {
@@ -45,7 +44,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal,
     return combined.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6);
   }, [filteredIncomes, filteredExpenses]);
 
-  const barData = [{ name: 'Period', Income: summary.totalIncome, Expenses: summary.totalExpenses }];
+  const barData = [{ name: 'Period', Salary: summary.monthlySalary || 0, Expenses: summary.totalExpenses }];
 
   const pieData = React.useMemo(() => {
     const totals: Record<string, number> = {};
@@ -61,12 +60,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal,
       {/* Quick actions row */}
       <div className="flex items-center justify-end gap-3">
         <button
-          onClick={onOpenIncomeModal}
-          className="btn-primary py-2 px-3 text-xs"
-        >
-          <Plus className="w-3.5 h-3.5" /> Add Income
-        </button>
-        <button
           onClick={onOpenExpenseModal}
           className="btn-dark py-2 px-3 text-xs"
         >
@@ -81,7 +74,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal,
           {/* Bar chart */}
           <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm/50 hover-lift">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-semibold text-slate-800">Income vs Expenses</p>
+              <p className="text-sm font-semibold text-slate-800">Salary vs Expenses</p>
               <Link to="/reports" className="text-xs text-slate-400 hover:text-slate-700 flex items-center gap-1 transition-colors">
                 See reports <ArrowRight className="w-3 h-3" />
               </Link>
@@ -96,7 +89,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal,
                     contentStyle={{ borderRadius: '10px', border: '1px solid #f1f5f9', fontSize: 12 }}
                     cursor={{ fill: '#f8fafc' }}
                   />
-                  <Bar dataKey="Income" fill="#10b981" radius={[6, 6, 0, 0]} maxBarSize={48} />
+                  <Bar dataKey="Salary" fill="#10b981" radius={[6, 6, 0, 0]} maxBarSize={48} />
                   <Bar dataKey="Expenses" fill="#f43f5e" radius={[6, 6, 0, 0]} maxBarSize={48} />
                 </BarChart>
               </ResponsiveContainer>
@@ -157,7 +150,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenIncomeModal,
           )}
 
           <div className="mt-4 pt-4 border-t border-slate-50 flex gap-4">
-            <Link to="/income" className="text-xs text-emerald-600 hover:text-emerald-700 font-medium transition-colors">Incomes →</Link>
             <Link to="/expenses" className="text-xs text-slate-600 hover:text-slate-800 font-medium transition-colors">Expenses →</Link>
           </div>
         </div>
