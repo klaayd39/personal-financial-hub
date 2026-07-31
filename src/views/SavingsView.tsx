@@ -3,6 +3,7 @@ import { useFinance } from '../context/FinanceContext';
 import type { SavingsRecord } from '../types/finance';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { ConfirmModal } from '../components/ConfirmModal';
+import { SavingsVault3D } from '../components/3d/SavingsVault3D';
 import {
   PiggyBank, Plus, Edit2, Trash2, X, CheckCircle2,
   TrendingUp, TrendingDown, Info,
@@ -230,6 +231,9 @@ export const SavingsView: React.FC = () => {
           <Plus className="w-3.5 h-3.5" /> Add Entry
         </button>
       </div>
+
+      {/* 3D Savings Vault */}
+      <SavingsVault3D netSavings={netSavings} />
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

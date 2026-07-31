@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Wallet, Mail, Lock, LogIn, UserPlus, AlertCircle, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { AuthHero3D } from '../components/3d/AuthHero3D';
 
 export const AuthView: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -157,8 +158,12 @@ export const AuthView: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center px-4 py-12">
-      <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-2xl border border-slate-100 shadow-xl/5">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 lg:p-12">
+      <div className="max-w-md lg:max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        {/* 3D Hero Visual for Desktop */}
+        <AuthHero3D />
+
+        <div className="w-full space-y-6 bg-white p-8 sm:p-10 rounded-3xl border border-slate-100 shadow-xl/5">
         {/* Brand logo & header */}
         <div className="text-center">
           <div className="w-12 h-12 rounded-2xl bg-slate-900 mx-auto flex items-center justify-center shadow-lg shadow-slate-900/10 mb-4">
@@ -286,5 +291,6 @@ export const AuthView: React.FC = () => {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };

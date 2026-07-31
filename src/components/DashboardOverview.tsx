@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useFinance } from '../context/FinanceContext';
 import { formatCurrency, MONTH_NAMES } from '../utils/formatters';
 import { TrendingDown, PiggyBank, Banknote, Wallet, Calendar } from 'lucide-react';
+import { BudgetRing3D } from './3d/BudgetRing3D';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 12, scale: 0.97 },
@@ -122,11 +123,7 @@ export const DashboardOverview: React.FC = () => {
           }`}
         >
           <div className="flex items-center gap-3">
-            <div
-              className={`p-2 rounded-xl shrink-0 ${isOverBudget ? 'bg-rose-500 text-white' : 'bg-blue-600 text-white'}`}
-            >
-              <Calendar className="w-4 h-4" />
-            </div>
+            <BudgetRing3D usedPct={budgetUsedPct} isOverBudget={isOverBudget} />
             <div>
               <p className="text-xs font-bold">
                 {MONTH_NAMES[filter.month]} Budget: {formatCurrency(summary.totalExpenses)} /{' '}
