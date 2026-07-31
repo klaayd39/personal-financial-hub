@@ -193,7 +193,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
                   placeholder="0.00"
                   value={amount}
                   onChange={(e) => { setAmount(e.target.value); setError(''); }}
-                  className="input-base pl-9 text-sm font-bold"
+                  className="input-base !pl-9 text-sm font-bold"
                 />
               </div>
             </div>

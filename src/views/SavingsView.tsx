@@ -123,7 +123,7 @@ const SavingsModal: React.FC<SavingsModalProps> = ({ existing, onClose }) => {
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => { setAmount(e.target.value); setError(''); }}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:bg-white transition-colors"
+                className="w-full !pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:bg-white transition-colors"
               />
             </div>
           </div>

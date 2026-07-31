@@ -133,7 +133,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
                 placeholder="0.00"
                 value={totalAmount}
                 onChange={(e) => handleTotalChange(e.target.value)}
-                className="input-base pl-9 text-base font-bold"
+                className="input-base !pl-10 text-base font-bold"
               />
             </div>
           </div>
@@ -156,7 +156,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
                     placeholder="0.00"
                     value={firstHalfAmount}
                     onChange={(e) => handleHalfChange(e.target.value, secondHalfAmount)}
-                    className="input-base pl-8 text-xs font-semibold"
+                    className="input-base !pl-8 text-xs font-semibold"
                   />
                 </div>
               </div>
@@ -175,7 +175,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
                     placeholder="0.00"
                     value={secondHalfAmount}
                     onChange={(e) => handleHalfChange(firstHalfAmount, e.target.value)}
-                    className="input-base pl-8 text-xs font-semibold"
+                    className="input-base !pl-8 text-xs font-semibold"
                   />
                 </div>
               </div>

@@ -85,7 +85,7 @@ const SalaryModal: React.FC<SalaryModalProps> = ({
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => { setAmount(e.target.value); setError(''); }}
-                className="input-base pl-9 text-base font-bold"
+                className="input-base !pl-10 text-base font-bold"
               />
             </div>
             {error && <p className="text-xs text-rose-500 mt-1">{error}</p>}

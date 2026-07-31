@@ -189,7 +189,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => { setAmount(e.target.value); setErrors((prev) => ({ ...prev, amount: '' })); }}
-                className={`input-base pl-9 text-base font-bold ${errors.amount ? 'border-rose-400 ring-2 ring-rose-400/20' : ''}`}
+                className={`input-base !pl-10 text-base font-bold ${errors.amount ? 'border-rose-400 ring-2 ring-rose-400/20' : ''}`}
                 aria-invalid={Boolean(errors.amount)}
                 aria-describedby={errors.amount ? 'amount-error' : undefined}
               />
