@@ -42,11 +42,21 @@ CREATE TABLE IF NOT EXISTS public.savings (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 5. Budgets Table
+CREATE TABLE IF NOT EXISTS public.budgets (
+  id TEXT PRIMARY KEY,
+  month INT NOT NULL,
+  year INT NOT NULL,
+  amount NUMERIC NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Enable Row Level Security (RLS) & add open policy for standard access
 ALTER TABLE public.incomes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.salaries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.savings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.budgets ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Allow public access to incomes" ON public.incomes;
 CREATE POLICY "Allow public access to incomes" ON public.incomes FOR ALL USING (true) WITH CHECK (true);
@@ -59,3 +69,6 @@ CREATE POLICY "Allow public access to salaries" ON public.salaries FOR ALL USING
 
 DROP POLICY IF EXISTS "Allow public access to savings" ON public.savings;
 CREATE POLICY "Allow public access to savings" ON public.savings FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access to budgets" ON public.budgets;
+CREATE POLICY "Allow public access to budgets" ON public.budgets FOR ALL USING (true) WITH CHECK (true);

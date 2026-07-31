@@ -28,6 +28,15 @@ export interface SalaryRecord {
   updated_at: string; // ISO timestamp
 }
 
+/** Monthly budget limit — one per calendar month/year. */
+export interface BudgetRecord {
+  id: string;        // e.g. "bud-2026-6"
+  month: number;     // 0 = January … 11 = December
+  year: number;
+  amount: number;
+  updated_at: string; // ISO timestamp
+}
+
 /** A single savings ledger entry (global, not per-month). */
 export interface SavingsRecord {
   id: string;

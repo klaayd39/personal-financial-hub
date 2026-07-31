@@ -1,10 +1,10 @@
 import React from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { formatCurrency, MONTH_NAMES } from '../utils/formatters';
-import { TrendingDown, PiggyBank, Banknote, Wallet } from 'lucide-react';
+import { TrendingDown, PiggyBank, Banknote, Wallet, Calendar } from 'lucide-react';
 
 export const DashboardOverview: React.FC = () => {
-  const { summary, filter, salaries } = useFinance();
+  const { summary, filter, salaries, getBudgetForPeriod } = useFinance();
   const period =
     filter.month === -1 ? `${filter.year}` : `${MONTH_NAMES[filter.month]} ${filter.year}`;
 
@@ -17,6 +17,11 @@ export const DashboardOverview: React.FC = () => {
   const selectedMonthSalary = filter.month !== -1
     ? salaries.find((s) => s.month === filter.month && s.year === filter.year)?.amount ?? 0
     : totalYearlySalary;
+
+  const activeBudget = filter.month !== -1 ? getBudgetForPeriod(filter.month, filter.year) : undefined;
+  const budgetLimit = activeBudget?.amount ?? 0;
+  const budgetUsedPct = budgetLimit > 0 ? Math.min((summary.totalExpenses / budgetLimit) * 100, 100) : 0;
+  const isOverBudget = budgetLimit > 0 && summary.totalExpenses > budgetLimit;
 
   const remainingBalance = selectedMonthSalary - summary.totalExpenses;
   const hasSalary = totalYearlySalary > 0;
@@ -44,11 +49,23 @@ export const DashboardOverview: React.FC = () => {
           },
         ]
       : []),
+    ...(!isAllMonths && budgetLimit > 0
+      ? [
+          {
+            label: `Budget Limit`,
+            value: budgetLimit,
+            icon: <Calendar className="w-4 h-4" />,
+            color: isOverBudget ? 'text-rose-600' : 'text-amber-600',
+            bg: isOverBudget ? 'bg-rose-50' : 'bg-amber-50',
+            badge: isOverBudget ? 'Over Limit' : `${budgetUsedPct.toFixed(0)}% Used`,
+          },
+        ]
+      : []),
     {
       label: 'Total Expenses',
       value: summary.totalExpenses,
       icon: <TrendingDown className="w-4 h-4" />,
-      color: 'text-rose-500',
+      color: isOverBudget ? 'text-rose-600 font-bold' : 'text-rose-500',
       bg: 'bg-rose-50',
       badge: null as string | null,
     },
@@ -75,11 +92,45 @@ export const DashboardOverview: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-1 mb-6">
+    <div className="space-y-3 mb-6">
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-400 font-medium">{period}</p>
       </div>
-      <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAllMonths ? 'lg:grid-cols-3' : 'lg:grid-cols-5'} gap-4`}>
+
+      {/* Budget Progress Notification Banner on Dashboard if active */}
+      {!isAllMonths && budgetLimit > 0 && (
+        <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+          isOverBudget ? 'bg-rose-500/10 border-rose-200 text-rose-900' : 'bg-amber-500/10 border-amber-200 text-amber-900'
+        }`}>
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-xl shrink-0 ${isOverBudget ? 'bg-rose-500 text-white' : 'bg-amber-500 text-white'}`}>
+              <Calendar className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold">
+                {MONTH_NAMES[filter.month]} Budget: {formatCurrency(summary.totalExpenses)} / {formatCurrency(budgetLimit)}
+              </p>
+              <p className="text-[11px] opacity-80">
+                {isOverBudget
+                  ? `You have exceeded your monthly budget by ${formatCurrency(summary.totalExpenses - budgetLimit)}!`
+                  : `${formatCurrency(budgetLimit - summary.totalExpenses)} remaining before reaching limit.`}
+              </p>
+            </div>
+          </div>
+
+          <div className="w-full sm:w-48 space-y-1">
+            <div className="w-full h-2 bg-white/60 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${isOverBudget ? 'bg-rose-600' : 'bg-amber-500'}`}
+                style={{ width: `${budgetUsedPct}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-right font-bold">{budgetUsedPct.toFixed(0)}% Used</p>
+          </div>
+        </div>
+      )}
+
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAllMonths ? 'lg:grid-cols-3' : 'lg:grid-cols-4 xl:grid-cols-6'} gap-3`}>
         {cards.map((card) => (
           <div key={card.label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm/50 hover-lift">
             <div className="flex items-center justify-between mb-3">

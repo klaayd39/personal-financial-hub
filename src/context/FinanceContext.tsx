@@ -4,6 +4,7 @@ import type {
   ExpenseRecord,
   SalaryRecord,
   SavingsRecord,
+  BudgetRecord,
   FinancialSummary,
   FilterState,
 } from '../types/finance';
@@ -21,6 +22,7 @@ interface FinanceContextType {
   expenses: ExpenseRecord[];
   salaries: SalaryRecord[];
   savingsRecords: SavingsRecord[];
+  budgets: BudgetRecord[];
   filteredIncomes: IncomeRecord[];
   filteredExpenses: ExpenseRecord[];
   summary: FinancialSummary;
@@ -42,14 +44,19 @@ interface FinanceContextType {
   deleteExpense: (id: string) => Promise<void>;
 
   // Salary CRUD
-  setSalary: (month: number, year: number, amount: number, notes?: string) => void;
-  deleteSalary: (id: string) => void;
+  setSalary: (month: number, year: number, amount: number, notes?: string) => Promise<void>;
+  deleteSalary: (id: string) => Promise<void>;
   getSalaryForPeriod: (month: number, year: number) => SalaryRecord | undefined;
 
+  // Budget CRUD
+  setBudget: (month: number, year: number, amount: number) => Promise<void>;
+  deleteBudget: (id: string) => Promise<void>;
+  getBudgetForPeriod: (month: number, year: number) => BudgetRecord | undefined;
+
   // Savings CRUD (global ledger entries)
-  addSavingsEntry: (entry: Omit<SavingsRecord, 'id' | 'created_at'>) => void;
-  updateSavingsEntry: (id: string, entry: Partial<Omit<SavingsRecord, 'id' | 'created_at'>>) => void;
-  deleteSavingsEntry: (id: string) => void;
+  addSavingsEntry: (entry: Omit<SavingsRecord, 'id' | 'created_at'>) => Promise<void>;
+  updateSavingsEntry: (id: string, entry: Partial<Omit<SavingsRecord, 'id' | 'created_at'>>) => Promise<void>;
+  deleteSavingsEntry: (id: string) => Promise<void>;
 
   // Data management
   exportDataJSON: () => void;
@@ -85,22 +92,25 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [salaries, setSalaries] = useState<SalaryRecord[]>([]);
   const [savingsRecords, setSavingsRecords] = useState<SavingsRecord[]>([]);
+  const [budgets, setBudgets] = useState<BudgetRecord[]>([]);
 
   useEffect(() => {
     let isMounted = true;
     const fetchInitialData = async () => {
       try {
-        const [inc, exp, sal, sav] = await Promise.all([
+        const [inc, exp, sal, sav, bud] = await Promise.all([
           supabaseService.fetchIncomes(),
           supabaseService.fetchExpenses(),
           supabaseService.fetchSalaries(),
-          supabaseService.fetchSavings()
+          supabaseService.fetchSavings(),
+          supabaseService.fetchBudgets(),
         ]);
         if (isMounted) {
           setIncomes(inc);
           setExpenses(exp);
           setSalaries(sal);
           setSavingsRecords(sav);
+          setBudgets(bud);
         }
       } catch (err: any) {
         showToast('Error loading data: ' + err.message, 'error');
@@ -208,6 +218,34 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
   const getSalaryForPeriod = (month: number, year: number) =>
     salaries.find((s) => s.month === month && s.year === year);
+
+  // ── Budget CRUD ───────────────────────────────────────────────────────
+  const setBudget = async (month: number, year: number, amount: number) => {
+    const id = `bud-${year}-${month}`;
+    const updated_at = new Date().toISOString();
+    try {
+      const saved = await supabaseService.upsertBudget({ id, month, year, amount, updated_at });
+      setBudgets((prev) => {
+        const exists = prev.some((b) => b.id === id);
+        if (exists) return prev.map((b) => (b.id === id ? saved : b));
+        return [...prev, saved];
+      });
+      showToast('Monthly budget saved', 'success');
+    } catch (err: any) {
+      showToast('Failed to set budget: ' + err.message, 'error');
+    }
+  };
+  const deleteBudget = async (id: string) => {
+    try {
+      await supabaseService.deleteBudget(id);
+      setBudgets((prev) => prev.filter((b) => b.id !== id));
+      showToast('Budget record removed', 'info');
+    } catch (err: any) {
+      showToast('Failed to delete budget: ' + err.message, 'error');
+    }
+  };
+  const getBudgetForPeriod = (month: number, year: number) =>
+    budgets.find((b) => b.month === month && b.year === year);
 
   // ── Savings CRUD (global ledger) ──────────────────────────────────────
   const addSavingsEntry = async (entry: Omit<SavingsRecord, 'id' | 'created_at'>) => {
@@ -404,6 +442,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         expenses,
         salaries,
         savingsRecords,
+        budgets,
         filteredIncomes,
         filteredExpenses,
         summary,
@@ -420,6 +459,9 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setSalary,
         deleteSalary,
         getSalaryForPeriod,
+        setBudget,
+        deleteBudget,
+        getBudgetForPeriod,
         addSavingsEntry,
         updateSavingsEntry,
         deleteSavingsEntry,

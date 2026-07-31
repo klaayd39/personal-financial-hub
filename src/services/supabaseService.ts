@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { IncomeRecord, ExpenseRecord, SalaryRecord, SavingsRecord } from '../types/finance';
+import type { IncomeRecord, ExpenseRecord, SalaryRecord, SavingsRecord, BudgetRecord } from '../types/finance';
 
 export const supabaseService = {
   // ── Incomes ──────────────────────────────────────────────────────────
@@ -103,6 +103,28 @@ export const supabaseService = {
   async deleteSavingsEntry(id: string): Promise<void> {
     if (!supabase) throw new Error('Supabase not configured');
     const { error } = await supabase.from('savings').delete().eq('id', id);
+    if (error) throw error;
+  },
+
+  // ── Budgets ──────────────────────────────────────────────────────────
+  async fetchBudgets(): Promise<BudgetRecord[]> {
+    if (!supabase) return [];
+    const { data, error } = await supabase.from('budgets').select('*');
+    if (error) {
+      console.error('Error fetching budgets:', error);
+      throw error;
+    }
+    return data as BudgetRecord[];
+  },
+  async upsertBudget(record: BudgetRecord): Promise<BudgetRecord> {
+    if (!supabase) throw new Error('Supabase not configured');
+    const { data, error } = await supabase.from('budgets').upsert([record], { onConflict: 'id' }).select().single();
+    if (error) throw error;
+    return data as BudgetRecord;
+  },
+  async deleteBudget(id: string): Promise<void> {
+    if (!supabase) throw new Error('Supabase not configured');
+    const { error } = await supabase.from('budgets').delete().eq('id', id);
     if (error) throw error;
   }
 };
