@@ -355,7 +355,9 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
           date: dateStr,
           category: 'Bills' as const,
           payment_method: 'Bank Transfer' as const,
-          description: `Bill Payment: ${target.name}`,
+          description: target.notes
+            ? `Bill Payment: ${target.name} (${target.notes})`
+            : `Bill Payment: ${target.name}`,
           notes: target.notes
             ? `[Ref ID: ${target.id}] ${target.notes}`
             : `[Ref ID: ${target.id}] Auto-generated bill payment`,

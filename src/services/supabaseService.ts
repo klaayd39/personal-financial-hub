@@ -41,13 +41,15 @@ export const supabaseService = {
   },
   async addExpense(record: Omit<ExpenseRecord, 'id' | 'created_at'>): Promise<ExpenseRecord> {
     if (!supabase) throw new Error('Supabase not configured');
-    const { data, error } = await supabase.from('expenses').insert([record]).select().single();
+    const { notes, ...dbRecord } = record as any;
+    const { data, error } = await supabase.from('expenses').insert([dbRecord]).select().single();
     if (error) throw error;
-    return data as ExpenseRecord;
+    return { ...data, notes } as ExpenseRecord;
   },
   async updateExpense(id: string, record: Partial<ExpenseRecord>): Promise<void> {
     if (!supabase) throw new Error('Supabase not configured');
-    const { error } = await supabase.from('expenses').update(record).eq('id', id);
+    const { notes, ...dbRecord } = record as any;
+    const { error } = await supabase.from('expenses').update(dbRecord).eq('id', id);
     if (error) throw error;
   },
   async deleteExpense(id: string): Promise<void> {
