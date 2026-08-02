@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { useFinance } from '../context/FinanceContext';
 import type { BillRecord, ExpenseRecord } from '../types/finance';
 import { formatCurrency, formatDate } from '../utils/formatters';
@@ -10,7 +9,7 @@ import { AnimatedModal } from '../components/AnimatedModal';
 import { AnimatedList, AnimatedListItem } from '../components/AnimatedComponents';
 import {
   Plus, Edit2, Trash2, X, CheckCircle2, Circle,
-  Calendar, AlertTriangle, Receipt, Zap, ExternalLink,
+  Calendar, AlertTriangle, Receipt, Zap, Download, Search, AlertCircle, Clock
 } from 'lucide-react';
 
 interface BillModalProps {
@@ -23,6 +22,26 @@ const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
+
+type BillCategory = 'Utilities' | 'Subscriptions' | 'Rent' | 'Loans' | 'Insurance' | 'Other';
+
+const BILL_CATEGORIES: { label: BillCategory; emoji: string }[] = [
+  { label: 'Utilities', emoji: '⚡' },
+  { label: 'Subscriptions', emoji: '💳' },
+  { label: 'Rent', emoji: '🏠' },
+  { label: 'Loans', emoji: '🏦' },
+  { label: 'Insurance', emoji: '🛡️' },
+  { label: 'Other', emoji: '📦' },
+];
+
+const CATEGORY_EMOJI: Record<string, string> = {
+  Utilities: '⚡',
+  Subscriptions: '💳',
+  Rent: '🏠',
+  Loans: '🏦',
+  Insurance: '🛡️',
+  Other: '📦',
+};
 
 const fieldVariants: Variants = {
   hidden: { opacity: 0, y: 6 },
@@ -38,6 +57,9 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
   const [name, setName] = useState(initialData?.name ?? '');
   const [amount, setAmount] = useState(initialData?.amount.toString() ?? '');
   const [dueDay, setDueDay] = useState(initialData?.due_day.toString() ?? '1');
+  const [category, setCategory] = useState<BillCategory>(
+    (initialData?.category as BillCategory) ?? 'Utilities'
+  );
   const [monthOption, setMonthOption] = useState<string>(
     initialData?.month !== undefined && initialData?.month !== null
       ? initialData.month.toString()
@@ -58,6 +80,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
       setName(initialData?.name ?? '');
       setAmount(initialData?.amount.toString() ?? '');
       setDueDay(initialData?.due_day.toString() ?? '1');
+      setCategory((initialData?.category as BillCategory) ?? 'Utilities');
       setMonthOption(
         initialData?.month !== undefined && initialData?.month !== null
           ? initialData.month.toString()
@@ -98,6 +121,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           name: name.trim(),
           amount: parsedAmount,
           due_day: parsedDay,
+          category,
           month: targetMonth,
           year: targetYear,
           billing_cycle: billingCycle,
@@ -108,6 +132,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           name: name.trim(),
           amount: parsedAmount,
           due_day: parsedDay,
+          category,
           month: targetMonth,
           year: targetYear,
           billing_cycle: billingCycle,
@@ -176,8 +201,32 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
             />
           </motion.div>
 
+          {/* Category selection */}
+          <motion.div custom={1} variants={fieldVariants} initial="hidden" animate="visible">
+            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+              Category
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {BILL_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.label}
+                  type="button"
+                  onClick={() => setCategory(cat.label)}
+                  className={`py-1.5 px-2 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition-all ${
+                    category === cat.label
+                      ? 'bg-blue-50 border-blue-300 text-blue-700 ring-2 ring-blue-500/20 font-semibold'
+                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  <span>{cat.emoji}</span>
+                  <span className="truncate">{cat.label}</span>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
           {/* Amount & Due Day */}
-          <motion.div custom={1} variants={fieldVariants} initial="hidden" animate="visible" className="grid grid-cols-2 gap-3">
+          <motion.div custom={2} variants={fieldVariants} initial="hidden" animate="visible" className="grid grid-cols-2 gap-3">
             <div>
               <label htmlFor="bill-amount" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
                 Amount (₱) *
@@ -217,7 +266,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           </motion.div>
 
           {/* Month & Year */}
-          <motion.div custom={2} variants={fieldVariants} initial="hidden" animate="visible" className="grid grid-cols-2 gap-3">
+          <motion.div custom={3} variants={fieldVariants} initial="hidden" animate="visible" className="grid grid-cols-2 gap-3">
             <div>
               <label htmlFor="bill-month" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
                 Bill Month
@@ -254,7 +303,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           </motion.div>
 
           {/* Billing Cycle */}
-          <motion.div custom={3} variants={fieldVariants} initial="hidden" animate="visible">
+          <motion.div custom={4} variants={fieldVariants} initial="hidden" animate="visible">
             <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
               Billing Cycle
             </label>
@@ -278,7 +327,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           </motion.div>
 
           {/* Notes */}
-          <motion.div custom={4} variants={fieldVariants} initial="hidden" animate="visible">
+          <motion.div custom={5} variants={fieldVariants} initial="hidden" animate="visible">
             <label htmlFor="bill-notes" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
               Notes <span className="font-normal text-slate-400">(Optional)</span>
             </label>
@@ -320,6 +369,8 @@ export const BillsView: React.FC = () => {
   const [editingBill, setEditingBill] = useState<BillRecord | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'pending' | 'paid' | 'overdue'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedLinkedExpense, setSelectedLinkedExpense] = useState<{
     bill: BillRecord;
     expense?: ExpenseRecord;
@@ -330,6 +381,7 @@ export const BillsView: React.FC = () => {
   const totalMonthlyBills = bills.reduce((sum, b) => sum + b.amount, 0);
   const paidTotal = bills.filter((b) => b.is_paid).reduce((sum, b) => sum + b.amount, 0);
   const unpaidTotal = totalMonthlyBills - paidTotal;
+  const overdueCount = bills.filter((b) => !b.is_paid && b.due_day < todayDay).length;
 
   const handleOpenAdd = () => {
     setEditingBill(null);
@@ -349,6 +401,50 @@ export const BillsView: React.FC = () => {
       setTogglingId(null);
     }
   };
+
+  const handleExportCSV = () => {
+    if (bills.length === 0) return;
+    const headers = ['Bill Name', 'Category', 'Due Day', 'Amount (PHP)', 'Status', 'Billing Cycle', 'Notes'];
+    const rows = bills.map((b) => [
+      `"${b.name.replace(/"/g, '""')}"`,
+      `"${b.category || 'Uncategorized'}"`,
+      b.due_day,
+      b.amount.toFixed(2),
+      b.is_paid ? 'Paid' : (b.due_day < todayDay ? 'Overdue' : 'Pending'),
+      b.billing_cycle,
+      `"${(b.notes || '').replace(/"/g, '""')}"`,
+    ]);
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `Recurring_Bills_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Filtered Bills
+  const filteredBills = useMemo(() => {
+    return bills.filter((b) => {
+      const isPastDue = !b.is_paid && b.due_day < todayDay;
+      const matchesFilter =
+        activeFilter === 'all' ||
+        (activeFilter === 'paid' && b.is_paid) ||
+        (activeFilter === 'pending' && !b.is_paid) ||
+        (activeFilter === 'overdue' && isPastDue);
+
+      const matchesSearch =
+        !searchQuery ||
+        b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (b.category && b.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (b.notes && b.notes.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      return matchesFilter && matchesSearch;
+    });
+  }, [bills, activeFilter, searchQuery, todayDay]);
 
   const summaryCards = [
     {
@@ -373,11 +469,11 @@ export const BillsView: React.FC = () => {
     {
       label: 'Unpaid Remaining',
       value: unpaidTotal,
-      color: 'text-rose-600',
-      sub: `${bills.filter((b) => !b.is_paid).length} pending`,
+      color: overdueCount > 0 ? 'text-rose-600' : 'text-amber-600',
+      sub: overdueCount > 0 ? `${overdueCount} overdue · ${bills.filter((b) => !b.is_paid).length} pending` : `${bills.filter((b) => !b.is_paid).length} pending`,
       icon: <Zap className="w-4 h-4" />,
-      bg: 'bg-rose-50',
-      iconColor: 'text-rose-500',
+      bg: overdueCount > 0 ? 'bg-rose-50' : 'bg-amber-50',
+      iconColor: overdueCount > 0 ? 'text-rose-500' : 'text-amber-500',
     },
   ];
 
@@ -396,14 +492,25 @@ export const BillsView: React.FC = () => {
             Track monthly subscriptions, utilities, and scheduled payments.
           </p>
         </div>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={handleOpenAdd}
-          className="btn-primary gap-1.5 self-start sm:self-auto text-xs py-2"
-        >
-          <Plus className="w-4 h-4" />
-          Add Bill
-        </motion.button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            onClick={handleExportCSV}
+            disabled={bills.length === 0}
+            className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors disabled:opacity-40"
+            title="Export Bills CSV"
+          >
+            <Download className="w-3.5 h-3.5" /> Export CSV
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={handleOpenAdd}
+            className="btn-primary gap-1.5 text-xs py-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add Bill
+          </motion.button>
+        </div>
       </motion.div>
 
       {/* Summary Cards */}
@@ -443,6 +550,55 @@ export const BillsView: React.FC = () => {
         ))}
       </div>
 
+      {/* Filter Tabs & Search Toolbar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-2.5 rounded-2xl border border-slate-100 shadow-sm">
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+          {[
+            { id: 'all', label: 'All Bills', count: bills.length },
+            { id: 'pending', label: 'Pending', count: bills.filter((b) => !b.is_paid).length },
+            { id: 'overdue', label: 'Overdue', count: overdueCount, alert: overdueCount > 0 },
+            { id: 'paid', label: 'Paid', count: bills.filter((b) => b.is_paid).length },
+          ].map((tab) => (
+            <motion.button
+              key={tab.id}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setActiveFilter(tab.id as any)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                activeFilter === tab.id
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+              }`}
+            >
+              <span>{tab.label}</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  tab.alert
+                    ? 'bg-rose-500 text-white animate-pulse'
+                    : activeFilter === tab.id
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-200 text-slate-600'
+                }`}
+              >
+                {tab.count}
+              </span>
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Search Input */}
+        <div className="relative min-w-[200px]">
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search bills..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+          />
+        </div>
+      </div>
+
       {/* Bills List */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -450,11 +606,14 @@ export const BillsView: React.FC = () => {
         transition={{ delay: 0.3, duration: 0.3 }}
         className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden"
       >
-        {bills.length > 0 ? (
+        {filteredBills.length > 0 ? (
           <AnimatedList className="divide-y divide-slate-100">
-            {bills.map((bill) => {
-              const isDueSoon = !bill.is_paid && bill.due_day >= todayDay && bill.due_day <= todayDay + 5;
+            {filteredBills.map((bill) => {
+              const daysDiff = bill.due_day - todayDay;
+              const isDueToday = !bill.is_paid && bill.due_day === todayDay;
+              const isDueSoon = !bill.is_paid && daysDiff > 0 && daysDiff <= 5;
               const isPastDue = !bill.is_paid && bill.due_day < todayDay;
+              const daysOverdue = Math.abs(daysDiff);
               const isToggling = togglingId === bill.id;
 
               return (
@@ -462,9 +621,11 @@ export const BillsView: React.FC = () => {
                   key={bill.id}
                   className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors border-l-4 ${
                     bill.is_paid
-                      ? 'bg-emerald-50/30 border-l-emerald-400'
+                      ? 'bg-emerald-50/20 border-l-emerald-400'
                       : isPastDue
-                      ? 'bg-rose-50/30 border-l-rose-400'
+                      ? 'bg-rose-50/40 border-l-rose-500'
+                      : isDueToday
+                      ? 'bg-amber-50/50 border-l-amber-500'
                       : isDueSoon
                       ? 'bg-amber-50/30 border-l-amber-400'
                       : 'hover:bg-slate-50/70 border-l-blue-300'
@@ -477,9 +638,11 @@ export const BillsView: React.FC = () => {
                       whileTap={{ scale: 0.8 }}
                       animate={isToggling ? { rotate: 360 } : {}}
                       transition={isToggling ? { duration: 0.5, repeat: Infinity, ease: 'linear' } : {}}
-                      className={`p-1 rounded-full transition-colors shrink-0 ${
+                      className={`p-1.5 rounded-full transition-colors shrink-0 ${
                         bill.is_paid
-                          ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
+                          ? 'text-emerald-600 bg-emerald-100 hover:bg-emerald-200'
+                          : isPastDue
+                          ? 'text-rose-500 bg-rose-100 hover:bg-rose-200'
                           : 'text-slate-300 hover:text-emerald-600 hover:bg-emerald-50'
                       } disabled:cursor-not-allowed`}
                       title={bill.is_paid ? 'Mark as Unpaid' : 'Mark as Paid'}
@@ -494,6 +657,11 @@ export const BillsView: React.FC = () => {
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
+                        {/* Category Emoji */}
+                        <span className="text-base leading-none">
+                          {CATEGORY_EMOJI[bill.category || 'Other'] || '📦'}
+                        </span>
+
                         <h4
                           className={`text-sm font-semibold truncate ${
                             bill.is_paid ? 'line-through text-slate-400' : 'text-slate-800'
@@ -501,24 +669,48 @@ export const BillsView: React.FC = () => {
                         >
                           {bill.name}
                         </h4>
+
+                        {/* Category Chip */}
+                        {bill.category && (
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+                            {bill.category}
+                          </span>
+                        )}
+
                         <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
                           {bill.month !== undefined && bill.month !== null
                             ? `${MONTH_NAMES[bill.month]} ${bill.year || ''}`
                             : 'Every Month'}
                         </span>
-                        <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                          Due day {bill.due_day}
-                        </span>
-                        {isPastDue && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">
-                            Past Due
+
+                        {/* Relative Due Date Badges */}
+                        {bill.is_paid ? (
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 inline-flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            Paid
+                          </span>
+                        ) : isPastDue ? (
+                          <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200 inline-flex items-center gap-1 animate-pulse">
+                            <AlertCircle className="w-3 h-3 text-rose-600" />
+                            Overdue by {daysOverdue} day{daysOverdue !== 1 ? 's' : ''}
+                          </span>
+                        ) : isDueToday ? (
+                          <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-500 text-white inline-flex items-center gap-1 shadow-sm animate-bounce">
+                            <Clock className="w-3 h-3 text-white" />
+                            Due Today!
+                          </span>
+                        ) : isDueSoon ? (
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-amber-600" />
+                            Due in {daysDiff} day{daysDiff !== 1 ? 's' : ''}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                            Due Day {bill.due_day}
                           </span>
                         )}
-                        {isDueSoon && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
-                            Due Soon
-                          </span>
-                        )}
+
+                        {/* Linked Expense Badge */}
                         {bill.is_paid && bill.bill_expense_id && (
                           <button
                             type="button"
@@ -572,14 +764,18 @@ export const BillsView: React.FC = () => {
             className="p-16 text-center"
           >
             <Calendar className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-600">No recurring bills added yet</p>
+            <p className="text-sm font-semibold text-slate-600">No bills found</p>
             <p className="text-xs text-slate-400 mt-1 mb-5">
-              Keep track of your monthly subscriptions, utilities, and scheduled payments.
+              {searchQuery
+                ? `No results matching "${searchQuery}"`
+                : activeFilter !== 'all'
+                ? `No bills matching "${activeFilter}" filter.`
+                : 'Keep track of your monthly subscriptions, utilities, and scheduled payments.'}
             </p>
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={handleOpenAdd}
-              className="btn-primary text-xs py-2"
+              className="btn-primary text-xs py-2 mx-auto"
             >
               <Plus className="w-3.5 h-3.5" /> Add First Bill
             </motion.button>
@@ -598,111 +794,81 @@ export const BillsView: React.FC = () => {
       >
         <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-emerald-50 to-white">
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3">
               <div className="p-2 bg-emerald-100 text-emerald-600 rounded-xl">
-                <Receipt className="w-4 h-4" />
+                <CheckCircle2 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-800 text-sm">Linked Expense Details</h3>
-                <p className="text-xs text-slate-400">Bill: {selectedLinkedExpense?.bill.name}</p>
+                <h3 className="text-sm font-bold text-slate-900">Linked Expense Record</h3>
+                <p className="text-[10px] text-slate-400">Created automatically when bill was marked paid</p>
               </div>
             </div>
             <button
               onClick={() => setSelectedLinkedExpense(null)}
-              className="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition-colors"
+              className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           <div className="p-6 space-y-4 text-xs">
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 font-medium">Bill Reference ID:</span>
-                <span className="font-mono text-xs font-semibold text-slate-800">{selectedLinkedExpense?.bill.id}</span>
+            <div className="bg-slate-50 rounded-xl p-4 space-y-3 border border-slate-100">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-medium">Bill Name</span>
+                <span className="font-bold text-slate-800">{selectedLinkedExpense?.bill.name}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 font-medium">Expense Record ID:</span>
-                <span className="font-mono text-xs font-semibold text-blue-600">{selectedLinkedExpense?.bill.bill_expense_id}</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-slate-50 rounded-xl">
-                <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Amount</span>
-                <span className="text-base font-bold text-slate-900">
-                  {formatCurrency(selectedLinkedExpense?.expense?.amount || selectedLinkedExpense?.bill.amount || 0)}
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-medium">Amount Paid</span>
+                <span className="font-extrabold text-emerald-600 text-sm">
+                  {formatCurrency(selectedLinkedExpense?.bill.amount || 0)}
                 </span>
               </div>
-              <div className="p-3 bg-slate-50 rounded-xl">
-                <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Payment Date</span>
-                <span className="text-sm font-semibold text-slate-800">
-                  {selectedLinkedExpense?.expense?.date ? formatDate(selectedLinkedExpense.expense.date) : 'Today'}
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-medium">Category</span>
+                <span className="font-medium text-slate-700">
+                  📋 {selectedLinkedExpense?.expense?.category || selectedLinkedExpense?.bill.category || 'Bills'}
                 </span>
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-slate-50 rounded-xl">
-                <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Category</span>
-                <span className="text-xs font-semibold text-slate-800">
-                  📋 {selectedLinkedExpense?.expense?.category || 'Bills'}
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-medium">Payment Method</span>
+                <span className="font-medium text-slate-700">
+                  💳 {selectedLinkedExpense?.expense?.payment_method || 'Bank Transfer'}
                 </span>
               </div>
-              <div className="p-3 bg-slate-50 rounded-xl">
-                <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Payment Method</span>
-                <span className="text-xs font-semibold text-slate-800">
-                  {selectedLinkedExpense?.expense?.payment_method || 'Bank Transfer'}
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-medium">Date Logged</span>
+                <span className="font-medium text-slate-700">
+                  {selectedLinkedExpense?.expense?.date ? formatDate(selectedLinkedExpense.expense.date) : 'Recently'}
                 </span>
               </div>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-xl">
-              <span className="text-slate-400 block mb-0.5 text-[10px] uppercase font-bold tracking-wider">Notes & Description</span>
-              <p className="font-medium text-slate-800">
-                {selectedLinkedExpense?.expense?.description || `Bill Payment: ${selectedLinkedExpense?.bill.name}`}
-              </p>
-              {selectedLinkedExpense?.expense?.notes && (
-                <p className="text-slate-500 text-[11px] mt-1 border-t border-slate-200/60 pt-1">
-                  {selectedLinkedExpense.expense.notes}
-                </p>
-              )}
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setSelectedLinkedExpense(null)}
+                className="btn-secondary text-xs py-2"
+              >
+                Close
+              </button>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between px-6 py-3 border-t border-slate-100 bg-slate-50/50">
-            <Link
-              to="/expenses"
-              onClick={() => setSelectedLinkedExpense(null)}
-              className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700 font-semibold"
-            >
-              View in Expenses Page <ExternalLink className="w-3 h-3" />
-            </Link>
-            <button
-              type="button"
-              onClick={() => setSelectedLinkedExpense(null)}
-              className="btn-secondary py-1.5 text-xs px-4"
-            >
-              Close
-            </button>
           </div>
         </div>
       </AnimatedModal>
 
-      {/* Delete Confirmation */}
-      {deleteTarget && (
-        <ConfirmModal
-          isOpen={true}
-          title="Delete Recurring Bill"
-          message="Are you sure you want to delete this bill? If it was marked as paid, the deducted amount will be restored to your salary balance."
-          confirmLabel="Delete"
-          onConfirm={async () => {
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(deleteTarget)}
+        title="Delete Bill"
+        message="Are you sure you want to remove this recurring bill? This action cannot be undone."
+        confirmLabel="Delete"
+        onConfirm={async () => {
+          if (deleteTarget) {
             await deleteBill(deleteTarget);
             setDeleteTarget(null);
-          }}
-          onClose={() => setDeleteTarget(null)}
-        />
-      )}
+          }
+        }}
+        onClose={() => setDeleteTarget(null)}
+      />
     </div>
   );
 };

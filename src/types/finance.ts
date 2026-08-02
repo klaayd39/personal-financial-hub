@@ -48,6 +48,7 @@ export interface BillRecord {
   month?: number;  // 0 = Jan ... 11 = Dec (optional for specific month, undefined = All Months)
   year?: number;   // e.g. 2026
   billing_cycle: 'monthly' | 'yearly' | 'weekly';
+  category?: 'Utilities' | 'Subscriptions' | 'Rent' | 'Loans' | 'Insurance' | 'Other';
   is_paid: boolean;
   /** ID of the auto-created ExpenseRecord when bill is marked paid. Null when unpaid. */
   bill_expense_id?: string | null;
