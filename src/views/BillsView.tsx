@@ -148,20 +148,20 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
 
   return (
     <AnimatedModal isOpen={isOpen} onClose={onClose} maxWidth="max-w-md">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-gradient-to-r from-blue-50 to-white dark:from-blue-900/20 dark:to-slate-900">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 text-blue-600 rounded-xl">
+            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl">
               <Receipt className="w-4 h-4" />
             </div>
-            <h2 className="text-base font-bold text-slate-900">
+            <h2 className="text-base font-bold text-slate-900 dark:text-white">
               {initialData ? 'Edit Bill' : 'Add New Bill'}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors"
+            className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             aria-label="Close"
           >
             <X className="w-4 h-4" />
@@ -176,7 +176,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2"
+                className="p-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-400 text-xs rounded-xl flex items-center gap-2"
                 role="alert"
               >
                 <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -187,7 +187,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
 
           {/* Bill Name */}
           <motion.div custom={0} variants={fieldVariants} initial="hidden" animate="visible">
-            <label htmlFor="bill-name" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+            <label htmlFor="bill-name" className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
               Bill / Subscription Name *
             </label>
             <input
@@ -203,7 +203,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
 
           {/* Category selection */}
           <motion.div custom={1} variants={fieldVariants} initial="hidden" animate="visible">
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
               Category
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -214,8 +214,8 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
                   onClick={() => setCategory(cat.label)}
                   className={`py-1.5 px-2 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition-all ${
                     category === cat.label
-                      ? 'bg-blue-50 border-blue-300 text-blue-700 ring-2 ring-blue-500/20 font-semibold'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-800/50 text-blue-700 dark:text-blue-400 ring-2 ring-blue-500/20 font-semibold'
+                      : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                   }`}
                 >
                   <span>{cat.emoji}</span>
@@ -228,11 +228,11 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           {/* Amount & Due Day */}
           <motion.div custom={2} variants={fieldVariants} initial="hidden" animate="visible" className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="bill-amount" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+              <label htmlFor="bill-amount" className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
                 Amount (₱) *
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs pointer-events-none select-none">₱</span>
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold text-xs pointer-events-none select-none">₱</span>
                 <input
                   id="bill-amount"
                   type="number"
@@ -248,7 +248,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
             </div>
 
             <div>
-              <label htmlFor="bill-due" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+              <label htmlFor="bill-due" className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
                 Due Day (1–31) *
               </label>
               <input
@@ -268,7 +268,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           {/* Month & Year */}
           <motion.div custom={3} variants={fieldVariants} initial="hidden" animate="visible" className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="bill-month" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+              <label htmlFor="bill-month" className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
                 Bill Month
               </label>
               <select
@@ -285,7 +285,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
             </div>
 
             <div>
-              <label htmlFor="bill-year" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+              <label htmlFor="bill-year" className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
                 Bill Year
               </label>
               <select
@@ -304,7 +304,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
 
           {/* Billing Cycle */}
           <motion.div custom={4} variants={fieldVariants} initial="hidden" animate="visible">
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
               Billing Cycle
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -315,8 +315,8 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
                   onClick={() => setBillingCycle(cycle)}
                   className={`py-2 rounded-xl border text-xs font-semibold capitalize transition-all active:scale-95 ${
                     billingCycle === cycle
-                      ? 'bg-blue-50 border-blue-300 text-blue-700 ring-2 ring-blue-500/20'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-800/50 text-blue-700 dark:text-blue-400 ring-2 ring-blue-500/20'
+                      : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                   }`}
                   aria-pressed={billingCycle === cycle}
                 >
@@ -328,8 +328,8 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
 
           {/* Notes */}
           <motion.div custom={5} variants={fieldVariants} initial="hidden" animate="visible">
-            <label htmlFor="bill-notes" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-              Notes <span className="font-normal text-slate-400">(Optional)</span>
+            <label htmlFor="bill-notes" className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
+              Notes <span className="font-normal text-slate-400 dark:text-slate-500">(Optional)</span>
             </label>
             <input
               id="bill-notes"
@@ -342,7 +342,7 @@ const BillModal: React.FC<BillModalProps> = ({ isOpen, onClose, initialData }) =
           </motion.div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
             <button type="button" onClick={onClose} className="btn-secondary py-2 text-xs">
               Cancel
             </button>
@@ -450,30 +450,30 @@ export const BillsView: React.FC = () => {
     {
       label: 'Total Monthly Bills',
       value: totalMonthlyBills,
-      color: 'text-slate-900',
+      color: 'text-slate-900 dark:text-white',
       sub: `${bills.length} recurring item${bills.length !== 1 ? 's' : ''}`,
       icon: <Receipt className="w-4 h-4" />,
-      bg: 'bg-slate-50',
-      iconColor: 'text-slate-500',
+      bg: 'bg-slate-50 dark:bg-slate-800/50',
+      iconColor: 'text-slate-500 dark:text-slate-400',
     },
     {
       label: 'Total Paid',
       value: paidTotal,
-      color: 'text-emerald-600',
+      color: 'text-emerald-600 dark:text-emerald-400',
       progress: bills.length > 0 ? (paidTotal / totalMonthlyBills) * 100 : 0,
       sub: `${bills.filter((b) => b.is_paid).length} paid`,
       icon: <CheckCircle2 className="w-4 h-4" />,
-      bg: 'bg-emerald-50',
-      iconColor: 'text-emerald-500',
+      bg: 'bg-emerald-50 dark:bg-emerald-900/20',
+      iconColor: 'text-emerald-500 dark:text-emerald-400',
     },
     {
       label: 'Unpaid Remaining',
       value: unpaidTotal,
-      color: overdueCount > 0 ? 'text-rose-600' : 'text-amber-600',
+      color: overdueCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400',
       sub: overdueCount > 0 ? `${overdueCount} overdue · ${bills.filter((b) => !b.is_paid).length} pending` : `${bills.filter((b) => !b.is_paid).length} pending`,
       icon: <Zap className="w-4 h-4" />,
-      bg: overdueCount > 0 ? 'bg-rose-50' : 'bg-amber-50',
-      iconColor: overdueCount > 0 ? 'text-rose-500' : 'text-amber-500',
+      bg: overdueCount > 0 ? 'bg-rose-50 dark:bg-rose-900/20' : 'bg-amber-50 dark:bg-amber-900/20',
+      iconColor: overdueCount > 0 ? 'text-rose-500 dark:text-rose-400' : 'text-amber-500 dark:text-amber-400',
     },
   ];
 
@@ -487,8 +487,8 @@ export const BillsView: React.FC = () => {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Fixed &amp; Recurring Bills</h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Fixed &amp; Recurring Bills</h1>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
             Track monthly subscriptions, utilities, and scheduled payments.
           </p>
         </div>
@@ -497,7 +497,7 @@ export const BillsView: React.FC = () => {
             whileTap={{ scale: 0.96 }}
             onClick={handleExportCSV}
             disabled={bills.length === 0}
-            className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors disabled:opacity-40"
+            className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-xl transition-colors disabled:opacity-40"
             title="Export Bills CSV"
           >
             <Download className="w-3.5 h-3.5" /> Export CSV
@@ -524,7 +524,7 @@ export const BillsView: React.FC = () => {
             className="card hover-lift"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-slate-400 font-medium">{card.label}</span>
+              <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">{card.label}</span>
               <span className={`${card.iconColor} ${card.bg} p-1.5 rounded-lg`}>{card.icon}</span>
             </div>
             <p className={`text-2xl font-extrabold ${card.color} tracking-tight mt-1`}>
@@ -532,26 +532,26 @@ export const BillsView: React.FC = () => {
             </p>
             {'progress' in card && card.progress !== undefined && (
               <div className="mt-3">
-                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-emerald-500 rounded-full"
+                    className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${card.progress}%` }}
                     transition={{ duration: 0.8, ease: 'easeOut' as const, delay: 0.3 }}
                   />
                 </div>
-                <span className="text-[10px] text-emerald-600 font-medium mt-1 block">
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 block">
                   {card.progress.toFixed(0)}% paid
                 </span>
               </div>
             )}
-            <span className="text-[10px] text-slate-400 mt-1 block">{card.sub}</span>
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 block">{card.sub}</span>
           </motion.div>
         ))}
       </div>
 
       {/* Filter Tabs & Search Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-2.5 rounded-2xl border border-slate-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-2.5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-200">
         {/* Filter Pills */}
         <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
           {[
@@ -566,8 +566,8 @@ export const BillsView: React.FC = () => {
               onClick={() => setActiveFilter(tab.id as any)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                 activeFilter === tab.id
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-sm'
+                  : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <span>{tab.label}</span>
@@ -577,7 +577,7 @@ export const BillsView: React.FC = () => {
                     ? 'bg-rose-500 text-white animate-pulse'
                     : activeFilter === tab.id
                     ? 'bg-slate-700 text-white'
-                    : 'bg-slate-200 text-slate-600'
+                    : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                 }`}
               >
                 {tab.count}
@@ -588,13 +588,13 @@ export const BillsView: React.FC = () => {
 
         {/* Search Input */}
         <div className="relative min-w-[200px]">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <input
             type="text"
             placeholder="Search bills..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
           />
         </div>
       </div>
@@ -604,10 +604,10 @@ export const BillsView: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.3 }}
-        className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden"
+        className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors duration-200"
       >
         {filteredBills.length > 0 ? (
-          <AnimatedList className="divide-y divide-slate-100">
+          <AnimatedList className="divide-y divide-slate-100 dark:divide-slate-800/50">
             {filteredBills.map((bill) => {
               const daysDiff = bill.due_day - todayDay;
               const isDueToday = !bill.is_paid && bill.due_day === todayDay;
@@ -621,14 +621,14 @@ export const BillsView: React.FC = () => {
                   key={bill.id}
                   className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors border-l-4 ${
                     bill.is_paid
-                      ? 'bg-emerald-50/20 border-l-emerald-400'
+                      ? 'bg-emerald-50/20 dark:bg-emerald-900/10 border-l-emerald-400 dark:border-l-emerald-500'
                       : isPastDue
-                      ? 'bg-rose-50/40 border-l-rose-500'
+                      ? 'bg-rose-50/40 dark:bg-rose-900/20 border-l-rose-500'
                       : isDueToday
-                      ? 'bg-amber-50/50 border-l-amber-500'
+                      ? 'bg-amber-50/50 dark:bg-amber-900/20 border-l-amber-500'
                       : isDueSoon
-                      ? 'bg-amber-50/30 border-l-amber-400'
-                      : 'hover:bg-slate-50/70 border-l-blue-300'
+                      ? 'bg-amber-50/30 dark:bg-amber-900/10 border-l-amber-400 dark:border-l-amber-500'
+                      : 'hover:bg-slate-50/70 dark:hover:bg-slate-800/30 border-l-blue-300 dark:border-l-blue-500'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
@@ -640,10 +640,10 @@ export const BillsView: React.FC = () => {
                       transition={isToggling ? { duration: 0.5, repeat: Infinity, ease: 'linear' } : {}}
                       className={`p-1.5 rounded-full transition-colors shrink-0 ${
                         bill.is_paid
-                          ? 'text-emerald-600 bg-emerald-100 hover:bg-emerald-200'
+                          ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50'
                           : isPastDue
-                          ? 'text-rose-500 bg-rose-100 hover:bg-rose-200'
-                          : 'text-slate-300 hover:text-emerald-600 hover:bg-emerald-50'
+                          ? 'text-rose-500 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-200 dark:hover:bg-rose-900/50'
+                          : 'text-slate-300 dark:text-slate-600 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20'
                       } disabled:cursor-not-allowed`}
                       title={bill.is_paid ? 'Mark as Unpaid' : 'Mark as Paid'}
                       aria-label={bill.is_paid ? `Mark ${bill.name} as unpaid` : `Mark ${bill.name} as paid`}
@@ -664,20 +664,20 @@ export const BillsView: React.FC = () => {
 
                         <h4
                           className={`text-sm font-semibold truncate ${
-                            bill.is_paid ? 'line-through text-slate-400' : 'text-slate-800'
+                            bill.is_paid ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200'
                           }`}
                         >
                           {bill.name}
                         </h4>
-
+                        
                         {/* Category Chip */}
                         {bill.category && (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                             {bill.category}
                           </span>
                         )}
 
-                        <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                        <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800/50">
                           {bill.month !== undefined && bill.month !== null
                             ? `${MONTH_NAMES[bill.month]} ${bill.year || ''}`
                             : 'Every Month'}
@@ -685,13 +685,13 @@ export const BillsView: React.FC = () => {
 
                         {/* Relative Due Date Badges */}
                         {bill.is_paid ? (
-                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 inline-flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 inline-flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                             Paid
                           </span>
                         ) : isPastDue ? (
-                          <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200 inline-flex items-center gap-1 animate-pulse">
-                            <AlertCircle className="w-3 h-3 text-rose-600" />
+                          <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50 inline-flex items-center gap-1 animate-pulse">
+                            <AlertCircle className="w-3 h-3 text-rose-600 dark:text-rose-400" />
                             Overdue by {daysOverdue} day{daysOverdue !== 1 ? 's' : ''}
                           </span>
                         ) : isDueToday ? (
@@ -700,12 +700,12 @@ export const BillsView: React.FC = () => {
                             Due Today!
                           </span>
                         ) : isDueSoon ? (
-                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 inline-flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-amber-600" />
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
                             Due in {daysDiff} day{daysDiff !== 1 ? 's' : ''}
                           </span>
                         ) : (
-                          <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                          <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
                             Due Day {bill.due_day}
                           </span>
                         )}
@@ -718,27 +718,27 @@ export const BillsView: React.FC = () => {
                               const linkedExp = expenses.find((e) => e.id === bill.bill_expense_id);
                               setSelectedLinkedExpense({ bill, expense: linkedExp });
                             }}
-                            className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 hover:bg-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors flex items-center gap-1 cursor-pointer"
                             title="View Linked Expense Record"
                           >
-                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                             View Linked Expense
                           </button>
                         )}
                       </div>
-                      {bill.notes && <p className="text-xs text-slate-400 mt-0.5">{bill.notes}</p>}
+                      {bill.notes && <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{bill.notes}</p>}
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
-                    <p className={`text-sm font-bold ${bill.is_paid ? 'text-slate-400' : 'text-slate-900'}`}>
+                  <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 dark:border-slate-800">
+                    <p className={`text-sm font-bold ${bill.is_paid ? 'text-slate-400 dark:text-slate-500' : 'text-slate-900 dark:text-white'}`}>
                       {formatCurrency(bill.amount)}
                     </p>
                     <div className="flex items-center gap-1">
                       <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={() => handleEdit(bill)}
-                        className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                         title="Edit Bill"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -746,7 +746,7 @@ export const BillsView: React.FC = () => {
                       <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setDeleteTarget(bill.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-colors"
                         title="Delete Bill"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -763,9 +763,9 @@ export const BillsView: React.FC = () => {
             animate={{ opacity: 1 }}
             className="p-16 text-center"
           >
-            <Calendar className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-600">No bills found</p>
-            <p className="text-xs text-slate-400 mt-1 mb-5">
+            <Calendar className="w-10 h-10 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
+            <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">No bills found</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 mb-5">
               {searchQuery
                 ? `No results matching "${searchQuery}"`
                 : activeFilter !== 'all'
@@ -792,52 +792,52 @@ export const BillsView: React.FC = () => {
         onClose={() => setSelectedLinkedExpense(null)}
         maxWidth="max-w-md"
       >
-        <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-emerald-50 to-white">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors duration-200">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-gradient-to-r from-emerald-50 to-white dark:from-emerald-900/20 dark:to-slate-900">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-100 text-emerald-600 rounded-xl">
+              <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Linked Expense Record</h3>
-                <p className="text-[10px] text-slate-400">Created automatically when bill was marked paid</p>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Linked Expense Record</h3>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500">Created automatically when bill was marked paid</p>
               </div>
             </div>
             <button
               onClick={() => setSelectedLinkedExpense(null)}
-              className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors"
+              className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           <div className="p-6 space-y-4 text-xs">
-            <div className="bg-slate-50 rounded-xl p-4 space-y-3 border border-slate-100">
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 space-y-3 border border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 font-medium">Bill Name</span>
-                <span className="font-bold text-slate-800">{selectedLinkedExpense?.bill.name}</span>
+                <span className="text-slate-400 dark:text-slate-500 font-medium">Bill Name</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{selectedLinkedExpense?.bill.name}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 font-medium">Amount Paid</span>
-                <span className="font-extrabold text-emerald-600 text-sm">
+                <span className="text-slate-400 dark:text-slate-500 font-medium">Amount Paid</span>
+                <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">
                   {formatCurrency(selectedLinkedExpense?.bill.amount || 0)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 font-medium">Category</span>
-                <span className="font-medium text-slate-700">
+                <span className="text-slate-400 dark:text-slate-500 font-medium">Category</span>
+                <span className="font-medium text-slate-700 dark:text-slate-300">
                   📋 {selectedLinkedExpense?.expense?.category || selectedLinkedExpense?.bill.category || 'Bills'}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 font-medium">Payment Method</span>
-                <span className="font-medium text-slate-700">
+                <span className="text-slate-400 dark:text-slate-500 font-medium">Payment Method</span>
+                <span className="font-medium text-slate-700 dark:text-slate-300">
                   💳 {selectedLinkedExpense?.expense?.payment_method || 'Bank Transfer'}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 font-medium">Date Logged</span>
-                <span className="font-medium text-slate-700">
+                <span className="text-slate-400 dark:text-slate-500 font-medium">Date Logged</span>
+                <span className="font-medium text-slate-700 dark:text-slate-300">
                   {selectedLinkedExpense?.expense?.date ? formatDate(selectedLinkedExpense.expense.date) : 'Recently'}
                 </span>
               </div>

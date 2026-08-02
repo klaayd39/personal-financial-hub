@@ -57,9 +57,9 @@ export const DashboardView: React.FC = () => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white border border-slate-100 rounded-xl shadow-lg px-3 py-2 text-xs">
-          <p className="font-semibold text-slate-700 mb-1">{label}</p>
-          <p className="text-rose-600 font-bold">{formatCurrency(payload[0]?.value ?? 0)}</p>
+        <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-lg px-3 py-2 text-xs transition-colors duration-200">
+          <p className="font-semibold text-slate-700 dark:text-slate-300 mb-1">{label}</p>
+          <p className="text-rose-600 dark:text-rose-400 font-bold">{formatCurrency(payload[0]?.value ?? 0)}</p>
         </div>
       );
     }
@@ -83,12 +83,12 @@ export const DashboardView: React.FC = () => {
           <div className="card hover-lift h-full flex flex-col">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <p className="text-sm font-bold text-slate-800">Monthly Expense Trend</p>
-                <p className="text-xs text-slate-400 mt-0.5">{filter.year} — all months</p>
+                <p className="text-sm font-bold text-slate-800 dark:text-white">Monthly Expense Trend</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{filter.year} — all months</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block" />
-                <span className="text-xs text-slate-400 font-medium">Expenses</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-400 dark:bg-rose-500 inline-block" />
+                <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">Expenses</span>
               </div>
             </div>
             <div className="flex-1 min-h-[220px]">
@@ -136,14 +136,14 @@ export const DashboardView: React.FC = () => {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-amber-50 rounded-lg">
-                  <Calendar className="w-3.5 h-3.5 text-amber-500" />
+                <div className="p-1.5 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                  <Calendar className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                 </div>
-                <p className="text-sm font-bold text-slate-800">Upcoming Bills</p>
+                <p className="text-sm font-bold text-slate-800 dark:text-white">Upcoming Bills</p>
               </div>
               <Link
                 to="/bills"
-                className="flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+                className="flex items-center gap-0.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors"
               >
                 Manage <ArrowRight className="w-3 h-3" />
               </Link>
@@ -151,12 +151,12 @@ export const DashboardView: React.FC = () => {
 
             {/* Bills paid progress */}
             {bills.length > 0 && (
-              <div className="mb-3 p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                <div className="flex items-center justify-between text-[10px] font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+              <div className="mb-3 p-2.5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50 transition-colors">
+                <div className="flex items-center justify-between text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">
                   <span>Bills Paid</span>
-                  <span className="text-blue-600">{billsPaidCount} / {bills.length}</span>
+                  <span className="text-blue-600 dark:text-blue-400">{billsPaidCount} / {bills.length}</span>
                 </div>
-                <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-blue-600 rounded-full"
                     initial={{ width: 0 }}
@@ -170,17 +170,17 @@ export const DashboardView: React.FC = () => {
             {upcomingBills.length > 0 ? (
               <AnimatedList className="space-y-1.5">
                 {upcomingBills.map((b) => (
-                  <AnimatedListItem key={b.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0 text-xs">
+                  <AnimatedListItem key={b.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 dark:border-slate-800/50 last:border-0 text-xs">
                     <div className="flex items-center gap-2 min-w-0">
                       <motion.button
                         onClick={() => toggleBillPaid(b.id)}
                         whileTap={{ scale: 0.85 }}
-                        className="p-0.5 text-slate-300 hover:text-emerald-600 transition-colors shrink-0"
+                        className="p-0.5 text-slate-300 dark:text-slate-600 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors shrink-0"
                         title="Mark Paid"
                       >
                         <Circle className="w-3.5 h-3.5" />
                       </motion.button>
-                      <span className="font-medium text-slate-800 truncate">{b.name}</span>
+                      <span className="font-medium text-slate-800 dark:text-slate-200 truncate">{b.name}</span>
                       <span className="badge badge-blue shrink-0">
                         {b.month !== undefined && b.month !== null
                           ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][b.month]
@@ -188,16 +188,16 @@ export const DashboardView: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[10px] font-semibold text-slate-400">Due {b.due_day}th</span>
-                      <span className="font-bold text-rose-600">{formatCurrency(b.amount)}</span>
+                      <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">Due {b.due_day}th</span>
+                      <span className="font-bold text-rose-600 dark:text-rose-400">{formatCurrency(b.amount)}</span>
                     </div>
                   </AnimatedListItem>
                 ))}
               </AnimatedList>
             ) : (
               <div className="py-4 text-center">
-                <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto mb-1" />
-                <p className="text-xs text-slate-400">All bills paid! 🎉</p>
+                <CheckCircle2 className="w-6 h-6 text-emerald-400 dark:text-emerald-500 mx-auto mb-1" />
+                <p className="text-xs text-slate-400 dark:text-slate-500">All bills paid! 🎉</p>
               </div>
             )}
           </motion.div>
@@ -210,10 +210,10 @@ export const DashboardView: React.FC = () => {
             transition={{ delay: 0.4, duration: 0.35, ease: [0.16, 1, 0.3, 1] as const }}
           >
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-bold text-slate-800">Recent Transactions</p>
+              <p className="text-sm font-bold text-slate-800 dark:text-white">Recent Transactions</p>
               <Link
                 to="/expenses"
-                className="flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+                className="flex items-center gap-0.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors"
               >
                 All <ArrowRight className="w-3 h-3" />
               </Link>
@@ -222,11 +222,11 @@ export const DashboardView: React.FC = () => {
             {recentTransactions.length > 0 ? (
               <AnimatedList className="space-y-0.5 flex-1">
                 {recentTransactions.map((tx) => (
-                  <AnimatedListItem key={tx.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
+                  <AnimatedListItem key={tx.id} className="flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-800/50 last:border-0">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div
                         className={`p-1.5 rounded-lg shrink-0 ${
-                          tx.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'
+                          tx.type === 'income' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400'
                         }`}
                       >
                         {tx.type === 'income' ? (
@@ -236,13 +236,13 @@ export const DashboardView: React.FC = () => {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-medium text-slate-800 truncate">{tx.title}</p>
-                        <p className="text-[10px] text-slate-400">{formatDate(tx.date)}</p>
+                        <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{tx.title}</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">{formatDate(tx.date)}</p>
                       </div>
                     </div>
                     <p
                       className={`text-xs font-bold shrink-0 ml-2 ${
-                        tx.type === 'income' ? 'text-emerald-600' : 'text-slate-700'
+                        tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'
                       }`}
                     >
                       {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
@@ -252,9 +252,9 @@ export const DashboardView: React.FC = () => {
               </AnimatedList>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center py-8 text-center">
-                <TrendingDown className="w-8 h-8 text-slate-200 mb-2" />
-                <p className="text-xs font-medium text-slate-500">No transactions yet</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">Add your first expense to get started</p>
+                <TrendingDown className="w-8 h-8 text-slate-200 dark:text-slate-700 mb-2" />
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">No transactions yet</p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Add your first expense to get started</p>
               </div>
             )}
           </motion.div>

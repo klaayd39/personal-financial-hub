@@ -37,15 +37,15 @@ const CATEGORY_EMOJI: Record<ExpenseCategory, string> = {
 };
 
 const CATEGORY_COLOR: Record<ExpenseCategory, string> = {
-  Food: 'bg-orange-50 border-orange-200 text-orange-700 ring-orange-400/20',
-  Transportation: 'bg-blue-50 border-blue-200 text-blue-700 ring-blue-400/20',
-  Bills: 'bg-purple-50 border-purple-200 text-purple-700 ring-purple-400/20',
-  Shopping: 'bg-pink-50 border-pink-200 text-pink-700 ring-pink-400/20',
-  Entertainment: 'bg-yellow-50 border-yellow-200 text-yellow-700 ring-yellow-400/20',
-  Health: 'bg-red-50 border-red-200 text-red-700 ring-red-400/20',
-  Education: 'bg-indigo-50 border-indigo-200 text-indigo-700 ring-indigo-400/20',
-  Travel: 'bg-cyan-50 border-cyan-200 text-cyan-700 ring-cyan-400/20',
-  Miscellaneous: 'bg-slate-50 border-slate-200 text-slate-700 ring-slate-400/20',
+  Food: 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800/50 text-orange-700 dark:text-orange-400 ring-orange-400/20',
+  Transportation: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-400 ring-blue-400/20',
+  Bills: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800/50 text-purple-700 dark:text-purple-400 ring-purple-400/20',
+  Shopping: 'bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-800/50 text-pink-700 dark:text-pink-400 ring-pink-400/20',
+  Entertainment: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/50 text-yellow-700 dark:text-yellow-400 ring-yellow-400/20',
+  Health: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 ring-red-400/20',
+  Education: 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800/50 text-indigo-700 dark:text-indigo-400 ring-indigo-400/20',
+  Travel: 'bg-cyan-50 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800/50 text-cyan-700 dark:text-cyan-400 ring-cyan-400/20',
+  Miscellaneous: 'bg-slate-50 dark:bg-slate-900/20 border-slate-200 dark:border-slate-800/50 text-slate-700 dark:text-slate-400 ring-slate-400/20',
 };
 
 /** Get today's date in YYYY-MM-DD using local timezone */
@@ -202,17 +202,16 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
 
   return (
     <AnimatedModal isOpen={isOpen} onClose={onClose} maxWidth="max-w-lg">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden max-h-[92vh] flex flex-col">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden max-h-[92vh] flex flex-col transition-colors duration-200">
 
         {/* ── Header ── */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0"
-          style={{ background: 'linear-gradient(135deg, #fff1f2 0%, #fff 60%)' }}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-gradient-to-br from-rose-50 to-white dark:from-rose-900/10 dark:to-slate-900">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-rose-100 text-rose-600 rounded-xl shadow-sm">
+            <div className="p-2.5 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-xl shadow-sm">
               <MinusCircle className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-800 text-base leading-tight">
+              <h3 className="font-bold text-slate-800 dark:text-white text-base leading-tight">
                 {isEditing ? 'Edit Expense' : 'Record New Expense'}
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
@@ -222,7 +221,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-rose-50 rounded-xl transition-all active:scale-95"
+            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-all active:scale-95"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -237,8 +236,8 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
             <label htmlFor="expense-amount" className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">
               Amount (₱) <span className="text-rose-500">*</span>
             </label>
-            <div className={`flex items-center rounded-xl border-2 transition-all bg-slate-50 overflow-hidden ${
-              errors.amount ? 'border-rose-400 ring-2 ring-rose-400/15' : 'border-slate-200 focus-within:border-rose-400 focus-within:ring-2 focus-within:ring-rose-400/10'
+            <div className={`flex items-center rounded-xl border-2 transition-all bg-slate-50 dark:bg-slate-800/50 overflow-hidden ${
+              errors.amount ? 'border-rose-400 ring-2 ring-rose-400/15' : 'border-slate-200 dark:border-slate-700 focus-within:border-rose-400 focus-within:ring-2 focus-within:ring-rose-400/10'
             }`}>
               <span className="pl-4 pr-2 text-rose-500 font-black text-lg select-none">₱</span>
               <input
@@ -249,7 +248,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => { setAmount(e.target.value); setErrors((prev) => ({ ...prev, amount: '' })); }}
-                className="flex-1 py-3 pr-4 text-xl font-bold text-slate-800 bg-transparent outline-none placeholder:text-slate-300"
+                className="flex-1 py-3 pr-4 text-xl font-bold text-slate-800 dark:text-white bg-transparent outline-none placeholder:text-slate-300 dark:placeholder:text-slate-600"
                 aria-invalid={Boolean(errors.amount)}
                 aria-describedby={errors.amount ? 'amount-error' : undefined}
               />
@@ -278,10 +277,10 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
               placeholder="e.g. Grocery shopping at SM"
               value={description}
               onChange={(e) => { setDescription(e.target.value); setErrors((prev) => ({ ...prev, description: '' })); }}
-              className={`w-full px-4 py-3 rounded-xl border-2 bg-slate-50 text-slate-800 text-sm placeholder:text-slate-300 outline-none transition-all ${
+              className={`w-full px-4 py-3 rounded-xl border-2 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-white text-sm placeholder:text-slate-300 dark:placeholder:text-slate-600 outline-none transition-all ${
                 errors.description
                   ? 'border-rose-400 ring-2 ring-rose-400/15'
-                  : 'border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/10'
+                  : 'border-slate-200 dark:border-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/10'
               }`}
               aria-invalid={Boolean(errors.description)}
               aria-describedby={errors.description ? 'desc-error' : undefined}
@@ -312,7 +311,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
                     className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl border-2 text-xs font-semibold transition-all duration-150 active:scale-95 ${
                       isSelected
                         ? `${CATEGORY_COLOR[cat]} ring-2 shadow-sm`
-                        : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100 hover:border-slate-300'
+                        : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                     }`}
                     aria-pressed={isSelected}
                   >
@@ -335,7 +334,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
                 id="expense-payment"
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-800 text-sm outline-none transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-400/10 appearance-none"
+                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-white text-sm outline-none transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-400/10 appearance-none"
               >
                 {PAYMENT_METHODS.map((pm) => (
                   <option key={pm} value={pm}>{pm}</option>
@@ -355,10 +354,10 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
                   required
                   value={date}
                   onChange={(e) => handleDateChange(e.target.value)}
-                  className={`w-full px-3 py-3 rounded-xl border-2 bg-slate-50 text-slate-800 text-sm outline-none transition-all ${
+                  className={`w-full px-3 py-3 rounded-xl border-2 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-white text-sm outline-none transition-all ${
                     errors.date
                       ? 'border-rose-400 ring-2 ring-rose-400/15'
-                      : 'border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/10'
+                      : 'border-slate-200 dark:border-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/10'
                   }`}
                   aria-invalid={Boolean(errors.date)}
                 />
@@ -389,7 +388,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
                   type="time"
                   value={time}
                   onChange={(e) => handleTimeChange(e.target.value)}
-                  className="w-full px-3 py-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-800 text-sm outline-none transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-400/10"
+                  className="w-full px-3 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-white text-sm outline-none transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-400/10"
                 />
               </div>
             </div>
@@ -401,7 +400,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
               Receipt Image <span className="font-normal text-slate-400 normal-case">(Optional)</span>
             </label>
             <div className="flex items-center gap-3 flex-wrap">
-              <label className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold cursor-pointer transition-colors border-2 border-slate-200 hover:border-slate-300 active:scale-95">
+              <label className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold cursor-pointer transition-colors border-2 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 active:scale-95">
                 <Upload className="w-3.5 h-3.5" />
                 {receiptUrl ? 'Replace Receipt' : 'Upload Receipt'}
                 <input type="file" accept="image/*" onChange={handleReceiptUpload} className="hidden" />
@@ -443,11 +442,11 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
         </form>
 
         {/* ── Footer ── */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/60 shrink-0">
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-white border-2 border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95"
+            className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all active:scale-95"
           >
             Cancel
           </button>

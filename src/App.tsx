@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { FinanceProvider, useFinance } from './context/FinanceContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { ToastContainer } from './components/Toast';
 import { DashboardView } from './views/DashboardView';
@@ -77,7 +78,7 @@ const MainLayout: React.FC = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center transition-colors duration-200">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
           <p className="text-xs font-medium text-slate-400">Authenticating…</p>
@@ -101,7 +102,7 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 flex flex-col font-sans antialiased selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-900/50 dark:selection:text-blue-100 transition-colors duration-200">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
@@ -115,17 +116,17 @@ const MainLayout: React.FC = () => {
         )}
       </main>
 
-      <footer className="border-t border-slate-100 py-4 text-center text-xs text-slate-300">
+      <footer className="border-t border-slate-100 dark:border-slate-800/60 py-4 text-center text-xs text-slate-300 dark:text-slate-500 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
               <span className="text-white text-[8px] font-black">F</span>
             </div>
-            <span className="font-medium text-slate-400">FinanceHub</span>
-            <span className="text-slate-200">·</span>
+            <span className="font-medium text-slate-400 dark:text-slate-500">FinanceHub</span>
+            <span className="text-slate-200 dark:text-slate-700">·</span>
             <span>© {new Date().getFullYear()}</span>
           </div>
-          <span className="hidden sm:inline text-slate-300">🔐 Encrypted · Secure Auth</span>
+          <span className="hidden sm:inline text-slate-300 dark:text-slate-600">🔐 Encrypted · Secure Auth</span>
         </div>
       </footer>
 
@@ -142,12 +143,14 @@ const MainLayout: React.FC = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <FinanceProvider>
-        <BrowserRouter>
-          <MainLayout />
-        </BrowserRouter>
-      </FinanceProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <FinanceProvider>
+          <BrowserRouter>
+            <MainLayout />
+          </BrowserRouter>
+        </FinanceProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

@@ -49,8 +49,8 @@ export const DashboardSkeleton: React.FC = () => (
 
 // Expense table skeleton
 export const ExpenseTableSkeleton: React.FC = () => (
-  <div className="glass-panel rounded-2xl overflow-hidden" aria-busy="true">
-    <div className="divide-y divide-slate-50">
+  <div className="glass-panel rounded-2xl overflow-hidden transition-colors duration-200" aria-busy="true">
+    <div className="divide-y divide-slate-50 dark:divide-slate-800/60">
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="flex items-center justify-between px-5 py-4 gap-4">
           <Skeleton className="h-3 w-20" />
@@ -66,8 +66,8 @@ export const ExpenseTableSkeleton: React.FC = () => (
 
 // Bill list skeleton
 export const BillListSkeleton: React.FC = () => (
-  <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden" aria-busy="true">
-    <div className="divide-y divide-slate-100">
+  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors duration-200" aria-busy="true">
+    <div className="divide-y divide-slate-100 dark:divide-slate-800">
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="flex items-center justify-between p-4 gap-3">
           <div className="flex items-center gap-3 flex-1">

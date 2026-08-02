@@ -46,8 +46,8 @@ export const DashboardOverview: React.FC = () => {
       label: `Total Salary (${filter.year})`,
       value: totalYearlySalary,
       icon: <Banknote className="w-4 h-4" />,
-      color: 'text-indigo-600',
-      bg: 'bg-indigo-50',
+      color: 'text-indigo-600 dark:text-indigo-400',
+      bg: 'bg-indigo-50 dark:bg-indigo-900/20',
       badge: hasSalary ? null : 'Not Set',
     },
     ...(!isAllMonths
@@ -56,8 +56,8 @@ export const DashboardOverview: React.FC = () => {
             label: `${MONTH_NAMES[filter.month]} Salary`,
             value: selectedMonthSalary,
             icon: <Banknote className="w-4 h-4" />,
-            color: 'text-blue-600',
-            bg: 'bg-blue-50',
+            color: 'text-blue-600 dark:text-blue-400',
+            bg: 'bg-blue-50 dark:bg-blue-900/20',
             badge: selectedMonthSalary > 0 ? null : 'Not Set',
           },
         ]
@@ -68,8 +68,8 @@ export const DashboardOverview: React.FC = () => {
             label: 'Budget Limit',
             value: budgetLimit,
             icon: <Calendar className="w-4 h-4" />,
-            color: isOverBudget ? 'text-rose-600' : 'text-blue-600',
-            bg: isOverBudget ? 'bg-rose-50' : 'bg-blue-50',
+            color: isOverBudget ? 'text-rose-600 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400',
+            bg: isOverBudget ? 'bg-rose-50 dark:bg-rose-900/20' : 'bg-blue-50 dark:bg-blue-900/20',
             badge: isOverBudget ? 'Over Limit' : `${budgetUsedPct.toFixed(0)}% Used`,
           },
         ]
@@ -78,8 +78,8 @@ export const DashboardOverview: React.FC = () => {
       label: 'Total Expenses',
       value: summary.totalExpenses,
       icon: <TrendingDown className="w-4 h-4" />,
-      color: isOverBudget ? 'text-rose-600 font-bold' : 'text-rose-500',
-      bg: 'bg-rose-50',
+      color: isOverBudget ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-rose-500 dark:text-rose-400',
+      bg: 'bg-rose-50 dark:bg-rose-900/20',
       badge: null as string | null,
     },
     ...(!isAllMonths
@@ -88,8 +88,8 @@ export const DashboardOverview: React.FC = () => {
             label: 'Remaining Balance',
             value: remainingBalance,
             icon: <Wallet className="w-4 h-4" />,
-            color: remainingBalance >= 0 ? 'text-emerald-600' : 'text-rose-600',
-            bg: remainingBalance >= 0 ? 'bg-emerald-50' : 'bg-rose-50',
+            color: remainingBalance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400',
+            bg: remainingBalance >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-rose-50 dark:bg-rose-900/20',
             badge: null as string | null,
           },
         ]
@@ -98,8 +98,8 @@ export const DashboardOverview: React.FC = () => {
       label: 'Total Savings',
       value: summary.totalSavings,
       icon: <PiggyBank className="w-4 h-4" />,
-      color: 'text-violet-600',
-      bg: 'bg-violet-50',
+      color: 'text-violet-600 dark:text-violet-400',
+      bg: 'bg-violet-50 dark:bg-violet-900/20',
       badge: null as string | null,
     },
   ];
@@ -107,7 +107,7 @@ export const DashboardOverview: React.FC = () => {
   return (
     <div className="space-y-3 mb-6">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-slate-400 font-medium">{period}</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">{period}</p>
       </div>
 
       {/* Budget Progress Banner */}
@@ -116,10 +116,10 @@ export const DashboardOverview: React.FC = () => {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+          className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
             isOverBudget
-              ? 'bg-rose-500/10 border-rose-200 text-rose-900'
-              : 'bg-blue-500/10 border-blue-200 text-blue-900'
+              ? 'bg-rose-500/10 border-rose-200 dark:border-rose-900/50 text-rose-900 dark:text-rose-200'
+              : 'bg-blue-500/10 border-blue-200 dark:border-blue-900/50 text-blue-900 dark:text-blue-200'
           }`}
         >
           <div className="flex items-center gap-3">
@@ -138,7 +138,7 @@ export const DashboardOverview: React.FC = () => {
           </div>
 
           <div className="w-full sm:w-48 space-y-1">
-            <div className="w-full h-2 bg-white/60 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-white/60 dark:bg-slate-900/50 rounded-full overflow-hidden">
               <motion.div
                 className={`h-full rounded-full ${isOverBudget ? 'bg-rose-600' : 'bg-blue-600'}`}
                 initial={{ width: 0 }}
@@ -168,7 +168,7 @@ export const DashboardOverview: React.FC = () => {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1.5 min-w-0">
-                <span className="text-xs text-slate-400 font-medium leading-tight truncate">
+                <span className="text-xs text-slate-400 dark:text-slate-500 font-medium leading-tight truncate">
                   {card.label}
                 </span>
                 {card.badge && (
