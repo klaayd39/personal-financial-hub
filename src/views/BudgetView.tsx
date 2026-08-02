@@ -141,7 +141,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">
-                  1st Half (1st–15th)
+                  1st Half (8th–22nd)
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold text-xs pointer-events-none select-none">
@@ -160,7 +160,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
 
               <div>
                 <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">
-                  2nd Half (16th–End)
+                  2nd Half (23rd–7th)
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold text-xs pointer-events-none select-none">
@@ -213,7 +213,7 @@ export const BudgetView: React.FC = () => {
   } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
-  // Group expenses by month and half (1st Half: Days 1-15, 2nd Half: Days 16+)
+  // Group expenses by month and half (1st Half: Days 8-22, 2nd Half: Days 23-7)
   const expensesByMonthAndHalf = React.useMemo(() => {
     const map: Record<number, { total: number; firstHalf: number; secondHalf: number }> = {};
     expenses.forEach((e) => {
@@ -223,7 +223,7 @@ export const BudgetView: React.FC = () => {
         const day = d.getDate();
         if (!map[month]) map[month] = { total: 0, firstHalf: 0, secondHalf: 0 };
         map[month].total += e.amount;
-        if (day <= 15) {
+        if (day >= 8 && day <= 22) {
           map[month].firstHalf += e.amount;
         } else {
           map[month].secondHalf += e.amount;
@@ -244,7 +244,7 @@ export const BudgetView: React.FC = () => {
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Monthly & Semi-Monthly Budgeting</h1>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-            Set spending limits split into 15-day pay cycles (1st–15th and 16th–End).
+            Set spending limits split into pay cycles (8th–22nd and 23rd–7th).
           </p>
         </div>
       </div>
@@ -365,13 +365,13 @@ export const BudgetView: React.FC = () => {
 
                     {/* 15-Day Semi-Monthly Split Cycles */}
                     <div className="pt-2 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-2">
-                      {/* 1st Half: Days 1 - 15 */}
+                      {/* 1st Half: Days 8 - 22 */}
                       {(() => {
                         const pct1 = firstHalfLimit > 0 ? Math.min((firstHalfSpent / firstHalfLimit) * 100, 100) : 0;
                         const over1 = firstHalfLimit > 0 && firstHalfSpent > firstHalfLimit;
                         return (
                           <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 space-y-1.5">
-                            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase block">1st (1st–15th)</span>
+                            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase block">1st (8th–22nd)</span>
                             <p className={`text-xs font-bold ${over1 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-800 dark:text-slate-200'}`}>
                               {formatCurrency(firstHalfSpent)}
                             </p>
@@ -386,13 +386,13 @@ export const BudgetView: React.FC = () => {
                         );
                       })()}
 
-                      {/* 2nd Half: Days 16 - End */}
+                      {/* 2nd Half: Days 23 - 7 */}
                       {(() => {
                         const pct2 = secondHalfLimit > 0 ? Math.min((secondHalfSpent / secondHalfLimit) * 100, 100) : 0;
                         const over2 = secondHalfLimit > 0 && secondHalfSpent > secondHalfLimit;
                         return (
                           <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 space-y-1.5">
-                            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase block">2nd (16th–End)</span>
+                            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase block">2nd (23rd–7th)</span>
                             <p className={`text-xs font-bold ${over2 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-800 dark:text-slate-200'}`}>
                               {formatCurrency(secondHalfSpent)}
                             </p>
