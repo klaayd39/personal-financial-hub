@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.expenses (
   id TEXT PRIMARY KEY,
   amount NUMERIC NOT NULL,
   date DATE NOT NULL,
+  time TEXT,
   category TEXT NOT NULL,
   payment_method TEXT NOT NULL,
   description TEXT NOT NULL,

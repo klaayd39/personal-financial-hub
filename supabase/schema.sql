@@ -63,6 +63,7 @@ create table if not exists public.expenses (
   user_id uuid references auth.users on delete cascade not null,
   amount numeric(12,2) not null check (amount >= 0),
   date date not null,
+  time text,
   category text not null check (category in (
     'Food', 'Transportation', 'Bills', 'Shopping', 
     'Entertainment', 'Health', 'Education', 'Travel', 'Miscellaneous'

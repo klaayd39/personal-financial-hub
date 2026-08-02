@@ -307,7 +307,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
                       className="hover:bg-slate-50 transition-colors group"
                     >
                       <td className="py-4 px-5 text-xs text-slate-500 whitespace-nowrap group-hover:text-slate-900 transition-colors">
-                        {formatDate(rec.date)}
+                        {formatDate(rec.date, rec.time)}
                       </td>
                       <td className="py-3 px-5 text-xs font-medium text-slate-800 max-w-[200px] truncate">
                         {rec.description}

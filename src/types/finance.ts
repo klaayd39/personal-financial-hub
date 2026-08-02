@@ -79,6 +79,7 @@ export interface ExpenseRecord {
   id: string;
   amount: number;
   date: string; // YYYY-MM-DD
+  time?: string; // HH:MM
   category: ExpenseCategory;
   payment_method: PaymentMethod;
   description: string;

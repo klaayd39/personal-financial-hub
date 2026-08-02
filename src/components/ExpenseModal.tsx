@@ -175,6 +175,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
         await updateExpense(initialData.id, {
           amount: parsedAmount,
           date,
+          time,
           category,
           payment_method: paymentMethod,
           description: description.trim(),
@@ -184,6 +185,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
         await addExpense({
           amount: parsedAmount,
           date,
+          time,
           category,
           payment_method: paymentMethod,
           description: description.trim(),
