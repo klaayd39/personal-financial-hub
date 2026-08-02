@@ -7,11 +7,8 @@ import {
   Edit2,
   Trash2,
   X,
-  Calendar,
   AlertTriangle,
 } from 'lucide-react';
-
-const YEARS = [2024, 2025, 2026, 2027, 2028];
 
 interface BudgetModalProps {
   month: number;

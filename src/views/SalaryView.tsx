@@ -12,8 +12,6 @@ import {
   Calendar,
 } from 'lucide-react';
 
-const YEARS = [2024, 2025, 2026, 2027, 2028];
-
 interface SalaryModalProps {
   month: number;
   year: number;
