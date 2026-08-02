@@ -1,32 +1,64 @@
-# React + TypeScript + Vite
+# Personal Financial Hub 💰
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A modern, visually stunning, and highly interactive web application designed to help you take complete control of your personal finances. Track your income, manage expenses, set budgets, and monitor your savings all in one beautiful dashboard.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **📊 Comprehensive Dashboard:** Get a real-time overview of your financial health, including total income, expenses, and remaining balances.
+- **💸 Expense Tracking:** Easily log expenses with detailed categorization, payment methods, and optional receipt attachments.
+- **📅 Monthly Budgets:** Set monthly budget limits and visualize your spending progress with dynamic 3D progress rings. Receive warnings when you're nearing or exceeding your limit.
+- **🧾 Bills & Subscriptions:** Manage recurring bills and subscriptions. Mark them as paid to automatically generate linked expense records.
+- **💰 Salary & Savings:** Track your monthly salary and record global savings ledger entries to monitor your growing wealth.
+- **🌙 Automatic Dark/Light Mode:** Seamlessly adapts to your system's theme preference with beautifully curated, modern glassmorphism aesthetics.
+- **🔐 Secure Authentication:** Robust user authentication and secure data storage powered by Supabase.
 
-## React Compiler
+## 🛠 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend Framework:** React 18 with TypeScript
+- **Build Tool:** Vite
+- **Styling:** Tailwind CSS (with custom utility classes and native dark mode support)
+- **Animations:** Framer Motion for smooth, interactive micro-animations
+- **Icons:** Lucide React
+- **Backend & Database:** Supabase (PostgreSQL, Auth)
+- **3D Elements:** Spline for stunning visual components
 
-## Expanding the Oxlint configuration
+## 🚀 Getting Started
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn
+- A Supabase project
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+### Installation
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/klaayd39/personal-financial-hub.git
+   cd "Personal Financial Hub"
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   Create a `.env` file in the root directory and add your Supabase credentials:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. Database Setup:
+   Run the `supabase_migration.sql` script in your Supabase SQL Editor to ensure all necessary tables (`bills`, `budgets`, `expenses`, `incomes`, `salaries`, `savings`) and Row Level Security (RLS) policies are correctly configured.
+
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+6. Open `http://localhost:5173` in your browser.
+
+## 🎨 Design Philosophy
+
+The Personal Financial Hub prioritizes **Visual Excellence**. By leveraging modern web design practices—such as vibrant yet harmonious color palettes, sleek dark modes, glassmorphism panels, and dynamic micro-animations—the application provides a premium, highly engaging user experience that makes managing finances a delight rather than a chore.
