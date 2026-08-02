@@ -40,10 +40,6 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
     setFilter((p) => ({ ...p, month: monthIndex }));
   };
 
-  const handleSelectYear = (year: number) => {
-    setFilter((p) => ({ ...p, year }));
-  };
-
   // Group all expenses by Month (0 - 11) for the selected Year
   const monthlyStats = useMemo(() => {
     const stats = Array.from({ length: 12 }, (_, i) => ({
