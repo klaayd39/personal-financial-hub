@@ -206,7 +206,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
 
 export const BudgetView: React.FC = () => {
   const { budgets, expenses, deleteBudget, filter } = useFinance();
-  const [selectedYear, setSelectedYear] = useState<number>(filter.year);
+  const selectedYear = filter.year;
   const [activeModal, setActiveModal] = useState<{
     month: number;
     year: number;
@@ -249,22 +249,6 @@ export const BudgetView: React.FC = () => {
           <p className="text-xs text-slate-400 mt-0.5">
             Set spending limits split into 15-day pay cycles (1st–15th and 16th–End).
           </p>
-        </div>
-
-        {/* Year Selector */}
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-slate-400" />
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(Number(e.target.value))}
-            className="input-base text-xs font-semibold py-1.5 px-3 bg-white border border-slate-200 rounded-xl"
-          >
-            {YEARS.map((yr) => (
-              <option key={yr} value={yr}>
-                {yr}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 

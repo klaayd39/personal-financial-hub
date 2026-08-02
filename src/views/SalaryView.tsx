@@ -130,16 +130,15 @@ const SalaryModal: React.FC<SalaryModalProps> = ({
 
 export const SalaryView: React.FC = () => {
   const { salaries, deleteSalary, filter } = useFinance();
-  const [viewYear, setViewYear] = useState(filter.year);
   const [editTarget, setEditTarget] = useState<{ month: number } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   // Salaries for the selected year, indexed by month (0–11)
   const salaryByMonth = React.useMemo(() => {
     const map: Record<number, (typeof salaries)[number]> = {};
-    salaries.filter((s) => s.year === viewYear).forEach((s) => { map[s.month] = s; });
+    salaries.filter((s) => s.year === filter.year).forEach((s) => { map[s.month] = s; });
     return map;
-  }, [salaries, viewYear]);
+  }, [salaries, filter.year]);
 
   const totalAnnual = Object.values(salaryByMonth).reduce((sum, s) => sum + s.amount, 0);
   const monthsSet = Object.keys(salaryByMonth).length;
@@ -157,16 +156,6 @@ export const SalaryView: React.FC = () => {
             <span className="font-semibold text-slate-600">{formatCurrency(totalAnnual)}</span>
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <label className="text-xs text-slate-500 font-medium">Year</label>
-          <select
-            value={viewYear}
-            onChange={(e) => setViewYear(parseInt(e.target.value))}
-            className="bg-white border border-slate-200 text-slate-700 text-xs font-medium rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-slate-200"
-          >
-            {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
-          </select>
-        </div>
       </div>
 
       {/* Info banner */}
@@ -182,7 +171,7 @@ export const SalaryView: React.FC = () => {
         {MONTH_NAMES.map((name, idx) => {
           const record = salaryByMonth[idx];
           const isCurrentPeriod =
-            idx === filter.month && viewYear === filter.year;
+            idx === filter.month;
 
           return (
             <div
@@ -247,7 +236,7 @@ export const SalaryView: React.FC = () => {
       {editTarget !== null && (
         <SalaryModal
           month={editTarget.month}
-          year={viewYear}
+          year={filter.year}
           existingAmount={editRecord?.amount}
           existingNotes={editRecord?.notes}
           onClose={() => setEditTarget(null)}
