@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS public.bills (
   billing_cycle TEXT DEFAULT 'monthly', -- 'monthly' | 'yearly' | 'weekly'
   category TEXT,
   is_paid BOOLEAN DEFAULT FALSE,
+  bill_expense_id TEXT,
   notes TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
