@@ -137,13 +137,6 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ onOpenAddModal, onEd
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <CustomDropdown
-            options={[2024, 2025, 2026, 2027, 2028].map(y => ({ value: y, label: y.toString() }))}
-            value={selectedYear}
-            onChange={(val) => handleSelectYear(val as number)}
-            className="w-24"
-            ariaLabel="Select year"
-          />
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={handleExportCSV}
