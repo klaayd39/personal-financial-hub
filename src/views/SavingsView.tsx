@@ -86,22 +86,20 @@ const SavingsModal: React.FC<SavingsModalProps> = ({ existing, onClose }) => {
               <button
                 type="button"
                 onClick={() => setEntryType('deposit')}
-                className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${
-                  entryType === 'deposit'
-                    ? 'bg-emerald-600 border-emerald-600 text-white'
-                    : 'border-slate-200 text-slate-500 hover:border-slate-300'
-                }`}
+                className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${entryType === 'deposit'
+                  ? 'bg-emerald-600 border-emerald-600 text-white'
+                  : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                  }`}
               >
                 <TrendingUp className="w-3.5 h-3.5" /> Deposit
               </button>
               <button
                 type="button"
                 onClick={() => setEntryType('withdrawal')}
-                className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${
-                  entryType === 'withdrawal'
-                    ? 'bg-rose-500 border-rose-500 text-white'
-                    : 'border-slate-200 text-slate-500 hover:border-slate-300'
-                }`}
+                className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${entryType === 'withdrawal'
+                  ? 'bg-rose-500 border-rose-500 text-white'
+                  : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                  }`}
               >
                 <TrendingDown className="w-3.5 h-3.5" /> Withdrawal
               </button>
@@ -204,9 +202,9 @@ export const SavingsView: React.FC = () => {
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
-  const totalDeposits    = savingsRecords.filter((s) => s.amount > 0).reduce((sum, s) => sum + s.amount, 0);
+  const totalDeposits = savingsRecords.filter((s) => s.amount > 0).reduce((sum, s) => sum + s.amount, 0);
   const totalWithdrawals = savingsRecords.filter((s) => s.amount < 0).reduce((sum, s) => sum + Math.abs(s.amount), 0);
-  const netSavings       = totalDeposits - totalWithdrawals;
+  const netSavings = totalDeposits - totalWithdrawals;
 
   const openAdd = () => { setEditTarget(null); setIsModalOpen(true); };
   const openEdit = (r: SavingsRecord) => { setEditTarget(r); setIsModalOpen(true); };

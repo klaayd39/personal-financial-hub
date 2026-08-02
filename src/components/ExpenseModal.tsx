@@ -6,7 +6,7 @@ import type { ExpenseRecord, PaymentMethod, ExpenseCategory } from '../types/fin
 import { AnimatedModal } from './AnimatedModal';
 import {
   X, MinusCircle, Save, Upload, Image as ImageIcon,
-  DollarSign, FileText, CreditCard, Calendar,
+  FileText, CreditCard, Calendar, Clock,
 } from 'lucide-react';
 
 interface ExpenseModalProps {
@@ -42,6 +42,12 @@ const getLocalDateString = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
+/** Get current time in HH:MM using local timezone */
+const getLocalTimeString = () => {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+};
+
 const fieldVariants: Variants = {
   hidden: { opacity: 0, y: 6 },
   visible: (i: number) => ({
@@ -54,6 +60,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
   const { addExpense, updateExpense, showToast } = useFinance();
   const [amount, setAmount] = useState<string>('');
   const [date, setDate] = useState<string>('');
+  const [time, setTime] = useState<string>('');
   const [category, setCategory] = useState<ExpenseCategory>('Miscellaneous');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Credit Card');
   const [description, setDescription] = useState<string>('');
@@ -66,6 +73,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
       if (initialData) {
         setAmount(initialData.amount.toString());
         setDate(initialData.date);
+        setTime((initialData as any).time || '');
         setCategory(initialData.category);
         setPaymentMethod(initialData.payment_method);
         setDescription(initialData.description);
@@ -73,6 +81,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
       } else {
         setAmount('');
         setDate(getLocalDateString());
+        setTime(getLocalTimeString());
         setCategory('Miscellaneous');
         setPaymentMethod('Credit Card');
         setDescription('');
@@ -177,7 +186,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
           {/* Amount */}
           <motion.div custom={0} variants={fieldVariants} initial="hidden" animate="visible">
             <label htmlFor="expense-amount" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
-              <span className="flex items-center gap-1.5"><DollarSign className="w-3 h-3" /> Amount (₱) <span className="text-rose-500">*</span></span>
+              <span className="flex items-center gap-1.5">Amount (₱) <span className="text-rose-500">*</span></span>
             </label>
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-base pointer-events-none select-none">₱</span>
@@ -262,22 +271,36 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({ isOpen, onClose, ini
               </select>
             </div>
 
-            <div>
-              <label htmlFor="expense-date" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
-                <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" /> Date <span className="text-rose-500">*</span></span>
-              </label>
-              <input
-                id="expense-date"
-                type="date"
-                required
-                value={date}
-                onChange={(e) => { setDate(e.target.value); setErrors((prev) => ({ ...prev, date: '' })); }}
-                className={`input-base ${errors.date ? 'border-rose-400 ring-2 ring-rose-400/20' : ''}`}
-                aria-invalid={Boolean(errors.date)}
-              />
-              {errors.date && (
-                <p className="mt-1 text-xs text-rose-500 font-medium">{errors.date}</p>
-              )}
+            <div className="space-y-3">
+              <div>
+                <label htmlFor="expense-date" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                  <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" /> Date <span className="text-rose-500">*</span></span>
+                </label>
+                <input
+                  id="expense-date"
+                  type="date"
+                  required
+                  value={date}
+                  onChange={(e) => { setDate(e.target.value); setErrors((prev) => ({ ...prev, date: '' })); }}
+                  className={`input-base ${errors.date ? 'border-rose-400 ring-2 ring-rose-400/20' : ''}`}
+                  aria-invalid={Boolean(errors.date)}
+                />
+                {errors.date && (
+                  <p className="mt-1 text-xs text-rose-500 font-medium">{errors.date}</p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="expense-time" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                  <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> Time</span>
+                </label>
+                <input
+                  id="expense-time"
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="input-base"
+                />
+              </div>
             </div>
           </motion.div>
 
