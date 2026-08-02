@@ -49,6 +49,8 @@ CREATE TABLE IF NOT EXISTS public.budgets (
   month INT NOT NULL,
   year INT NOT NULL,
   amount NUMERIC NOT NULL,
+  first_half_amount NUMERIC,
+  second_half_amount NUMERIC,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
