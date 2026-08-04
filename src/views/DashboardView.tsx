@@ -72,7 +72,7 @@ export const DashboardView: React.FC = () => {
       <DashboardOverview />
 
       {/* Charts + sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 12-Month Expense Trend */}
         <motion.div
           className="lg:col-span-2"
@@ -91,7 +91,7 @@ export const DashboardView: React.FC = () => {
                 <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">Expenses</span>
               </div>
             </div>
-            <div className="flex-1 min-h-[220px]">
+            <div className="flex-1 min-h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={monthlyTrendData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                   <defs>
@@ -126,7 +126,7 @@ export const DashboardView: React.FC = () => {
         </motion.div>
 
         {/* Right sidebar: Bills + Recent */}
-        <div className="space-y-4 flex flex-col">
+        <div className="space-y-6 flex flex-col">
           {/* Upcoming Bills Widget */}
           <motion.div
             className="card hover-lift"

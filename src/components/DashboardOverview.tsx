@@ -72,6 +72,14 @@ export const DashboardOverview: React.FC = () => {
             bg: isOverBudget ? 'bg-rose-50 dark:bg-rose-900/20' : 'bg-blue-50 dark:bg-blue-900/20',
             badge: isOverBudget ? 'Over Limit' : `${budgetUsedPct.toFixed(0)}% Used`,
           },
+          {
+            label: 'Budget Remaining',
+            value: budgetLimit - summary.totalExpenses,
+            icon: <Wallet className="w-4 h-4" />,
+            color: isOverBudget ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400',
+            bg: isOverBudget ? 'bg-rose-50 dark:bg-rose-900/20' : 'bg-emerald-50 dark:bg-emerald-900/20',
+            badge: isOverBudget ? 'Over Limit' : null,
+          },
         ]
       : []),
     {
@@ -85,7 +93,7 @@ export const DashboardOverview: React.FC = () => {
     ...(!isAllMonths
       ? [
           {
-            label: 'Remaining Balance',
+            label: 'Salary Remaining Balance',
             value: remainingBalance,
             icon: <Wallet className="w-4 h-4" />,
             color: remainingBalance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400',
@@ -105,7 +113,7 @@ export const DashboardOverview: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-3 mb-6">
+    <div className="space-y-5 mb-6">
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">{period}</p>
       </div>
@@ -153,9 +161,7 @@ export const DashboardOverview: React.FC = () => {
 
       {/* Metric Cards */}
       <div
-        className={`grid grid-cols-1 sm:grid-cols-2 ${
-          isAllMonths ? 'lg:grid-cols-3' : 'lg:grid-cols-4 xl:grid-cols-6'
-        } gap-3`}
+        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`}
       >
         {cards.map((card, i) => (
           <motion.div
