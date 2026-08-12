@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { IncomeRecord, ExpenseRecord, SalaryRecord, SavingsRecord, BudgetRecord, BillRecord } from '../types/finance';
+import type { IncomeRecord, ExpenseRecord, SalaryRecord, SavingsRecord, BillRecord } from '../types/finance';
 
 export const supabaseService = {
   // ── Incomes ──────────────────────────────────────────────────────────
@@ -108,54 +108,6 @@ export const supabaseService = {
     if (error) throw error;
   },
 
-  // ── Budgets ──────────────────────────────────────────────────────────
-  async fetchBudgets(): Promise<BudgetRecord[]> {
-    if (!supabase) return [];
-    try {
-      const { data, error } = await supabase.from('budgets').select('*');
-      if (error) {
-        console.warn('Budgets table not created in Supabase yet:', error.message);
-        const local = localStorage.getItem('finance_budgets_fallback');
-        return local ? JSON.parse(local) : [];
-      }
-      return data as BudgetRecord[];
-    } catch (e) {
-      console.warn('Budgets table fallback active:', e);
-      const local = localStorage.getItem('finance_budgets_fallback');
-      return local ? JSON.parse(local) : [];
-    }
-  },
-  async upsertBudget(record: BudgetRecord): Promise<BudgetRecord> {
-    if (!supabase) throw new Error('Supabase not configured');
-    try {
-      const { data, error } = await supabase.from('budgets').upsert([record], { onConflict: 'id' }).select().single();
-      if (error) throw error;
-      return data as BudgetRecord;
-    } catch (err: any) {
-      console.warn('Supabase upsert failed, saving to local fallback:', err.message);
-      const local = localStorage.getItem('finance_budgets_fallback');
-      const list: BudgetRecord[] = local ? JSON.parse(local) : [];
-      const idx = list.findIndex((b) => b.id === record.id);
-      if (idx >= 0) list[idx] = record;
-      else list.push(record);
-      localStorage.setItem('finance_budgets_fallback', JSON.stringify(list));
-      return record;
-    }
-  },
-  async deleteBudget(id: string): Promise<void> {
-    if (!supabase) throw new Error('Supabase not configured');
-    try {
-      const { error } = await supabase.from('budgets').delete().eq('id', id);
-      if (error) console.warn('Supabase delete failed:', error.message);
-    } catch (e) {
-      console.warn('Supabase delete catch:', e);
-    }
-    const local = localStorage.getItem('finance_budgets_fallback');
-    if (local) {
-      const list: BudgetRecord[] = JSON.parse(local);
-      localStorage.setItem('finance_budgets_fallback', JSON.stringify(list.filter((b) => b.id !== id)));
-    }
-  },
 
   // ── Bills (Fixed & Recurring) ─────────────────────────────────────────
   async fetchBills(): Promise<BillRecord[]> {

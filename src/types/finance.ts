@@ -28,16 +28,7 @@ export interface SalaryRecord {
   updated_at: string; // ISO timestamp
 }
 
-/** Monthly budget limit — one per calendar month/year. */
-export interface BudgetRecord {
-  id: string;        // e.g. "bud-2026-6"
-  month: number;     // 0 = January … 11 = December
-  year: number;
-  amount: number;
-  first_half_amount?: number;  // custom 1st half limit (1st - 15th)
-  second_half_amount?: number; // custom 2nd half limit (16th - End)
-  updated_at: string; // ISO timestamp
-}
+
 
 /** Recurring or fixed monthly bill record. */
 export interface BillRecord {

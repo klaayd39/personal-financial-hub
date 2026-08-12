@@ -34,7 +34,7 @@ export const Navbar: React.FC = () => {
     { to: '/', label: 'Dashboard', icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
     { to: '/expenses', label: 'Expenses', icon: <CreditCard className="w-3.5 h-3.5" /> },
     { to: '/salary', label: 'Salary', icon: <Banknote className="w-3.5 h-3.5" /> },
-    { to: '/budget', label: 'Budget', icon: <Calendar className="w-3.5 h-3.5" /> },
+
     { to: '/bills', label: 'Bills', icon: <Receipt className="w-3.5 h-3.5" /> },
     { to: '/savings', label: 'Savings', icon: <PiggyBank className="w-3.5 h-3.5" /> },
   ];

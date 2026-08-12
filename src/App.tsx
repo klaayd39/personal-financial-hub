@@ -10,7 +10,7 @@ import { DashboardView } from './views/DashboardView';
 import { ExpensesView } from './views/ExpensesView';
 import { SalaryView } from './views/SalaryView';
 import { SavingsView } from './views/SavingsView';
-import { BudgetView } from './views/BudgetView';
+
 import { BillsView } from './views/BillsView';
 import { AuthView } from './views/AuthView';
 import { ExpenseModal } from './components/ExpenseModal';
@@ -61,7 +61,7 @@ const AnimatedRoutes: React.FC<{
           }
         />
         <Route path="/salary" element={<PageWrapper><SalaryView /></PageWrapper>} />
-        <Route path="/budget" element={<PageWrapper><BudgetView /></PageWrapper>} />
+
         <Route path="/bills" element={<PageWrapper><BillsView /></PageWrapper>} />
         <Route path="/savings" element={<PageWrapper><SavingsView /></PageWrapper>} />
         <Route path="*" element={<Navigate to="/" replace />} />

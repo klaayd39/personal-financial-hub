@@ -1,12 +1,12 @@
 # Personal Financial Hub 💰
 
-A modern, visually stunning, and highly interactive web application designed to help you take complete control of your personal finances. Track your income, manage expenses, set budgets, and monitor your savings all in one beautiful dashboard.
+A modern, visually stunning, and highly interactive web application designed to help you take complete control of your personal finances. Track your income, manage expenses, and monitor your savings all in one beautiful dashboard.
 
 ## ✨ Features
 
 - **📊 Comprehensive Dashboard:** Get a real-time overview of your financial health, including total income, expenses, and remaining balances.
 - **💸 Expense Tracking:** Easily log expenses with detailed categorization, payment methods, and optional receipt attachments.
-- **📅 Monthly Budgets:** Set monthly budget limits and visualize your spending progress with dynamic 3D progress rings. Receive warnings when you're nearing or exceeding your limit.
+
 - **🧾 Bills & Subscriptions:** Manage recurring bills and subscriptions. Mark them as paid to automatically generate linked expense records.
 - **💰 Salary & Savings:** Track your monthly salary and record global savings ledger entries to monitor your growing wealth.
 - **🌙 Automatic Dark/Light Mode:** Seamlessly adapts to your system's theme preference with beautifully curated, modern glassmorphism aesthetics.
@@ -50,7 +50,7 @@ A modern, visually stunning, and highly interactive web application designed to 
    ```
 
 4. Database Setup:
-   Run the `supabase_migration.sql` script in your Supabase SQL Editor to ensure all necessary tables (`bills`, `budgets`, `expenses`, `incomes`, `salaries`, `savings`) and Row Level Security (RLS) policies are correctly configured.
+   Run the `supabase_migration.sql` script in your Supabase SQL Editor to ensure all necessary tables (`bills`, `expenses`, `incomes`, `salaries`, `savings`) and Row Level Security (RLS) policies are correctly configured.
 
 5. Start the development server:
    ```bash

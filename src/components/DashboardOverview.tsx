@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useFinance } from '../context/FinanceContext';
 import { formatCurrency, MONTH_NAMES } from '../utils/formatters';
 import { TrendingDown, PiggyBank, Banknote, Wallet, Calendar } from 'lucide-react';
-import { BudgetRing3D } from './3d/BudgetRing3D';
+
 
 const cardVariants = {
   hidden: { opacity: 0, y: 12, scale: 0.97 },
@@ -16,7 +16,7 @@ const cardVariants = {
 };
 
 export const DashboardOverview: React.FC = () => {
-  const { summary, filter, salaries, getBudgetForPeriod } = useFinance();
+  const { summary, filter, salaries } = useFinance();
   const period =
     filter.month === -1 ? `${filter.year}` : `${MONTH_NAMES[filter.month]} ${filter.year}`;
 
@@ -31,10 +31,7 @@ export const DashboardOverview: React.FC = () => {
       ? salaries.find((s) => s.month === filter.month && s.year === filter.year)?.amount ?? 0
       : totalYearlySalary;
 
-  const activeBudget = filter.month !== -1 ? getBudgetForPeriod(filter.month, filter.year) : undefined;
-  const budgetLimit = activeBudget?.amount ?? 0;
-  const budgetUsedPct = budgetLimit > 0 ? Math.min((summary.totalExpenses / budgetLimit) * 100, 100) : 0;
-  const isOverBudget = budgetLimit > 0 && summary.totalExpenses > budgetLimit;
+
 
   const remainingBalance = selectedMonthSalary - summary.totalExpenses;
   const hasSalary = totalYearlySalary > 0;
@@ -62,31 +59,12 @@ export const DashboardOverview: React.FC = () => {
           },
         ]
       : []),
-    ...(!isAllMonths && budgetLimit > 0
-      ? [
-          {
-            label: 'Budget Limit',
-            value: budgetLimit,
-            icon: <Calendar className="w-4 h-4" />,
-            color: isOverBudget ? 'text-rose-600 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400',
-            bg: isOverBudget ? 'bg-rose-50 dark:bg-rose-900/20' : 'bg-blue-50 dark:bg-blue-900/20',
-            badge: isOverBudget ? 'Over Limit' : `${budgetUsedPct.toFixed(0)}% Used`,
-          },
-          {
-            label: 'Budget Remaining',
-            value: budgetLimit - summary.totalExpenses,
-            icon: <Wallet className="w-4 h-4" />,
-            color: isOverBudget ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400',
-            bg: isOverBudget ? 'bg-rose-50 dark:bg-rose-900/20' : 'bg-emerald-50 dark:bg-emerald-900/20',
-            badge: isOverBudget ? 'Over Limit' : null,
-          },
-        ]
-      : []),
+
     {
       label: 'Total Expenses',
       value: summary.totalExpenses,
       icon: <TrendingDown className="w-4 h-4" />,
-      color: isOverBudget ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-rose-500 dark:text-rose-400',
+      color: 'text-rose-500 dark:text-rose-400',
       bg: 'bg-rose-50 dark:bg-rose-900/20',
       badge: null as string | null,
     },
@@ -118,46 +96,7 @@ export const DashboardOverview: React.FC = () => {
         <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">{period}</p>
       </div>
 
-      {/* Budget Progress Banner */}
-      {!isAllMonths && budgetLimit > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
-            isOverBudget
-              ? 'bg-rose-500/10 border-rose-200 dark:border-rose-900/50 text-rose-900 dark:text-rose-200'
-              : 'bg-blue-500/10 border-blue-200 dark:border-blue-900/50 text-blue-900 dark:text-blue-200'
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            <BudgetRing3D usedPct={budgetUsedPct} isOverBudget={isOverBudget} />
-            <div>
-              <p className="text-xs font-bold">
-                {MONTH_NAMES[filter.month]} Budget: {formatCurrency(summary.totalExpenses)} /{' '}
-                {formatCurrency(budgetLimit)}
-              </p>
-              <p className="text-[11px] opacity-80">
-                {isOverBudget
-                  ? `You have exceeded your monthly budget by ${formatCurrency(summary.totalExpenses - budgetLimit)}!`
-                  : `${formatCurrency(budgetLimit - summary.totalExpenses)} remaining before reaching limit.`}
-              </p>
-            </div>
-          </div>
 
-          <div className="w-full sm:w-48 space-y-1">
-            <div className="w-full h-2 bg-white/60 dark:bg-slate-900/50 rounded-full overflow-hidden">
-              <motion.div
-                className={`h-full rounded-full ${isOverBudget ? 'bg-rose-600' : 'bg-blue-600'}`}
-                initial={{ width: 0 }}
-                animate={{ width: `${budgetUsedPct}%` }}
-                transition={{ duration: 0.8, ease: 'easeOut' as const }}
-              />
-            </div>
-            <p className="text-[10px] text-right font-bold">{budgetUsedPct.toFixed(0)}% Used</p>
-          </div>
-        </motion.div>
-      )}
 
       {/* Metric Cards */}
       <div

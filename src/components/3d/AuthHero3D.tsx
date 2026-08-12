@@ -98,7 +98,7 @@ export const AuthHero3D: React.FC = () => {
           Master Your Money <br /> With Confidence
         </h1>
         <p className="text-sm text-slate-300 max-w-sm">
-          Track expenses, budget smarter, monitor savings, and hit your financial goals effortlessly.
+          Track expenses, monitor savings, and hit your financial goals effortlessly.
         </p>
       </div>
 

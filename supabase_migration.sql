@@ -1,18 +1,4 @@
--- 1. Ensure Budgets table exists
-CREATE TABLE IF NOT EXISTS public.budgets (
-    id TEXT PRIMARY KEY,
-    month INTEGER NOT NULL,
-    year INTEGER NOT NULL,
-    amount NUMERIC NOT NULL,
-    first_half_amount NUMERIC,
-    second_half_amount NUMERIC,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
 
--- 2. Enable RLS and add basic policies for budgets
-ALTER TABLE public.budgets ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Allow all actions for budgets" ON public.budgets;
-CREATE POLICY "Allow all actions for budgets" ON public.budgets FOR ALL USING (true) WITH CHECK (true);
 
 -- 3. Ensure Bills table exists
 CREATE TABLE IF NOT EXISTS public.bills (

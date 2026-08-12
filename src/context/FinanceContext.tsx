@@ -4,7 +4,7 @@ import type {
   ExpenseRecord,
   SalaryRecord,
   SavingsRecord,
-  BudgetRecord,
+
   BillRecord,
   FinancialSummary,
   FilterState,
@@ -23,7 +23,7 @@ interface FinanceContextType {
   expenses: ExpenseRecord[];
   salaries: SalaryRecord[];
   savingsRecords: SavingsRecord[];
-  budgets: BudgetRecord[];
+
   bills: BillRecord[];
   filteredIncomes: IncomeRecord[];
   filteredExpenses: ExpenseRecord[];
@@ -50,16 +50,7 @@ interface FinanceContextType {
   deleteSalary: (id: string) => Promise<void>;
   getSalaryForPeriod: (month: number, year: number) => SalaryRecord | undefined;
 
-  // Budget CRUD
-  setBudget: (
-    month: number,
-    year: number,
-    amount: number,
-    firstHalfAmount?: number,
-    secondHalfAmount?: number
-  ) => Promise<void>;
-  deleteBudget: (id: string) => Promise<void>;
-  getBudgetForPeriod: (month: number, year: number) => BudgetRecord | undefined;
+
 
   // Bills CRUD
   addBill: (record: Omit<BillRecord, 'id'>) => Promise<void>;
@@ -106,19 +97,18 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [salaries, setSalaries] = useState<SalaryRecord[]>([]);
   const [savingsRecords, setSavingsRecords] = useState<SavingsRecord[]>([]);
-  const [budgets, setBudgets] = useState<BudgetRecord[]>([]);
+
   const [bills, setBills] = useState<BillRecord[]>([]);
 
   useEffect(() => {
     let isMounted = true;
     const fetchInitialData = async () => {
       try {
-        const [inc, exp, sal, sav, bud, bls] = await Promise.all([
+        const [inc, exp, sal, sav, bls] = await Promise.all([
           supabaseService.fetchIncomes(),
           supabaseService.fetchExpenses(),
           supabaseService.fetchSalaries(),
           supabaseService.fetchSavings(),
-          supabaseService.fetchBudgets(),
           supabaseService.fetchBills(),
         ]);
         if (isMounted) {
@@ -126,7 +116,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
           setExpenses(exp);
           setSalaries(sal);
           setSavingsRecords(sav);
-          setBudgets(bud);
           setBills(bls);
         }
       } catch (err: any) {
@@ -236,47 +225,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const getSalaryForPeriod = (month: number, year: number) =>
     salaries.find((s) => s.month === month && s.year === year);
 
-  // ── Budget CRUD ───────────────────────────────────────────────────────
-  const setBudget = async (
-    month: number,
-    year: number,
-    amount: number,
-    firstHalfAmount?: number,
-    secondHalfAmount?: number
-  ) => {
-    const id = `bud-${year}-${month}`;
-    const updated_at = new Date().toISOString();
-    try {
-      const saved = await supabaseService.upsertBudget({
-        id,
-        month,
-        year,
-        amount,
-        first_half_amount: firstHalfAmount,
-        second_half_amount: secondHalfAmount,
-        updated_at,
-      });
-      setBudgets((prev) => {
-        const exists = prev.some((b) => b.id === id);
-        if (exists) return prev.map((b) => (b.id === id ? saved : b));
-        return [...prev, saved];
-      });
-      showToast('Monthly budget saved', 'success');
-    } catch (err: any) {
-      showToast('Failed to set budget: ' + err.message, 'error');
-    }
-  };
-  const deleteBudget = async (id: string) => {
-    try {
-      await supabaseService.deleteBudget(id);
-      setBudgets((prev) => prev.filter((b) => b.id !== id));
-      showToast('Budget record removed', 'info');
-    } catch (err: any) {
-      showToast('Failed to delete budget: ' + err.message, 'error');
-    }
-  };
-  const getBudgetForPeriod = (month: number, year: number) =>
-    budgets.find((b) => b.month === month && b.year === year);
+
 
   // ── Bills CRUD ────────────────────────────────────────────────────────
   const addBill = async (record: Omit<BillRecord, 'id'>) => {
@@ -608,7 +557,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         expenses,
         salaries,
         savingsRecords,
-        budgets,
+
         bills,
         filteredIncomes,
         filteredExpenses,
@@ -626,9 +575,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setSalary,
         deleteSalary,
         getSalaryForPeriod,
-        setBudget,
-        deleteBudget,
-        getBudgetForPeriod,
+
         addBill,
         updateBill,
         deleteBill,
