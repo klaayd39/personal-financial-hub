@@ -15,7 +15,7 @@ import {
   Wallet,
   Menu,
   X,
-  Calendar,
+
   LogOut,
   Receipt,
   Moon,

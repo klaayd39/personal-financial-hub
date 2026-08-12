@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useFinance } from '../context/FinanceContext';
 import { formatCurrency, MONTH_NAMES } from '../utils/formatters';
-import { TrendingDown, PiggyBank, Banknote, Wallet, Calendar } from 'lucide-react';
+import { TrendingDown, PiggyBank, Banknote, Wallet } from 'lucide-react';
 
 
 const cardVariants = {
