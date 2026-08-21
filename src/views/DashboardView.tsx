@@ -12,15 +12,15 @@ import {
 import type { ExpenseCategory } from '../types/finance';
 
 const CATEGORY_META: Record<string, { emoji: string; gradient: string; color: string }> = {
-  Food:            { emoji: '🍽️', gradient: 'from-orange-500 to-amber-500',  color: 'text-orange-600 dark:text-orange-400' },
-  Transportation:  { emoji: '🚗', gradient: 'from-sky-500 to-cyan-500',      color: 'text-sky-600 dark:text-sky-400' },
-  Bills:           { emoji: '📋', gradient: 'from-slate-600 to-slate-500',    color: 'text-slate-600 dark:text-slate-400' },
-  Shopping:        { emoji: '🛒', gradient: 'from-pink-500 to-rose-500',      color: 'text-pink-600 dark:text-pink-400' },
-  Entertainment:   { emoji: '🎬', gradient: 'from-purple-500 to-violet-500',  color: 'text-purple-600 dark:text-purple-400' },
-  Health:          { emoji: '🏥', gradient: 'from-emerald-500 to-teal-500',   color: 'text-emerald-600 dark:text-emerald-400' },
-  Education:       { emoji: '📚', gradient: 'from-blue-600 to-indigo-600',    color: 'text-blue-600 dark:text-blue-400' },
-  Travel:          { emoji: '✈️', gradient: 'from-teal-500 to-cyan-500',      color: 'text-teal-600 dark:text-teal-400' },
-  Miscellaneous:   { emoji: '📦', gradient: 'from-amber-500 to-yellow-500',   color: 'text-amber-600 dark:text-amber-400' },
+  Food: { emoji: '🍽️', gradient: 'from-orange-500 to-amber-500', color: 'text-orange-600 dark:text-orange-400' },
+  Transportation: { emoji: '🚗', gradient: 'from-sky-500 to-cyan-500', color: 'text-sky-600 dark:text-sky-400' },
+  Bills: { emoji: '📋', gradient: 'from-slate-600 to-slate-500', color: 'text-slate-600 dark:text-slate-400' },
+  Shopping: { emoji: '🛒', gradient: 'from-pink-500 to-rose-500', color: 'text-pink-600 dark:text-pink-400' },
+  Entertainment: { emoji: '🎬', gradient: 'from-purple-500 to-violet-500', color: 'text-purple-600 dark:text-purple-400' },
+  Health: { emoji: '🏥', gradient: 'from-emerald-500 to-teal-500', color: 'text-emerald-600 dark:text-emerald-400' },
+  Education: { emoji: '📚', gradient: 'from-blue-600 to-indigo-600', color: 'text-blue-600 dark:text-blue-400' },
+  Travel: { emoji: '✈️', gradient: 'from-teal-500 to-cyan-500', color: 'text-teal-600 dark:text-teal-400' },
+  Miscellaneous: { emoji: '📦', gradient: 'from-amber-500 to-yellow-500', color: 'text-amber-600 dark:text-amber-400' },
 };
 
 const ALL_CATEGORIES: ExpenseCategory[] = [
@@ -98,6 +98,50 @@ export const DashboardView: React.FC = () => {
       {/* Overview cards */}
       <DashboardOverview />
 
+      {/* Category Dashboards Grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15, duration: 0.4, ease: [0.16, 1, 0.3, 1] as const }}
+      >
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-sm font-bold text-slate-800 dark:text-white">Category Dashboards</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Tap a category for detailed analytics</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-2">
+            {categoryStats.map((stat, i) => {
+              const cm = CATEGORY_META[stat.category];
+              return (
+                <motion.div
+                  key={stat.category}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 + i * 0.04, duration: 0.3, ease: [0.16, 1, 0.3, 1] as const }}
+                >
+                  <Link
+                    to={`/category/${stat.category.toLowerCase()}`}
+                    className="group flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700 hover:shadow-md transition-all"
+                  >
+                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${cm.gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
+                      <span className="text-base">{cm.emoji}</span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-slate-700 dark:text-slate-300 leading-tight text-center">
+                      {stat.category}
+                    </span>
+                    <span className={`text-[10px] font-bold ${stat.total > 0 ? cm.color : 'text-slate-300 dark:text-slate-600'}`}>
+                      {stat.total > 0 ? formatCurrency(stat.total) : '—'}
+                    </span>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </motion.div>
+
       {/* Charts + sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 12-Month Expense Trend */}
@@ -105,7 +149,7 @@ export const DashboardView: React.FC = () => {
           className="lg:col-span-2"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.4, ease: [0.16, 1, 0.3, 1] as const }}
+          transition={{ delay: 0.3, duration: 0.4, ease: [0.16, 1, 0.3, 1] as const }}
         >
           <div className="card hover-lift h-full flex flex-col">
             <div className="flex items-center justify-between mb-5">
@@ -159,7 +203,7 @@ export const DashboardView: React.FC = () => {
             className="card hover-lift"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.35, ease: [0.16, 1, 0.3, 1] as const }}
+            transition={{ delay: 0.4, duration: 0.35, ease: [0.16, 1, 0.3, 1] as const }}
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -210,7 +254,7 @@ export const DashboardView: React.FC = () => {
                       <span className="font-medium text-slate-800 dark:text-slate-200 truncate">{b.name}</span>
                       <span className="badge badge-blue shrink-0">
                         {b.month !== undefined && b.month !== null
-                          ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][b.month]
+                          ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][b.month]
                           : 'Monthly'}
                       </span>
                     </div>
@@ -234,7 +278,7 @@ export const DashboardView: React.FC = () => {
             className="card hover-lift flex-1 flex flex-col"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.35, ease: [0.16, 1, 0.3, 1] as const }}
+            transition={{ delay: 0.5, duration: 0.35, ease: [0.16, 1, 0.3, 1] as const }}
           >
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm font-bold text-slate-800 dark:text-white">Recent Transactions</p>
@@ -252,9 +296,8 @@ export const DashboardView: React.FC = () => {
                   <AnimatedListItem key={tx.id} className="flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-800/50 last:border-0">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div
-                        className={`p-1.5 rounded-lg shrink-0 ${
-                          tx.type === 'income' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400'
-                        }`}
+                        className={`p-1.5 rounded-lg shrink-0 ${tx.type === 'income' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400'
+                          }`}
                       >
                         {tx.type === 'income' ? (
                           <TrendingUp className="w-3.5 h-3.5" />
@@ -268,9 +311,8 @@ export const DashboardView: React.FC = () => {
                       </div>
                     </div>
                     <p
-                      className={`text-xs font-bold shrink-0 ml-2 ${
-                        tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'
-                      }`}
+                      className={`text-xs font-bold shrink-0 ml-2 ${tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'
+                        }`}
                     >
                       {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
                     </p>
@@ -287,50 +329,6 @@ export const DashboardView: React.FC = () => {
           </motion.div>
         </div>
       </div>
-
-      {/* Category Dashboards Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.4, ease: [0.16, 1, 0.3, 1] as const }}
-      >
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-sm font-bold text-slate-800 dark:text-white">Category Dashboards</p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Tap a category for detailed analytics</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-2">
-            {categoryStats.map((stat, i) => {
-              const cm = CATEGORY_META[stat.category];
-              return (
-                <motion.div
-                  key={stat.category}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.55 + i * 0.04, duration: 0.3, ease: [0.16, 1, 0.3, 1] as const }}
-                >
-                  <Link
-                    to={`/category/${stat.category.toLowerCase()}`}
-                    className="group flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700 hover:shadow-md transition-all"
-                  >
-                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${cm.gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
-                      <span className="text-base">{cm.emoji}</span>
-                    </div>
-                    <span className="text-[10px] font-semibold text-slate-700 dark:text-slate-300 leading-tight text-center">
-                      {stat.category}
-                    </span>
-                    <span className={`text-[10px] font-bold ${stat.total > 0 ? cm.color : 'text-slate-300 dark:text-slate-600'}`}>
-                      {stat.total > 0 ? formatCurrency(stat.total) : '—'}
-                    </span>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </motion.div>
     </div>
   );
 };
